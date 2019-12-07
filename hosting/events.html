@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="./img/favicon.png">
+    <link rel="apple-touch-icon" sizes="64x64" href="./img/favicon.png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet" />
+    <link href="./style.css" rel="stylesheet" />
+    <title>Events – Coragon</title>
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+    <script>
+    var OneSignal = window.OneSignal || [];
+    OneSignal.push(function() {
+        OneSignal.init({
+            appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983",
+        });
+    });
+    </script>
+</head>
+
+<body id="events-page">
+    <nav class="navbar navbar-vertical fixed-left navbar-expand-md navbar-light" id="sidenav-main">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" name="show">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand pr-3" href="./">
+                <img src="./img/logo.png" alt="Coragon Logo" id="navbar-brand-img">
+            </a>
+            <div class="navbar-collapse collapse" id="navcol">
+                <div class="navbar-collapse-header d-md-none">
+                    <div class="row">
+                        <div class="col-6 collapse-brand">
+                            <a href="./">
+                                <img src="./img/logo.png" alt="Coragon Logo" id="navbar-brand-img">
+                            </a>
+                        </div>
+                        <div class="col-6 collapse-close">
+                            <button class="navbar-toggler" type="button" name="hide">
+                                <span></span><span></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="./">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link active text-primary" href="./events">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./goals">Goals</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./notes">Notes</a></li>
+                </ul>
+                <hr class="my-3">
+                <ul class="navbar-nav mb-md-3">
+                    <li class="nav-item"><a id="logout" class="nav-link" href="">Logout</a></li>
+                </ul>
+            </span>
+        </div>
+    </nav>
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-8">
+                    <h3 class="page-nav">Events</h3>
+                </div>
+                <div class="col-sm-4">
+                    <button id="add" class="btn btn-primary btn-sm rounded-0 float-left mt-3 mt-sm-0 float-sm-right">Add Event</button>
+                </div>
+            </div>        
+            <div class="row">
+                <div class="col">
+                    <div id="events-wrapper" class="card table-responsive mt-4 rounded-0 border-top-0">
+                        <div id="events" class='small my-3 mx-4 text-center'>Loading data ...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-firestore.js"></script>
+    <script src="./script.js"></script>
+    <script>
+
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+
+            let eventsRef = fs.collection("users").doc(user.uid).collection('events');
+
+            function createNotif(id,name,timestamp,useBox = true){
+                let base = 'https://coragon.herokuapp.com/create';
+                if(timestamp<time(utcDate())+60*60*24*30){
+                    if(useBox) infoBox("Creating notification ...")
+                    $.get(`${base}?content=${name} is happening now!&time=${timestamp}`).done(data=>{
+                        eventsRef.doc(id).update({ notif_id: data.notif_id });
+                        if(useBox) infoBox("Event notification created!");
+                    }).fail(xhr=>{
+                        if(useBox) infoBox("Failed to create notification. Error: "+xhr.responseJSON.message);
+                    });
+                }
+            }
+
+            function cancelNotif(notif_id){
+                let base = 'https://coragon.herokuapp.com/cancel';
+                $.get(`${base}?notif_id=${notif_id}`).fail(xhr=>{
+                    infoBox("Unable to delete notification. Error: "+xhr.responseJSON.message);
+                });
+            }
+
+            function afterDone(id,obj){
+                if (obj.repeat===null) {
+                    eventsRef.doc(id).delete();
+                } else {
+                    eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromMillis(repeatTime(obj.date.toMillis(),obj.repeat)) })
+                    .then(() => createNotif(id,obj.name,Number(repeatTime(obj.date.toMillis(),obj.repeat))/1000));
+                }
+            }
+
+            $("#add").click(function(){
+                dialogBox({
+                    header: "Add new event",
+                    input: ["title","date","repeat"],
+                    titlePlaceholder: "Event Name"
+                }, args => {
+                    eventsRef.add({
+                        name: args.title,
+                        date: firebase.firestore.Timestamp.fromDate(new Date(args.date)),
+                        repeat: args.repeat
+                    })
+                    .then(doc => createNotif(doc.id,args.title,time(args.date)));
+                });
+            });
+
+            eventsRef.get().then(function(once){
+                once.forEach(raw=>{
+                    let dt = raw.data();
+                    if (Math.floor(dt.date.toMillis()/1000)<=time(utcDate())-60*60*24) afterDone(raw.id,dt);
+                    if(!dt.hasOwnProperty("notif_id") && time(utcDate())<Math.floor(dt.date.toMillis()/1000)<time(utcDate())+60*60*24*30){
+                        createNotif(raw.id,dt.name,Number(repeatTime(dt.date.toMillis(),dt.repeat))/1000,false);
+                    }
+                });
+                eventsRef.orderBy('date').onSnapshot(function(data){
+                    var elem = '';
+                    var cachingData = {};
+                    if(!data.empty){
+                        elem += `
+                            <table id="events" class="table align-items-center table-flush">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">Event Name</th>
+                                        <th scope="col">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
+                        data.forEach(v=>{
+                            let d = v.data();
+                            elem += "<tr data-id='"+v.id+"'>";
+                                elem += "<td title='"+d.date.toDate()+"'>";
+                                    elem += readableDate(d.date.toMillis());
+                                    elem += d.repeat !== null ? " <img class='d-none d-md-inline repeat' title='Repeats "+d.repeat+"' src='img/icon/repeat.svg'> <span class='d-inline d-md-none'>(Repeats "+d.repeat+")</span>" : "";
+                                elem += "</td>";
+                                elem += "<th>"+d.name+"</th>";
+                                elem += "<td>";
+                                    if (Math.floor(d.date.toMillis()/1000)>time(utcDate())) {
+                                    elem += "<img title='Edit' class='edit pointer mr-3' src='img/icon/edit.svg'>";
+                                    elem += "<img title='Delete' class='delete pointer' src='img/icon/delete.svg'>";
+                                    } else {
+                                    if(d.repeat === null) elem += "<img title='Snooze' class='snooze pointer mr-3' src='img/icon/snooze.svg'>";
+                                    elem += "<img title='Done' class='done pointer' src='img/icon/done.svg'>";
+                                    }
+                                elem += "</td>";
+                            elem += "</tr>";
+                            cachingData[v.id] = d;
+                        });
+                        elem += `
+                                </tbody>
+                            </table>
+                        `;
+                    } else {
+                        elem += "<div id='events' class='small my-3 mx-4 text-center'>No event has been added yet</div>";
+                    }
+                    $('#events').replaceWith(elem);
+                    $("#events").data("data", cachingData);
+                });
+            });
+
+            $(document).on("click", ".edit",function(){
+                var id = $(this).parents("tr").attr("data-id");
+                var event = $("#events").data("data")[id];
+                dialogBox({
+                    header: "Edit event",
+                    input: ["title","date","repeat"],
+                    titlePlaceholder: "Event Name",
+                    titleValue: event.name,
+                    dateValue: utcDate(event.date.toMillis()),
+                    repeatValue: event.repeat
+                }, args => {
+                    eventsRef.doc(id).update({
+                        name: args.title,
+                        date: firebase.firestore.Timestamp.fromDate(new Date(args.date)),
+                        repeat: args.repeat
+                    })
+                    .then(function(){
+                        if(event.name !== args.title || event.date.seconds !== firebase.firestore.Timestamp.fromDate(new Date(args.date)).seconds){
+                            if(event.hasOwnProperty("notif_id")) cancelNotif(event.notif_id);
+                            createNotif(id,args.title,time(args.date));
+                        }
+                    });
+                });
+            });
+
+            $(document).on("click", ".delete",function(){
+                var id = $(this).parents("tr").attr("data-id");
+                var expire = new Date(time()*1000+11000);
+                var event = $("#events").data("data")[id];
+                document.cookie="events_"+id+"="+JSON.stringify(event)+";expires="+expire.toUTCString()+";path=/";
+                eventsRef.doc(id).delete().then(function(){
+                    if(event.hasOwnProperty("notif_id")) cancelNotif(event.notif_id);
+                    infoBox("Event successfully deleted!", () => {
+                        let events = JSON.parse(getCookie("events_"+id));
+                        events.date = firebase.firestore.Timestamp.fromMillis(events.date.seconds*1000);
+                        eventsRef.doc(id).set(events).then(() => createNotif(id,event.name,Number(event.date.toMillis())/1000));
+                    });
+                });
+            });
+
+            $(document).on("click", ".snooze",function(){
+                var id = $(this).parents("tr").attr("data-id");
+                var event = $("#events").data("data")[id];
+                dialogBox({
+                    header: "Snooze event",
+                    input: ["date"],
+                    dateValue: utcDate(event.date.toMillis())
+                }, args => {
+                    eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromDate(new Date(args.date)) })
+                    .then(() => createNotif(id,event.name,time(args.date)));
+                });
+            });
+
+            $(document).on("click", ".done",function(){
+                var id = $(this).parents("tr").attr("data-id");
+                var event = $("#events").data("data")[id];
+                afterDone(id,event);
+            });
+    
+        } else {
+            location.href = "./login";
+        }
+    });
+
+    </script>
+</body>
+
+</html>

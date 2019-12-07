@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="./img/favicon.png">
+    <link rel="apple-touch-icon" sizes="64x64" href="./img/favicon.png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet" />
+    <link href="./style.css" rel="stylesheet" />
+    <title>Login to Coragon</title>
+</head>
+
+<body id="login-page">
+    <div class="main-content">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-5 col-md-7">
+                    <div class="card bg-white shadow">
+                        <div class="card-body p-5">
+                            <div class="text-center mb-4">
+                                <h1 class="text-muted">Get into</h1>
+                                <img class="logo-img" src="./img/logo.png" alt="Coragon Logo">
+                            </div>
+                            <div class="social-login mb-4">
+                                <div class="social-button btn btn-danger mb-3 rounded-0" data-login="google">
+                                    <img width="20" height="20" src='img/social_icon/google.svg'>
+                                    <span>Sign in with <b>Google</b></span>
+                                </div>
+                                <div class="social-button btn btn-primary rounded-0" data-login="facebook">
+                                    <img width="20" height="20" src='img/social_icon/facebook.svg'>
+                                    <span>Login with <b>Facebook</b></span>
+                                </div>
+                            </div>
+                            <div class="error-message text-center mb-3 small text-danger" style="display:none"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
+    <script>
+
+    const config = {
+        apiKey: "AIzaSyDEwp69Rir4QRYYJzZtEHBwhC2fLD5IqVw",
+        authDomain: "coragon.firebaseapp.com",
+        databaseURL: "https://coragon.firebaseio.com",
+        projectId: "coragon",
+        storageBucket: "coragon.appspot.com",
+        messagingSenderId: "975187721562",
+        appId: "1:975187721562:web:7299b5199bb1b232620763"
+    };
+    firebase.initializeApp(config);
+
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) window.location = "./";
+    });
+
+    $(".social-button").click(function(){
+        var login = $(this).attr("data-login");
+        var provider = login === "google" ? new firebase.auth.GoogleAuthProvider() : new firebase.auth.FacebookAuthProvider();
+        firebase.auth().signInWithPopup(provider).catch(err => $(".error-message").fadeIn().text(err.message));
+    });
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="./img/favicon.png">
+    <link rel="apple-touch-icon" sizes="64x64" href="./img/favicon.png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet" />
+    <link href="./style.css" rel="stylesheet" />
+    <title>Coragon Dashboard</title>
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+    <script>
+    var OneSignal = window.OneSignal || [];
+    OneSignal.push(function() {
+        OneSignal.init({
+            appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983",
+        });
+    });
+    </script>
+</head>
+
+<body id="dashboard-page">
+    <nav class="navbar navbar-vertical fixed-left navbar-expand-md navbar-light" id="sidenav-main">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" name="show">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand pr-3" href="./">
+                <img src="./img/logo.png" alt="Coragon Logo" id="navbar-brand-img">
+            </a>
+            <div class="navbar-collapse collapse" id="navcol">
+                <div class="navbar-collapse-header d-md-none">
+                    <div class="row">
+                        <div class="col-6 collapse-brand">
+                            <a href="./">
+                                <img src="./img/logo.png" alt="Coragon Logo" id="navbar-brand-img">
+                            </a>
+                        </div>
+                        <div class="col-6 collapse-close">
+                            <button class="navbar-toggler" type="button" name="hide">
+                                <span></span><span></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link active text-primary" href="./">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./events">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./goals">Goals</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./notes">Notes</a></li>
+                </ul>
+                <hr class="my-3">
+                <ul class="navbar-nav mb-md-3">
+                    <li class="nav-item"><a id="logout" class="nav-link" href="">Logout</a></li>
+                </ul>
+            </span>
+        </div>
+    </nav>
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    <h3 class="page-nav">Dashboard</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div id="greetings" class="card rounded-0 mt-4 bg-white p-4 text-muted">
+                        <div class="row mx-0 mt-0 mb-3">
+                            <h3>How's it going ?</h3>
+                        </div>
+                        <div id="user" class="row mx-0">
+                            <h6>Loading user profile ...</h6>
+                        </div>
+                    </div>
+                    <div id="feature" class="card rounded-0 mt-4 bg-white p-4">
+                        <div class="events">
+                            <h5><a href="./events">Events</a></h5>
+                            <p class="text-muted">Schedule your important events</p>
+                        </div>
+                        <hr class="my-4">
+                        <div class="goals">
+                            <h5><a href="./goals">Goals</a></h5>
+                            <p class="text-muted">Things you wanna achieve soon</p>
+                        </div>
+                        <hr class="my-4">
+                        <div class="notes">
+                            <h5><a href="./notes">Notes</a></h5>
+                            <p class="text-muted">Keep your personal notes here</p>
+                            </button>
+                        </div>
+                        <hr class="my-4">
+                        <div class="export">
+                            <select id="exportSelect" class="form-control d-inline-block rounded-0 input-responsive" required>
+                                <option value="" disabled selected>Export Data</option>
+                                <option value="events">Events</option>
+                                <option value="goals">Goals</option>
+                                <option value="notes">Notes</option>
+                            </select>
+                            <textarea class='form-control data mt-3 hide' readonly></textarea>
+                        </div>
+                        <hr class="my-4">
+                        <div class="import">
+                            <textarea id="importTextarea" class="form-control mb-3 rounded-0" placeholder="Import data here ..." rows="3"></textarea>
+                            <button id="importSubmit" class="btn btn-primary px-3 rounded-0" disabled>Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-firestore.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/autosize@4.0.2/dist/autosize.min.js"></script>
+    <script src="./script.js"></script>
+    <script>
+
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+
+            let prov = user.providerData[0];
+            console.table([user,prov])
+
+            let userRef = fs.collection("users").doc(user.uid);
+
+            userRef.set(user.providerData[0]);
+
+            $("#user").replaceWith(`
+                <div id="user" class="row">
+                    <div class="col-sm-auto px-3 mb-3 mb-sm-0">
+                        <img class="user-photo rounded-circle border" src="${user.photoURL}">
+                    </div>
+                    <div class="col px-sm-0 px-3">
+                        <h5 class="user-name">${user.displayName}</h5>
+                        <h6 class="user-email">${user.email}</h6>
+                        <p class="user-uid small">UID: ${user.uid}</p>
+                    </div>
+                </div>
+            `);
+
+            $("#exportSelect").change(function(){
+                let v = $(this).val();
+                let res = {[v]:{}};
+                userRef.collection(v).get().then(dt=>{
+                    if(dt.empty){
+                        res = "No data";
+                    } else {
+                        dt.docs.map(function(val){
+                            let dt = val.data();
+                            if(dt.hasOwnProperty("date")) dt.date = dt.date.seconds*1000;
+                            res[v][val.id] = dt;
+                        });
+                        res = JSON.stringify(res);
+                    }
+                    $("textarea.data").fadeIn().val(res).focus(() => $(this).select());
+                    autosize($("textarea.data"));
+                    autosize.update($("textarea.data"));
+                });
+            });
+
+            $('#importTextarea').keyup(function(){
+                if($(this).val()==="") $('#importSubmit').prop("disabled", true);
+                else $('#importSubmit').removeAttr("disabled");
+                $(this).css("border-color","");
+            });
+
+            autosize($(".import textarea"));
+
+            $('#importSubmit').click(function(){
+                var v = JSON.parse($('#importTextarea').val());
+                var col = Object.keys(v).toString();
+                if($.inArray(col,['events','goals','notes']) >= 0){
+                    $.each(v[col],function(doc,dt){
+                        if(dt.hasOwnProperty("date")) dt.date = firebase.firestore.Timestamp.fromMillis(dt.date);
+                        userRef.collection(col).doc(doc).set(dt,{merge:true});
+                    });
+                    infoBox("Data successfully imported!");
+                } else {
+                    $('#importTextarea').css("border-color","#fd8f9a");
+                }
+            });
+
+        } else {
+            location.href = "./login";
+        }
+    });
+
+    </script>
+</body>
+
+</html>

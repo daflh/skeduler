@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="./img/favicon.png">
+    <link rel="apple-touch-icon" sizes="64x64" href="./img/favicon.png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet" />
+    <link href="./style.css" rel="stylesheet" />
+    <title>Goals – Coragon</title>
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+    <script>
+    var OneSignal = window.OneSignal || [];
+    OneSignal.push(function() {
+        OneSignal.init({
+            appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983",
+        });
+    });
+    </script>
+</head>
+
+<body id="goals-page">
+    <nav class="navbar navbar-vertical fixed-left navbar-expand-md navbar-light" id="sidenav-main">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" name="show">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand pr-3" href="./">
+                <img src="./img/logo.png" alt="Coragon Logo" id="navbar-brand-img">
+            </a>
+            <div class="navbar-collapse collapse" id="navcol">
+                <div class="navbar-collapse-header d-md-none">
+                    <div class="row">
+                        <div class="col-6 collapse-brand">
+                            <a href="./">
+                                <img src="./img/logo.png" alt="Coragon Logo" id="navbar-brand-img">
+                            </a>
+                        </div>
+                        <div class="col-6 collapse-close">
+                            <button class="navbar-toggler" type="button" name="hide">
+                                <span></span><span></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="./">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./events">Events</a></li>
+                    <li class="nav-item"><a class="nav-link active text-primary" href="./goals">Goals</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./notes">Notes</a></li>
+                </ul>
+                <hr class="my-3">
+                <ul class="navbar-nav mb-md-3">
+                    <li class="nav-item"><a id="logout" class="nav-link" href="">Logout</a></li>
+                </ul>
+            </span>
+        </div>
+    </nav>
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-8">
+                    <h3 class="page-nav">Goals</h3>
+                </div>
+                <div class="col-sm-4">
+                    <button id="add" class="btn btn-primary btn-sm rounded-0 float-left mt-3 mt-sm-0 float-sm-right">Add Goal</button>
+                </div>
+            </div>        
+            <div class="row">
+                <div class="col">
+                    <div id="goals-wrapper" class="card rounded-0 mt-4">
+                        <div id="goals" class='small my-3 mx-4 text-center'>Loading data ...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-firestore.js"></script>
+    <script src="./script.js"></script>
+    <script>
+
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+
+            let goalsRef = fs.collection("users").doc(user.uid).collection('goals');
+
+            $("#add").click(function(){
+                dialogBox({
+                    header: "Add new goal",
+                    input: ["title","link"],
+                    titlePlaceholder: "Goal Name",
+                    linkPlaceholder: "Redirect Link (Optional)"
+                }, args => {
+                    goalsRef.add({
+                        name: args.title,
+                        link: args.link!==""?args.link:null,
+                        sort: Number(""+new Date().getTime()+Math.floor(Math.random()*90+10))
+                    });
+                });
+            });
+
+            goalsRef.orderBy('sort').onSnapshot(function(data){
+                var elem = '';
+                var cachingData = {};
+                if(!data.empty){
+                    elem += "<ol id='goals' class='list-group list-group-flush'>";
+                    data.forEach(v=>{
+                        let d = v.data();
+                        elem += "<li class='list-group-item' data-id='"+v.id+"'>";
+                            elem += "<span class='float-right pl-2'>";
+                                elem += "<img class='up' src='img/icon/arrow-up.svg'>";
+                                elem += "<img class='down ml-2' src='img/icon/arrow-down.svg'>";
+                                elem += "<img title='Delete' class='delete ml-3' src='img/icon/delete.svg'>";
+                            elem += "</span>";
+                            elem += "<span>";
+                                elem += d.link === null ? d.name : "<a href='"+autoHttp(d.link)+"' target='_blank'>"+d.name+"</a>";
+                            elem += "</span>";
+                        elem += "</li>";
+                        cachingData[v.id] = d;
+                    });
+                    elem += "</ol>";
+                } else {
+                    elem += "<div id='goals' class='small my-3 mx-4 text-center'>No goal has been added yet</div>";
+                }
+                $('#goals').replaceWith(elem);
+                $("#goals").data("data", cachingData);
+            });
+
+            $(document).on("click", ".delete",function(){
+                var id = $(this).parents("li").attr("data-id");
+                var expire = new Date(time()*1000+7000);
+                document.cookie="goals_"+id+"="+JSON.stringify($("#goals").data("data")[id])+";expires="+expire.toUTCString()+";path=/";
+                goalsRef.doc(id).delete().then(function(){
+                    infoBox("Event successfully deleted!",() => goalsRef.doc(id).set(JSON.parse(getCookie("goals_"+id))));
+                });
+            });
+
+            $(document).on("click", ".up,.down",function(e){
+                var thisID = $(this).parents("li").attr("data-id");
+                var oppID = e.target.classList.contains("up")?$(this).parents("li").prev().attr("data-id"):$(this).parents("li").next().attr("data-id");
+                goalsRef.doc(thisID).update({ sort: $("#goals").data("data")[oppID].sort });
+                goalsRef.doc(oppID).update({ sort: $("#goals").data("data")[thisID].sort });
+            });
+
+        } else {
+            location.href = "./login";
+        }
+    });
+
+    </script>
+</body>
+
+</html>
