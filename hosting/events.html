@@ -118,6 +118,23 @@
                 }
             }
 
+            if(Notification.permission !== "granted"){
+                $(`
+                    <div class="card rounded-0 mt-4 bg-white text-muted">
+                        <div class="card-body p-4">
+                            <img class="d-lg-inline d-none mr-3 align-top" width="55" src='img/icon/warning.svg'>
+                            <div class="d-inline-block">
+                                <p class="m-0 font-weight-bold">
+                                    <span class="d-lg-none text-warning">Warning: </span>
+                                    Notification Blocked
+                                </p>
+                                <p class="m-0">Turn on notifications to get event reminders in <a href="https://support.google.com/chrome/answer/3220216" target="_blank">Chrome</a>, <a href="https://support.mozilla.org/en-US/kb/push-notifications-firefox" target="_blank">Firefox</a> or <a href="https://www.windowscentral.com/how-manage-web-notifications-edge-windows-10" target="_blank">Edge</a></p>
+                            </div>
+                        </div>
+                    </div>
+                `).hide().insertBefore("#events-wrapper").fadeIn("slow");
+            }
+
             $("#add").click(function(){
                 dialogBox({
                     header: "Add new event",

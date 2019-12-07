@@ -68,10 +68,10 @@
             <div class="row">
                 <div class="col">
                     <div id="greetings" class="card rounded-0 mt-4 bg-white p-4 text-muted">
-                        <div class="row mx-0 mt-0 mb-3">
+                        <div class="card-header bg-white border-0 p-0 mb-3">
                             <h3>How's it going ?</h3>
                         </div>
-                        <div id="user" class="row mx-0">
+                        <div id="user" class="card-body p-0">
                             <h6>Loading user profile ...</h6>
                         </div>
                     </div>
@@ -122,15 +122,10 @@
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
 
-            let prov = user.providerData[0];
-            console.table([user,prov])
-
             let userRef = fs.collection("users").doc(user.uid);
 
-            userRef.set(user.providerData[0]);
-
             $("#user").replaceWith(`
-                <div id="user" class="row">
+                <div id="user" class="card-body row p-0">
                     <div class="col-sm-auto px-3 mb-3 mb-sm-0">
                         <img class="user-photo rounded-circle border" src="${user.photoURL}">
                     </div>
