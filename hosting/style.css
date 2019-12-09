@@ -87,7 +87,7 @@ img{max-width:100%}
 @media (max-width:767.98px) {
     .navbar-nav .nav-link{padding:.625rem 0;color:#172b4d!important}
     .navbar-collapse{display:none;padding:1.5rem;background:#fff;box-shadow:0 50px 100px rgba(50,50,93,.1),0 15px 35px rgba(50,50,93,.15),0 5px 15px rgba(0,0,0,.1);width:calc(100% - 1.4rem);position:absolute;top:0;left:0;right:0;z-index:1050;margin:.7rem;overflow-y:auto;height:auto!important}
-    .navbar-collapse .navbar-toggler{width:20px;height:20px;position:relative;cursor:pointer;display:inline-block;padding:0}
+    .navbar-collapse .navbar-toggler{width:20px;height:20px;position:relative;cursor:pointer;display:inline-block;padding:0;vertical-align:middle}
     .navbar-collapse .navbar-toggler span{display:block;position:absolute;width:100%;height:2px;opacity:1;background:#283448}
     .navbar-collapse .navbar-toggler :first-child{transform:rotate(135deg)}
     .navbar-collapse .navbar-toggler :nth-child(2){transform:rotate(-135deg)}
