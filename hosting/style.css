@@ -48,7 +48,7 @@ img{max-width:100%}
 .social-button{text-align:center;display:block;cursor:pointer;padding:0.75rem 0}
 .social-button span{margin-left:.25rem}
 .dialog-overlay,.note-edit-overlay{position:fixed;width:100%;top:0;bottom:0;z-index:9999;background-color:rgba(0,0,0,.4)}
-.dialog-overlay .dialog-box,.note-edit-overlay .note-edit-box{position:absolute;top:0;right:0;left:0;margin:3rem auto;background-color:#fff;box-shadow:0 5px 22px 0 rgba(0,0,0,0.25)}
+.dialog-overlay .dialog-box,.note-edit-overlay .note-edit-box{position:absolute;top:50%;right:0;left:0;transform:translateY(-50%);margin:0 auto;background-color:#fff;box-shadow:0 5px 22px 0 rgba(0,0,0,0.25)}
 .dialog-overlay .dialog-box{width:450px;padding:3rem 2rem;text-align:center}
 .dialog-overlay .dialog-box h2{font-weight:600}
 .note-edit-overlay .note-edit-box{width:750px}
