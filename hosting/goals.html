@@ -115,7 +115,8 @@
                             elem += "<span class='float-right pl-2'>";
                                 elem += "<img class='up' src='img/icon/arrow-up.svg'>";
                                 elem += "<img class='down ml-2' src='img/icon/arrow-down.svg'>";
-                                elem += "<img title='Delete' class='delete ml-3' src='img/icon/delete.svg'>";
+                                elem += "<img title='Rename' class='rename ml-2' src='img/icon/edit.svg'>";
+                                elem += "<img title='Delete' class='delete ml-2' src='img/icon/delete.svg'>";
                             elem += "</span>";
                             elem += "<span>";
                                 elem += d.link === null ? d.name : "<a href='"+autoHttp(d.link)+"' target='_blank'>"+d.name+"</a>";
@@ -131,12 +132,23 @@
                 $("#goals").data("data", cachingData);
             });
 
+            $(document).on("click", ".rename",function(){
+                var id = $(this).parents("li").attr("data-id");
+                var goal = $("#goals").data("data")[id];
+                dialogBox({
+                    header: "Rename goal",
+                    input: ["title"],
+                    titlePlaceholder: "Goal Name",
+                    titleValue: goal.name,
+                }, args => goalsRef.doc(id).update({ name: args.title }) );
+            });
+
             $(document).on("click", ".delete",function(){
                 var id = $(this).parents("li").attr("data-id");
                 var expire = new Date(time()*1000+7000);
                 document.cookie="goals_"+id+"="+JSON.stringify($("#goals").data("data")[id])+";expires="+expire.toUTCString()+";path=/";
                 goalsRef.doc(id).delete().then(function(){
-                    infoBox("Event successfully deleted!",() => goalsRef.doc(id).set(JSON.parse(getCookie("goals_"+id))));
+                    infoBox("Goal successfully deleted!",() => goalsRef.doc(id).set(JSON.parse(getCookie("goals_"+id))));
                 });
             });
 
