@@ -13,7 +13,7 @@
     <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
     <script>
     var OneSignal = window.OneSignal || [];
-    OneSignal.push(function() {
+    OneSignal.push(()=> {
         OneSignal.init({
             appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983",
         });
@@ -89,7 +89,7 @@
 
             let goalsRef = fs.collection("users").doc(user.uid).collection('goals');
 
-            $("#add").click(function(){
+            $("#add").click(()=>{
                 dialogBox({
                     header: "Add new goal",
                     input: ["title","link"],
@@ -132,7 +132,7 @@
                 $("#goals").data("data", cachingData);
             });
 
-            $(document).on("click", ".rename",function(){
+            $(document).on("click", ".rename",()=>{
                 var id = $(this).parents("li").attr("data-id");
                 var goal = $("#goals").data("data")[id];
                 dialogBox({
@@ -143,11 +143,11 @@
                 }, args => goalsRef.doc(id).update({ name: args.title }) );
             });
 
-            $(document).on("click", ".delete",function(){
+            $(document).on("click", ".delete",()=>{
                 var id = $(this).parents("li").attr("data-id");
                 var expire = new Date(time()*1000+7000);
                 document.cookie="goals_"+id+"="+JSON.stringify($("#goals").data("data")[id])+";expires="+expire.toUTCString()+";path=/";
-                goalsRef.doc(id).delete().then(function(){
+                goalsRef.doc(id).delete().then(()=>{
                     infoBox("Goal successfully deleted!",() => goalsRef.doc(id).set(JSON.parse(getCookie("goals_"+id))));
                 });
             });

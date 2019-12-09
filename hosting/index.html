@@ -13,7 +13,7 @@
     <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
     <script>
     var OneSignal = window.OneSignal || [];
-    OneSignal.push(function() {
+    OneSignal.push(()=> {
         OneSignal.init({
             appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983",
         });
@@ -137,7 +137,7 @@
                 </div>
             `);
 
-            $("#exportSelect").change(function(){
+            $("#exportSelect").change(()=>{
                 let v = $(this).val();
                 let res = {[v]:{}};
                 userRef.collection(v).get().then(dt=>{
@@ -157,7 +157,7 @@
                 });
             });
 
-            $('#importTextarea').keyup(function(){
+            $('#importTextarea').keyup(()=>{
                 if($(this).val()==="") $('#importSubmit').prop("disabled", true);
                 else $('#importSubmit').removeAttr("disabled");
                 $(this).css("border-color","");
@@ -165,7 +165,7 @@
 
             autosize($(".import textarea"));
 
-            $('#importSubmit').click(function(){
+            $('#importSubmit').click(()=>{
                 var v = JSON.parse($('#importTextarea').val());
                 var col = Object.keys(v).toString();
                 if($.inArray(col,['events','goals','notes']) >= 0){

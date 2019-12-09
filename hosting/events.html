@@ -13,7 +13,7 @@
     <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
     <script>
     var OneSignal = window.OneSignal || [];
-    OneSignal.push(function() {
+    OneSignal.push(()=> {
         OneSignal.init({
             appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983",
         });
@@ -135,7 +135,7 @@
                 `).hide().insertBefore("#events-wrapper").fadeIn("slow");
             }
 
-            $("#add").click(function(){
+            $("#add").click(()=>{
                 dialogBox({
                     header: "Add new event",
                     input: ["title","date","repeat"],
@@ -205,7 +205,7 @@
                 });
             });
 
-            $(document).on("click", ".edit",function(){
+            $(document).on("click", ".edit",()=>{
                 var id = $(this).parents("tr").attr("data-id");
                 var event = $("#events").data("data")[id];
                 dialogBox({
@@ -221,7 +221,7 @@
                         date: firebase.firestore.Timestamp.fromDate(new Date(args.date)),
                         repeat: args.repeat
                     })
-                    .then(function(){
+                    .then(()=>{
                         if(event.name !== args.title || event.date.seconds !== firebase.firestore.Timestamp.fromDate(new Date(args.date)).seconds){
                             if(event.hasOwnProperty("notif_id")) cancelNotif(event.notif_id);
                             createNotif(id,args.title,time(args.date));
@@ -230,12 +230,12 @@
                 });
             });
 
-            $(document).on("click", ".delete",function(){
+            $(document).on("click", ".delete",()=>{
                 var id = $(this).parents("tr").attr("data-id");
                 var expire = new Date(time()*1000+11000);
                 var event = $("#events").data("data")[id];
                 document.cookie="events_"+id+"="+JSON.stringify(event)+";expires="+expire.toUTCString()+";path=/";
-                eventsRef.doc(id).delete().then(function(){
+                eventsRef.doc(id).delete().then(()=>{
                     if(event.hasOwnProperty("notif_id")) cancelNotif(event.notif_id);
                     infoBox("Event successfully deleted!", () => {
                         let events = JSON.parse(getCookie("events_"+id));
@@ -245,7 +245,7 @@
                 });
             });
 
-            $(document).on("click", ".snooze",function(){
+            $(document).on("click", ".snooze",()=>{
                 var id = $(this).parents("tr").attr("data-id");
                 var event = $("#events").data("data")[id];
                 dialogBox({
@@ -258,7 +258,7 @@
                 });
             });
 
-            $(document).on("click", ".done",function(){
+            $(document).on("click", ".done",()=>{
                 var id = $(this).parents("tr").attr("data-id");
                 var event = $("#events").data("data")[id];
                 afterDone(id,event);

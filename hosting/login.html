@@ -60,7 +60,7 @@
         if (user) window.location = "./";
     });
 
-    $(".social-button").click(function(){
+    $(".social-button").click(()=>{
         var login = $(this).attr("data-login");
         var provider = login === "google" ? new firebase.auth.GoogleAuthProvider() : new firebase.auth.FacebookAuthProvider();
         firebase.auth().signInWithPopup(provider).catch(err => $(".error-message").fadeIn().text(err.message));

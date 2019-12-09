@@ -13,7 +13,7 @@
     <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
     <script>
     var OneSignal = window.OneSignal || [];
-    OneSignal.push(function() {
+    OneSignal.push(()=> {
         OneSignal.init({
             appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983",
         });
@@ -96,14 +96,14 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
             var ta = $("#newNoteForm textarea");
             var save = $("#newNoteForm .save");
 
-            ta.keyup(function(){
+            ta.keyup(()=>{
                 if($(this).val()!=="") save.slideDown();
                 else save.slideUp();
             });
 
             autosize(ta);
 
-            save.click(function(){
+            save.click(()=>{
                 if(!!ta.val().replace(/\s/g, '').length){
                     notesRef.add({
                         data: ta.val(),
@@ -160,25 +160,25 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                     `).hide().appendTo("body").fadeIn();
                     Array.prototype.forEach.call($("#note-edit textarea"), elem => elem.placeholder = elem.placeholder.replace(/\\n/g, '\n'));
                     autosize($("#note-edit textarea"));
-                    $("#note-edit .edit-close").click(function(){
+                    $("#note-edit .edit-close").click(()=>{
                         if(!!$("#note-edit textarea").val().replace(/\s/g, '').length){
                             notesRef.doc(dtid).update({ data: $("#note-edit textarea").val() });
                         }
-                        $("#note-edit").fadeOut("fast", function(){$(this).remove()});
+                        $("#note-edit").fadeOut("fast", ()=>$(this).remove());
                     });
                 }
             });
 
-            $(document).on("click", ".pin",function(){
+            $(document).on("click", ".pin",()=>{
                 var id = $(this).parents("li").attr("data-id");
                 notesRef.doc(id).update({ pin: !$("#notes").data("data")[id].pin });
             });
 
-            $(document).on("click", ".delete",function(){
+            $(document).on("click", ".delete",()=>{
                 var id = $(this).parents("li").attr("data-id");
                 var expire = new Date(time()*1000+7000);
                 document.cookie="notes_"+id+"="+JSON.stringify($("#notes").data("data")[id])+";expires="+expire.toUTCString()+";path=/";
-                notesRef.doc(id).delete().then(function(){
+                notesRef.doc(id).delete().then(()=>{
                     infoBox("Notes successfully deleted!",() => notesRef.doc(id).set(JSON.parse(getCookie("notes_"+id))));
                 });
             });
