@@ -123,7 +123,9 @@ function repeatTime(dateTimestamp,repeatEvery) {
 
 function dialogBox(opt,doneCallback=()=>{}){
     function closeDialog(){
-        $("#dialog").fadeOut("fast", ()=>$(this).remove());
+        $("#dialog").fadeOut("fast", function(){
+            $(this).remove();
+        });
     }
     var element = `
         <div id="dialog" class="dialog-overlay">
@@ -158,7 +160,7 @@ function dialogBox(opt,doneCallback=()=>{}){
         </div>
     `;
     $(element).hide().appendTo("body").fadeIn();
-    $("#dialogForm").submit(()=>{
+    $("#dialogForm").submit(function(){
         doneCallback({
             title: $("#dialog input[name=title]").val()||"",
             link: $("#dialog input[name=link]").val()||"",
@@ -168,12 +170,16 @@ function dialogBox(opt,doneCallback=()=>{}){
         closeDialog();
         return false;
     });
-    $("#dialog button.cancel").click(()=>closeDialog());
+    $("#dialog button.cancel").click(function(){
+        closeDialog()
+    });
 }
 
 function infoBox(text,undoActionCallback){
     function closeInfo(sesn){
-        $("#info[data-session="+sesn+"]").fadeOut("fast",()=>$(this).remove());
+        $("#info[data-session="+sesn+"]").fadeOut("fast",function(){
+            $(this).remove();
+        });
         clearTimeout(timeout);
     }
     var timeout;
@@ -195,7 +201,14 @@ function infoBox(text,undoActionCallback){
     } else {
         $(element).hide().appendTo("body").fadeIn("fast");
     }
-    timeout = setTimeout(()=>closeInfo(rand), 10000);
-    $("#info .undo").click(()=>{undoActionCallback();closeInfo(rand)});
-    $("#info .shut").click(()=>closeInfo(rand));
+    timeout = setTimeout(function(){
+        closeInfo(rand)
+    }, 10000);
+    $("#info .undo").click(function(){
+        undoActionCallback();
+        closeInfo(rand);
+    });
+    $("#info .shut").click(function(){
+        closeInfo(rand)
+    });
 }

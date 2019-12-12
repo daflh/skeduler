@@ -97,14 +97,14 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
             var ta = $("#newNoteForm textarea");
             var save = $("#newNoteForm .save");
 
-            ta.keyup(()=>{
+            ta.keyup(function(){
                 if($(this).val()!=="") save.slideDown();
                 else save.slideUp();
             });
 
             autosize(ta);
 
-            save.click(()=>{
+            save.click(function(){
                 if(!!ta.val().replace(/\s/g, '').length){
                     notesRef.add({
                         data: ta.val(),
@@ -161,26 +161,30 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                     `).hide().appendTo("body").fadeIn();
                     Array.prototype.forEach.call($("#note-edit textarea"), elem => elem.placeholder = elem.placeholder.replace(/\\n/g, '\n'));
                     autosize($("#note-edit textarea"));
-                    $("#note-edit .edit-close").click(()=>{
+                    $("#note-edit .edit-close").click(function(){
                         if(!!$("#note-edit textarea").val().replace(/\s/g, '').length){
                             notesRef.doc(dtid).update({ data: $("#note-edit textarea").val() });
                         }
-                        $("#note-edit").fadeOut("fast", ()=>$(this).remove());
+                        $("#note-edit").fadeOut("fast", function(){
+                            $(this).remove();
+                        });
                     });
                 }
             });
 
-            $(document).on("click", ".pin",()=>{
+            $(document).on("click", ".pin", function(){
                 var id = $(this).parents("li").attr("data-id");
                 notesRef.doc(id).update({ pin: !$("#notes").data("data")[id].pin });
             });
 
-            $(document).on("click", ".delete",()=>{
+            $(document).on("click", ".delete", function(){
                 var id = $(this).parents("li").attr("data-id");
                 var expire = new Date(time()*1000+7000);
                 document.cookie="notes_"+id+"="+JSON.stringify($("#notes").data("data")[id])+";expires="+expire.toUTCString()+";path=/";
-                notesRef.doc(id).delete().then(()=>{
-                    infoBox("Notes successfully deleted!",() => notesRef.doc(id).set(JSON.parse(getCookie("notes_"+id))));
+                notesRef.doc(id).delete().then(function(){
+                    infoBox("Notes successfully deleted!",function(){
+                        notesRef.doc(id).set(JSON.parse(getCookie("notes_"+id)))
+                    });
                 });
             });
 

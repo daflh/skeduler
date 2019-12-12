@@ -138,7 +138,7 @@
                 </div>
             `);
 
-            $("#exportSelect").change(()=>{
+            $("#exportSelect").change(function(){
                 let v = $(this).val();
                 let res = {[v]:{}};
                 userRef.collection(v).get().then(dt=>{
@@ -152,13 +152,15 @@
                         });
                         res = JSON.stringify(res);
                     }
-                    $("textarea.data").fadeIn().val(res).focus(() => $(this).select());
+                    $("textarea.data").fadeIn().val(res).focus(function(){
+                        $(this).select()
+                    });
                     autosize($("textarea.data"));
                     autosize.update($("textarea.data"));
                 });
             });
 
-            $('#importTextarea').keyup(()=>{
+            $('#importTextarea').keyup(function(){
                 if($(this).val()==="") $('#importSubmit').prop("disabled", true);
                 else $('#importSubmit').removeAttr("disabled");
                 $(this).css("border-color","");
@@ -166,7 +168,7 @@
 
             autosize($(".import textarea"));
 
-            $('#importSubmit').click(()=>{
+            $('#importSubmit').click(function(){
                 var v = JSON.parse($('#importTextarea').val());
                 var col = Object.keys(v).toString();
                 if($.inArray(col,['events','goals','notes']) >= 0){

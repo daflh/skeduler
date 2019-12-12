@@ -90,7 +90,7 @@
 
             let goalsRef = fs.collection("users").doc(user.uid).collection('goals');
 
-            $("#add").click(()=>{
+            $("#add").click(function(){
                 dialogBox({
                     header: "Add new goal",
                     input: ["title","link"],
@@ -133,7 +133,7 @@
                 $("#goals").data("data", cachingData);
             });
 
-            $(document).on("click", ".rename",()=>{
+            $(document).on("click", ".rename", function(){
                 var id = $(this).parents("li").attr("data-id");
                 var goal = $("#goals").data("data")[id];
                 dialogBox({
@@ -144,12 +144,14 @@
                 }, args => goalsRef.doc(id).update({ name: args.title }) );
             });
 
-            $(document).on("click", ".delete",()=>{
+            $(document).on("click", ".delete", function(){
                 var id = $(this).parents("li").attr("data-id");
                 var expire = new Date(time()*1000+7000);
                 document.cookie="goals_"+id+"="+JSON.stringify($("#goals").data("data")[id])+";expires="+expire.toUTCString()+";path=/";
-                goalsRef.doc(id).delete().then(()=>{
-                    infoBox("Goal successfully deleted!",() => goalsRef.doc(id).set(JSON.parse(getCookie("goals_"+id))));
+                goalsRef.doc(id).delete().then(function(){
+                    infoBox("Goal successfully deleted!", function(){
+                        goalsRef.doc(id).set(JSON.parse(getCookie("goals_"+id)))
+                    });
                 });
             });
 
