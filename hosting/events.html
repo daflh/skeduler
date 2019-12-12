@@ -181,7 +181,7 @@
                             elem += "<tr data-id='"+v.id+"'>";
                                 elem += "<td title='"+d.date.toDate()+"'>";
                                     elem += readableDate(d.date.toMillis());
-                                    elem += d.repeat !== null ? " <img class='d-none d-md-inline repeat' title='Repeats "+d.repeat+"' src='img/svg/repeat.svg'> <span class='d-inline d-md-none'>(Repeats "+d.repeat+")</span>" : "";
+                                    elem += d.repeat !== null ? " <img class='d-none d-md-inline repeat' title='Repeats "+d.repeat+"' src='img/svg/repeat.svg'> <span class='d-inline d-md-none'>("+capitalize(d.repeat)+")</span>" : "";
                                 elem += "</td>";
                                 elem += "<th>"+d.name+"</th>";
                                 elem += "<td>";

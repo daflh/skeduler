@@ -22,6 +22,10 @@ function pad(num, size) {
     return s.substr(s.length-size);
 }
 
+function capitalize(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 function autoHttp(url){
     if(!url.match(/^[a-zA-Z]+:\/\//)){
         return 'http://' + url;
