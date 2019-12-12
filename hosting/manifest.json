@@ -1,7 +1,7 @@
 {
   "name": "Coragon",
   "short_name": "Coragon",
-  "start_url": "/hosting/index.html",
+  "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#429dff",
   "theme_color": "#429dff",
