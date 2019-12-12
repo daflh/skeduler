@@ -59,7 +59,7 @@ img{max-width:100%}
 #dashboard-page .list-group li{background-color:initial!important;padding:.75rem 0}
 #dashboard-page textarea{max-height:300px}
 #dashboard-page textarea.data{background-color:#f9f9f9}
-#dashboard-page .user-photo{width:90px}
+#dashboard-page .user-photo{width:80px}
 #dashboard-page .user-name{font-weight:600}
 #login-page,#error-page{position:absolute;top:50%;transform:translateY(-50%);-ms-transform:translateY(-50%);width:100%}
 #login-page .container{margin:10vh auto!important}

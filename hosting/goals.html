@@ -113,14 +113,14 @@
                     data.forEach(v=>{
                         let d = v.data();
                         elem += "<li class='list-group-item' data-id='"+v.id+"'>";
-                            elem += "<span class='float-right pl-2'>";
+                            elem += "<span>";
+                                elem += d.link === null ? d.name : "<a href='"+autoHttp(d.link)+"' target='_blank'>"+d.name+"</a>";
+                            elem += "</span>";
+                            elem += "<span class='action float-right pl-2'>";
                                 elem += "<img class='up' src='img/svg/arrow-up.svg'>";
                                 elem += "<img class='down ml-2' src='img/svg/arrow-down.svg'>";
                                 elem += "<img title='Rename' class='rename ml-2' src='img/svg/edit.svg'>";
                                 elem += "<img title='Delete' class='delete ml-2' src='img/svg/delete.svg'>";
-                            elem += "</span>";
-                            elem += "<span>";
-                                elem += d.link === null ? d.name : "<a href='"+autoHttp(d.link)+"' target='_blank'>"+d.name+"</a>";
                             elem += "</span>";
                         elem += "</li>";
                         cachingData[v.id] = d;
@@ -131,6 +131,14 @@
                 }
                 $('#goals').replaceWith(elem);
                 $("#goals").data("data", cachingData);
+            });
+
+            $(document).on("mouseenter", "#goals li", function(){
+                $(this).children(".action").show()
+            });
+
+            $(document).on("mouseleave", "#goals li", function(){
+                $(this).children(".action").hide()
             });
 
             $(document).on("click", ".rename", function(){
