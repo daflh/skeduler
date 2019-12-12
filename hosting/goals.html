@@ -119,7 +119,7 @@
                             elem += "<span class='action float-right pl-2'>";
                                 elem += "<img class='up' src='img/svg/arrow-up.svg'>";
                                 elem += "<img class='down ml-2' src='img/svg/arrow-down.svg'>";
-                                elem += "<img title='Rename' class='rename ml-2' src='img/svg/edit.svg'>";
+                                elem += "<img title='Edit' class='edit ml-2' src='img/svg/edit.svg'>";
                                 elem += "<img title='Delete' class='delete ml-2' src='img/svg/delete.svg'>";
                             elem += "</span>";
                         elem += "</li>";
@@ -141,15 +141,20 @@
                 $(this).children(".action").hide()
             });
 
-            $(document).on("click", ".rename", function(){
+            $(document).on("click", ".edit", function(){
                 var id = $(this).parents("li").attr("data-id");
                 var goal = $("#goals").data("data")[id];
                 dialogBox({
-                    header: "Rename goal",
-                    input: ["title"],
+                    header: "Edit goal",
+                    input: ["title","link"],
                     titlePlaceholder: "Goal Name",
                     titleValue: goal.name,
-                }, args => goalsRef.doc(id).update({ name: args.title }) );
+                    linkPlaceholder: "Redirect Link (Optional)",
+                    linkValue: goal.link
+                }, args => goalsRef.doc(id).update({
+                    name: args.title,
+                    link: args.link!==""?args.link:null
+                }));
             });
 
             $(document).on("click", ".delete", function(){

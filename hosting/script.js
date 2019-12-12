@@ -170,9 +170,7 @@ function dialogBox(opt,doneCallback=()=>{}){
         closeDialog();
         return false;
     });
-    $("#dialog button.cancel").click(function(){
-        closeDialog()
-    });
+    $("#dialog button.cancel").click(closeDialog);
 }
 
 function infoBox(text,undoActionCallback){
