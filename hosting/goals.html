@@ -133,14 +133,6 @@
                 $("#goals").data("data", cachingData);
             });
 
-            $(document).on("mouseenter", "#goals li", function(){
-                $(this).children(".action").show()
-            });
-
-            $(document).on("mouseleave", "#goals li", function(){
-                $(this).children(".action").hide()
-            });
-
             $(document).on("click", ".edit", function(){
                 var id = $(this).parents("li").attr("data-id");
                 var goal = $("#goals").data("data")[id];
