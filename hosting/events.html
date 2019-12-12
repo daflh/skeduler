@@ -4,8 +4,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="shortcut icon" href="./img/favicon.png">
-    <link rel="apple-touch-icon" sizes="64x64" href="./img/favicon.png">
+    <link rel="shortcut icon" href="./img/icons/64x64.png">
+    <link rel="apple-touch-icon" sizes="64x64" href="./img/icons/64x64.png">
     <link rel="manifest" href="./manifest.json">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet" />
@@ -123,7 +123,7 @@
                 $(`
                     <div class="card rounded-0 mt-4 bg-white text-muted">
                         <div class="card-body p-4">
-                            <img class="d-lg-inline d-none mr-3 align-top" width="55" src='img/icon/warning.svg'>
+                            <img class="d-lg-inline d-none mr-3 align-top" width="55" src='img/svg/warning.svg'>
                             <div class="d-inline-block">
                                 <p class="m-0 font-weight-bold">
                                     <span class="d-lg-none text-warning">Warning: </span>
@@ -179,16 +179,16 @@
                             elem += "<tr data-id='"+v.id+"'>";
                                 elem += "<td title='"+d.date.toDate()+"'>";
                                     elem += readableDate(d.date.toMillis());
-                                    elem += d.repeat !== null ? " <img class='d-none d-md-inline repeat' title='Repeats "+d.repeat+"' src='img/icon/repeat.svg'> <span class='d-inline d-md-none'>(Repeats "+d.repeat+")</span>" : "";
+                                    elem += d.repeat !== null ? " <img class='d-none d-md-inline repeat' title='Repeats "+d.repeat+"' src='img/svg/repeat.svg'> <span class='d-inline d-md-none'>(Repeats "+d.repeat+")</span>" : "";
                                 elem += "</td>";
                                 elem += "<th>"+d.name+"</th>";
                                 elem += "<td>";
                                     if (Math.floor(d.date.toMillis()/1000)>time(utcDate())) {
-                                    elem += "<img title='Edit' class='edit pointer' src='img/icon/edit.svg'>";
-                                    elem += "<img title='Delete' class='delete ml-3 pointer' src='img/icon/delete.svg'>";
+                                    elem += "<img title='Edit' class='edit pointer' src='img/svg/edit.svg'>";
+                                    elem += "<img title='Delete' class='delete ml-3 pointer' src='img/svg/delete.svg'>";
                                     } else {
-                                    if(d.repeat === null) elem += "<img title='Snooze' class='snooze mr-3 pointer' src='img/icon/snooze.svg'>";
-                                    elem += "<img title='Done' class='done pointer' src='img/icon/done.svg'>";
+                                    if(d.repeat === null) elem += "<img title='Snooze' class='snooze mr-3 pointer' src='img/svg/snooze.svg'>";
+                                    elem += "<img title='Done' class='done pointer' src='img/svg/done.svg'>";
                                     }
                                 elem += "</td>";
                             elem += "</tr>";
