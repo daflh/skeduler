@@ -140,6 +140,9 @@
             $("#exportSelect").change(function(){
                 let v = $(this).val();
                 let res = {[v]:{}};
+                $("textarea.data").fadeIn().val("Loading data ...");
+                autosize($("textarea.data"));
+                autosize.update($("textarea.data"));
                 userRef.collection(v).get().then(dt=>{
                     if(dt.empty){
                         res = "No data";
@@ -151,10 +154,9 @@
                         });
                         res = JSON.stringify(res);
                     }
-                    $("textarea.data").fadeIn().val(res).focus(function(){
+                    $("textarea.data").val(res).focus(function(){
                         $(this).select()
                     });
-                    autosize($("textarea.data"));
                     autosize.update($("textarea.data"));
                 });
             });
