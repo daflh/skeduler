@@ -1,0 +1,16 @@
+{
+  "name": "Coragon",
+  "short_name": "Coragon",
+  "start_url": "/hosting/index.html",
+  "display": "standalone",
+  "background_color": "#429dff",
+  "theme_color": "#429dff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/hosting/img/favicon.png",
+      "type": "image/png",
+      "sizes": "128x128"
+    }
+  ]
+}
