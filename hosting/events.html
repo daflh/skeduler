@@ -111,7 +111,7 @@
             }
 
             function afterDone(id,obj){
-                if (obj.repeat===null) {
+                if (obj.repeat==="unrepeat") {
                     eventsRef.doc(id).delete();
                 } else {
                     eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromMillis(repeatTime(obj.date.toMillis(),obj.repeat)) })
@@ -179,7 +179,7 @@
                             elem += "<tr data-id='"+v.id+"'>";
                                 elem += "<td title='"+d.date.toDate()+"'>";
                                     elem += readableDate(d.date.toMillis());
-                                    elem += d.repeat !== null ? " <img class='d-none d-md-inline repeat' title='Repeats "+d.repeat+"' src='img/svg/repeat.svg'> <span class='d-inline d-md-none'>("+capitalize(d.repeat)+")</span>" : "";
+                                    elem += d.repeat !== "unrepeat" ? " <img class='d-none d-md-inline repeat' title='Repeats "+d.repeat+"' src='img/svg/repeat.svg'> <span class='d-inline d-md-none'>("+capitalize(d.repeat)+")</span>" : "";
                                 elem += "</td>";
                                 elem += "<th>"+d.name+"</th>";
                                 elem += "<td>";
@@ -187,7 +187,7 @@
                                     elem += "<img title='Edit' class='edit pointer' src='img/svg/edit.svg'>";
                                     elem += "<img title='Delete' class='delete ml-3 pointer' src='img/svg/delete.svg'>";
                                     } else {
-                                    if(d.repeat === null) elem += "<img title='Snooze' class='snooze mr-3 pointer' src='img/svg/snooze.svg'>";
+                                    if(d.repeat === "unrepeat") elem += "<img title='Snooze' class='snooze mr-3 pointer' src='img/svg/snooze.svg'>";
                                     elem += "<img title='Done' class='done pointer' src='img/svg/done.svg'>";
                                     }
                                 elem += "</td>";
