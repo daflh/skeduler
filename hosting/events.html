@@ -39,9 +39,9 @@
                                 <img src="./img/logo.png" alt="Coragon Logo" id="navbar-brand-img">
                             </a>
                         </div>
-                        <div class="col-6 collapse-close">
+                        <div class="col-6 collapse-close align-self-center">
                             <button class="navbar-toggler" type="button" name="hide">
-                                <span></span><span></span>
+                                <img title="Close navbar" src='img/svg/close.svg'>
                             </button>
                         </div>
                     </div>
@@ -93,12 +93,12 @@
             function createNotif(id,name,timestamp,useBox = true){
                 let base = 'https://coragon.herokuapp.com/create';
                 if(timestamp<time(utcDate())+60*60*24*30){
-                    if(useBox) infoBox("Creating notification ...")
+                    if(useBox) notif("Creating notification ...", undefined, undefined, 0)
                     $.get(`${base}?content=${name} is happening now!&time=${timestamp}`).done(data=>{
                         eventsRef.doc(id).update({ notif_id: data.notif_id });
-                        if(useBox) infoBox("Event notification created!");
+                        if(useBox) notif("Event notification created!", undefined, "info");
                     }).fail(xhr=>{
-                        if(useBox) infoBox("Failed to create notification. Error: "+xhr.responseJSON.message);
+                        if(useBox) notif("Failed to create notification.", "Error: "+xhr.responseJSON.message, "warning", 0);
                     });
                 }
             }
@@ -106,7 +106,7 @@
             function cancelNotif(notif_id){
                 let base = 'https://coragon.herokuapp.com/cancel';
                 $.get(`${base}?notif_id=${notif_id}`).fail(xhr=>{
-                    infoBox("Unable to delete notification. Error: "+xhr.responseJSON.message);
+                    notif("Unable to delete notification.", "Error: "+xhr.responseJSON.message, "warning", 0);
                 });
             }
 
@@ -139,10 +139,8 @@
             }
 
             $("#add").click(function(){
-                dialogBox({
-                    header: "Add new event",
-                    input: ["title","date","repeat"],
-                    titlePlaceholder: "Event Name"
+                modal("Add new event", ["title","date","repeat"], {
+                    titlePl: "Event Name"
                 }, args => {
                     eventsRef.add({
                         name: args.title,
@@ -211,13 +209,11 @@
             $(document).on("click", ".edit", function(){
                 var id = $(this).parents("tr").attr("data-id");
                 var event = $("#events").data("data")[id];
-                dialogBox({
-                    header: "Edit event",
-                    input: ["title","date","repeat"],
-                    titlePlaceholder: "Event Name",
-                    titleValue: event.name,
-                    dateValue: utcDate(event.date.toMillis()),
-                    repeatValue: event.repeat
+                modal("Edit event", ["title","date","repeat"], {
+                    titlePl: "Event Name",
+                    titleVal: event.name,
+                    dateVal: utcDate(event.date.toMillis()),
+                    repeatVal: event.repeat
                 }, args => {
                     eventsRef.doc(id).update({
                         name: args.title,
@@ -240,7 +236,7 @@
                 document.cookie="events_"+id+"="+JSON.stringify(event)+";expires="+expire.toUTCString()+";path=/";
                 eventsRef.doc(id).delete().then(function(){
                     if(event.hasOwnProperty("notif_id")) cancelNotif(event.notif_id);
-                    infoBox("Event successfully deleted!", function(){
+                    notif("Event successfully deleted!", undefined, "info", undefined, function(){
                         let events = JSON.parse(getCookie("events_"+id));
                         events.date = firebase.firestore.Timestamp.fromMillis(events.date.seconds*1000);
                         eventsRef.doc(id).set(events).then(function(){
@@ -253,10 +249,8 @@
             $(document).on("click", ".snooze", function(){
                 var id = $(this).parents("tr").attr("data-id");
                 var event = $("#events").data("data")[id];
-                dialogBox({
-                    header: "Snooze event",
-                    input: ["date"],
-                    dateValue: utcDate(event.date.toMillis())
+                modal("Snooze event", ["date"], {
+                    dateVal: utcDate(event.date.toMillis())
                 }, args => {
                     eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromDate(new Date(args.date)) })
                     .then(function(){

@@ -125,92 +125,111 @@ function repeatTime(dateTimestamp,repeatEvery) {
     return dt;
 }
 
-function dialogBox(opt,doneCallback=()=>{}){
-    function closeDialog(){
-        $("#dialog").fadeOut("fast", function(){
-            $(this).remove();
-        });
-    }
+function modal(header, input, options, done = ()=>{}){
+
     var element = `
-        <div id="dialog" class="dialog-overlay">
-            <div class="dialog-box">
-                <h2 class="mb-4">${opt.header}</h2>
-                <form id="dialogForm" class="form-group mb-4">
+        <div id="modal" class="modal-overlay">
+            <div class="modal-box">
+                <h2 class="mb-4">${header}</h2>
+                <form id="modal-form" class="form-group mb-4">
                     <br/>
-                    `+(opt.input.includes("title")?`
-                    <input class="form-control" type="text" name="title" value="${opt.titleValue||''}" placeholder="${opt.titlePlaceholder||''}" required><br/>
-                    `:``)
-                    +(opt.input.includes("link")?`
-                    <input class="form-control" type="text" name="link" value="${opt.linkValue||''}" placeholder="${opt.linkPlaceholder||''}">
-                    `:``)
-                    +(opt.input.includes("date")?`
-                    <input class="form-control" type="datetime-local" name="date" value="${opt.dateValue||''}" min="${utcDate((time()+60)*1000)}" required><br/>
-                    `:``)
-                    +(opt.input.includes("repeat")?`
+                    ${input.includes("title")?`<input class="form-control" type="text" name="title" value="${options.titleVal||''}" placeholder="${options.titlePl||''}" required><br/>`:``}
+                    ${input.includes("link")?`<input class="form-control" type="text" name="link" value="${options.linkVal||''}" placeholder="${options.linkPl||''}">`:``}
+                    ${input.includes("date")?`<input class="form-control" type="datetime-local" name="date" value="${options.dateVal||''}" min="${utcDate((time()+60)*1000)}" required><br/>`:``}
+                    ${input.includes("repeat")?`
                     <select class="form-control rounded-0" name="repeat">
-                        <option `+(opt.repeatValue===null?'selected ':'')+` value="null">Does not repeat</option>
-                        <option `+(opt.repeatValue==='daily'?'selected ':'')+`value="daily">Daily</option>
-                        <option `+(opt.repeatValue==='weekly'?'selected ':'')+`value="weekly">Weekly</option>
-                        <option `+(opt.repeatValue==='monthly'?'selected ':'')+`value="monthly">Monthly</option>
-                        <option `+(opt.repeatValue==='yearly'?'selected ':'')+`value="yearly">Yearly</option>
+                        <option ${options.repeatVal==='unrepeat'?'selected':''} value="unrepeat">Does not repeat</option>
+                        <option ${options.repeatVal==='daily'?'selected':''} value="daily">Daily</option>
+                        <option ${options.repeatVal==='weekly'?'selected':''} value="weekly">Weekly</option>
+                        <option ${options.repeatVal==='monthly'?'selected':''} value="monthly">Monthly</option>
+                        <option ${options.repeatVal==='yearly'?'selected':''} value="yearly">Yearly</option>
                     </select>
-                    `:``)+`
+                    `:``}
                 </form>
                 <div class="text-right">
                     <button class="btn btn-danger cancel">Cancel</button>
-                    <button type="submit" form="dialogForm" class="btn btn-primary ml-2" autofocus>OK</button>
+                    <button type="submit" form="modal-form" class="btn btn-primary ml-2" autofocus>OK</button>
                 </div>
             </div>
         </div>
     `;
-    $(element).hide().appendTo("body").fadeIn();
-    $("#dialogForm").submit(function(){
-        doneCallback({
-            title: $("#dialog input[name=title]").val()||"",
-            link: $("#dialog input[name=link]").val()||"",
-            date: $("#dialog input[name=date]").val()||"",
-            repeat: $("#dialog select[name=repeat]").val()!="null"?$("#dialog select[name=repeat]").val():null
-        });
-        closeDialog();
-        return false;
-    });
-    $("#dialog button.cancel").click(closeDialog);
-}
 
-function infoBox(text,undoActionCallback){
-    function closeInfo(sesn){
-        $("#info[data-session="+sesn+"]").fadeOut("fast",function(){
+    $(element).hide().appendTo("body").fadeIn();
+
+    function closeModal(){
+        $("#modal").fadeOut(400, function(){
             $(this).remove();
         });
-        clearTimeout(timeout);
     }
-    var timeout;
+
+    $("#modal-form").submit(function(){
+        done({
+            title: $("#modal input[name=title]").val() || "",
+            link: $("#modal input[name=link]").val() || "",
+            date: $("#modal input[name=date]").val() || "",
+            repeat: $("#modal select[name=repeat]").val() || ""
+        });
+        closeModal();
+        return false;
+    });
+
+    $("#modal .cancel").click(closeModal);
+
+}
+
+function notif(text = "", desc, type = "", time = 5000, undo){
+
     var rand = Math.floor(Math.random() * 10000);
-    var undo = undoActionCallback !== undefined;
     var element = `
-        <div id="info" class="info-overlay" data-session="${rand}">
-            <div class="info-box">
-                <div class="text small">${text}</div>
-                <div class="mt-3">
-                    `+(undo?`<span class="undo pointer text-primary small float-left">Undo</span>`:``)+`
-                    <span class="shut pointer small `+(undo?`float-right`:`float-left`)+`">Close</span>
+        <div id="notif" class="notif-overlay" data-box-id="${rand}">
+            <div class="notif-box">
+                <div class="row">
+                    <div class="text col align-self-center small">
+                        ${type!==""?`<img class="mr-2" title="Information" src='img/svg/${type}.svg'>`:``}
+                        <span class="align-middle">${text}</span>
+                    </div>
+                    <div class="col col-auto align-self-center">
+                        ${undo?`<span class="undo pointer"><img title="Undo" src='img/svg/undo.svg'></span>`:``}
+                        ${desc?`<span class="expand pointer"><img title="See description" src='img/svg/arrow-down.svg'></span>`:``}
+                        <span class="shut pointer"><img title="Close" src='img/svg/close.svg'></span>
+                    </div>
+                </div>
+                <div class="row desc" style="display:none">
+                    <div class="col mt-2">
+                        <p class="small m-0">${desc}</p>
+                    </div>
+                </div>
             </div>
         </div>
     `;
-    if($("#info").length !== 0){
-        $("#info").remove();
-        $("body").append(element);
-    } else {
-        $(element).hide().appendTo("body").fadeIn("fast");
+
+    if($("#notif").length !== 0) $("#notif").replaceWith(element);
+    else $(element).hide().appendTo("body").fadeIn("fast");
+
+    function closeNotif(boxID){
+        $("#notif[data-box-id="+boxID+"]").fadeOut("fast",function(){
+            $(this).remove();
+        });
     }
-    timeout = setTimeout(function(){
-        closeInfo(rand)
-    }, 10000);
-    $("#info .undo").click(function(){
-        undoActionCallback();
-        closeInfo(rand);
+
+    if(time !== 0) setTimeout(()=>closeNotif(rand), time);
+
+    $("#notif .undo").click(()=>{
+        undo();
+        closeNotif(rand);
     });
-    $("#info .shut").click(function(){
-        closeInfo(rand)
+
+    $("#notif .expand").click(function(){
+        let el = $(".desc");
+        if(el.is(":hidden")){
+            el.slideDown("fast");
+            $(this).children("img").attr("src","img/svg/arrow-up.svg");
+        } else {
+            el.slideUp("fast");
+            $(this).children("img").attr("src","img/svg/arrow-down.svg");
+        }
     });
+
+    $("#notif .shut").click(()=>closeNotif(rand));
+
 }

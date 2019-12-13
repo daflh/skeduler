@@ -39,9 +39,9 @@
                                 <img src="./img/logo.png" alt="Coragon Logo" id="navbar-brand-img">
                             </a>
                         </div>
-                        <div class="col-6 collapse-close">
+                        <div class="col-6 collapse-close align-self-center">
                             <button class="navbar-toggler" type="button" name="hide">
-                                <span></span><span></span>
+                                <img title="Close navbar" src='img/svg/close.svg'>
                             </button>
                         </div>
                     </div>
@@ -177,7 +177,7 @@
                         if(dt.hasOwnProperty("date")) dt.date = firebase.firestore.Timestamp.fromMillis(dt.date);
                         userRef.collection(col).doc(doc).set(dt,{merge:true});
                     });
-                    infoBox("Data successfully imported!");
+                    notif("Data successfully imported!", undefined, "info");
                 } else {
                     $('#importTextarea').css("border-color","#fd8f9a");
                 }

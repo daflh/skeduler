@@ -47,15 +47,16 @@ img{max-width:100%}
 .card .table{margin-bottom:0}
 .social-button{text-align:center;display:block;cursor:pointer;padding:0.75rem 0}
 .social-button span{margin-left:.25rem}
-.dialog-overlay,.note-edit-overlay{position:fixed;width:100%;top:0;bottom:0;z-index:9999;background-color:rgba(0,0,0,.4)}
-.dialog-overlay .dialog-box,.note-edit-overlay .note-edit-box{position:absolute;top:50%;right:0;left:0;transform:translateY(-50%);-ms-transform:translateY(-50%);margin:0 auto;background-color:#fff;box-shadow:0 5px 22px 0 rgba(0,0,0,0.25)}
-.dialog-overlay .dialog-box{width:450px;padding:3rem 2rem;text-align:center}
-.dialog-overlay .dialog-box h2{font-weight:600}
+.modal-overlay,.note-edit-overlay{position:fixed;width:100%;top:0;bottom:0;z-index:9999;background-color:rgba(0,0,0,.4)}
+.modal-overlay .modal-box,.note-edit-overlay .note-edit-box{position:absolute;top:50%;right:0;left:0;transform:translateY(-50%);-ms-transform:translateY(-50%);margin:0 auto;background-color:#fff;box-shadow:0 5px 22px 0 rgba(0,0,0,0.25)}
+.modal-overlay .modal-box{width:450px;padding:3rem 2rem;text-align:center}
+.modal-overlay .modal-box h2{font-weight:600}
 .note-edit-overlay .note-edit-box{width:750px}
 .note-edit-overlay .note-edit-box textarea{border:0;border-bottom:1px solid #f3f3f3!important;resize:none;max-height:75vh}
 .note-edit-overlay .note-edit-box textarea:first-line{font-weight:700}
-.info-overlay{position:fixed;width:100%;bottom:0;z-index:9999}
-.info-overlay .info-box{position:absolute;bottom:0;padding:1rem 1.5rem;margin:1.25rem;background-color:#fff;box-shadow:0 5px 22px 0 rgba(0,0,0,0.25);line-height:1.15}
+.notif-overlay{position:fixed;width:100%;bottom:0;z-index:9999}
+.notif-overlay .notif-box{position:absolute;bottom:0;padding:1rem 1.5rem;margin:1.5rem;background-color:#fff;box-shadow:0 5px 22px 0 rgba(0,0,0,0.25)}
+.notif-overlay .notif-box .text span{font-weight:600}
 #dashboard-page .list-group li{background-color:initial!important;padding:.75rem 0}
 #dashboard-page textarea{max-height:300px}
 #dashboard-page textarea.data{background-color:#f9f9f9}
@@ -83,15 +84,14 @@ img{max-width:100%}
 #notes-page .textbox textarea:first-line{font-weight:700}
 #notes-page .textbox .save{padding:.75rem 1.5rem;font-size:.9rem;background-color:#fff;text-align:right;border:1px solid #f3f3f3}
 @media (max-width:575.98px) {
-    .dialog-overlay .dialog-box{width:calc(100% - 25px)}
+    .modal-overlay .modal-box{width:calc(100% - 25px)}
+    .notif-overlay .notif-box{margin:0;width:100%}
 }
 @media (max-width:767.98px) {
     .navbar-nav .nav-link{padding:.625rem 0;color:#172b4d!important}
     .navbar-collapse{display:none;padding:1.5rem;background:#fff;box-shadow:0 50px 100px rgba(50,50,93,.1),0 15px 35px rgba(50,50,93,.15),0 5px 15px rgba(0,0,0,.1);width:calc(100% - 1.4rem);position:absolute;top:0;left:0;right:0;z-index:1050;margin:.7rem;overflow-y:auto;height:auto!important}
-    .navbar-collapse .navbar-toggler{width:20px;height:20px;position:relative;cursor:pointer;display:inline-block;padding:0;vertical-align:middle}
-    .navbar-collapse .navbar-toggler span{display:block;position:absolute;width:100%;height:2px;opacity:1;background:#283448}
-    .navbar-collapse .navbar-toggler :first-child{transform:rotate(135deg)}
-    .navbar-collapse .navbar-toggler :nth-child(2){transform:rotate(-135deg)}
+    .navbar-collapse .navbar-toggler{position:relative;cursor:pointer;display:inline-block;padding:0}
+    .navbar-collapse .navbar-toggler img{width:25px;height:25px}
     .navbar-collapse .navbar-collapse-header{display:block;padding-bottom:1rem;margin-bottom:1rem;border-bottom:1px solid rgba(0,0,0,.1)}
     .navbar-collapse .collapse-brand img{height:36px}
     .navbar-collapse .collapse-close{text-align:right}

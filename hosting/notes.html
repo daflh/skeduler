@@ -39,9 +39,9 @@
                                 <img src="./img/logo.png" alt="Coragon Logo" id="navbar-brand-img">
                             </a>
                         </div>
-                        <div class="col-6 collapse-close">
+                        <div class="col-6 collapse-close align-self-center">
                             <button class="navbar-toggler" type="button" name="hide">
-                                <span></span><span></span>
+                                <img title="Close navbar" src='img/svg/close.svg'>
                             </button>
                         </div>
                     </div>
@@ -182,7 +182,7 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                 var expire = new Date(time()*1000+7000);
                 document.cookie="notes_"+id+"="+JSON.stringify($("#notes").data("data")[id])+";expires="+expire.toUTCString()+";path=/";
                 notesRef.doc(id).delete().then(function(){
-                    infoBox("Notes successfully deleted!",function(){
+                    notif("Notes successfully deleted!", undefined, "info", undefined, function(){
                         notesRef.doc(id).set(JSON.parse(getCookie("notes_"+id)))
                     });
                 });
