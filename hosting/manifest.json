@@ -28,6 +28,11 @@
       "sizes": "144x144"
     },
     {
+      "src": "/img/icons/192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
       "src": "/img/icons/256x256.png",
       "type": "image/png",
       "sizes": "256x256"
