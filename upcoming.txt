@@ -1,0 +1,5 @@
+only account devices receive notif
+offline cache feature
+remove jquery and use vanilla js
+events table responsive
+show goals/notes action button on hover
