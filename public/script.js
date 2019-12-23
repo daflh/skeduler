@@ -21,6 +21,55 @@ Notification.requestPermission(function(status) {
     console.log('Notification permission status:', status);
 });
 
+if ('serviceWorker' in navigator && 'PushManager' in window) {
+    navigator.serviceWorker.register('sw.js').then(function(reg) {
+        console.log('Service Worker is registered', reg);
+        reg.pushManager.getSubscription().then(function(sub) {
+            if (sub === null) {
+                console.log('Not subscribed to push service!');
+            } else {
+                console.log('Subscription object: ', sub);
+            }
+        });
+    }).catch(function(err) {
+        console.log('Service Worker registration failed: ', err);
+    });
+} else {
+    console.log('Push messaging is not supported');
+}
+
+function displayNotification() {
+    if (Notification.permission === 'granted') {
+        navigator.serviceWorker.getRegistration().then(reg => {
+            var options = {
+                body: 'Here is a notification body!',
+                icon: './img/icons/144x144.png',
+                requireInteraction: true,
+                data: {
+                    repeat: null
+                },
+                actions: [
+                    {action: 'snooze', title: 'Snooze'},
+                    {action: 'done', title: 'Done'}
+                ]
+            };
+            reg.showNotification('Coragon Notification', options);
+        });
+    }
+}
+
+function subscribeUser() {
+    navigator.serviceWorker.getRegistration().then(reg => {
+        reg.pushManager.subscribe({
+            userVisibleOnly: true
+        }).then(function(sub) {
+            console.log('Endpoint URL: ', sub.endpoint);
+        }).catch(function(e) {
+            console.log('Unable to subscribe to push', e);
+        });
+    })
+}
+
 function pad(num, size) {
     var s = "00000" + num;
     return s.substr(s.length-size);
