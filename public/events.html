@@ -121,15 +121,18 @@
                 }
             }
 
-            if(Notification.permission !== "granted"){
+            let permission = Notification.permission;
+
+            if (permission !== "granted"){
                 $(`
-                    <div class="card rounded-0 mt-4 bg-white text-muted">
+                    <div id="permission-warning" class="card rounded-0 mt-4 bg-white text-muted">
                         <div class="card-body p-4">
                             <img class="mr-3 align-text-bottom" width="50" src='img/svg/warning.svg'>
                             <div class="d-block d-sm-inline-block">
                                 <p class="m-0 mt-1 mt-sm-0 small font-weight-bold">Notification Blocked</p>
                                 <p class="m-0 small">Turn on notifications to get event reminder.</p>
-                                <p class="m-0 small">See how to enable it in <a href="https://support.google.com/chrome/answer/3220216" target="_blank">Chrome</a>, <a href="https://support.mozilla.org/en-US/kb/push-notifications-firefox" target="_blank">Firefox</a> or <a href="https://www.windowscentral.com/how-manage-web-notifications-edge-windows-10" target="_blank">Edge</a>.</p>
+                                ${permission === "default" ? `<button id="prompt-notif" class="btn btn-primary btn-sm small border-0 bg-secondary mt-1">Allow Notification</button>` : ``}
+                                ${permission === "denied" ? `<p class="m-0 small">See how to enable it in <a href="https://support.google.com/chrome/answer/3220216" target="_blank">Chrome</a>, <a href="https://support.mozilla.org/en-US/kb/push-notifications-firefox" target="_blank">Firefox</a> or <a href="https://www.windowscentral.com/how-manage-web-notifications-edge-windows-10" target="_blank">Edge</a>.</p>` : ``}
                             </div>
                         </div>
                     </div>
