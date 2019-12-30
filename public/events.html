@@ -11,15 +11,6 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet" />
     <link href="./style.css" rel="stylesheet" />
     <title>Events – Coragon</title>
-    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
-    <script>
-    var OneSignal = window.OneSignal || [];
-    OneSignal.push(()=> {
-        OneSignal.init({
-            appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983",
-        });
-    });
-    </script>
 </head>
 
 <body id="events-page">
@@ -79,6 +70,7 @@
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-firestore.js"></script>
@@ -87,6 +79,13 @@
 
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
+
+            let onesig = window.OneSignal || [];
+            onesig.push(()=> {
+                onesig.init({
+                    appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983",
+                });
+            });
 
             let eventsRef = fs.collection("users").doc(user.uid).collection('events');
 
