@@ -1,5 +1,6 @@
 only account devices receive notif
-remove jquery and use vanilla js
+remove jquery and autosize; use vanilla js
+use oop
 offline cache feature
 events table responsive
 show goals/notes action button on hover

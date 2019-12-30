@@ -59,7 +59,7 @@
                 <div class="col">
                     <button id="add" class="btn btn-primary btn-sm rounded-0 float-right">Add Event</button>
                 </div>
-            </div>        
+            </div>
             <div class="row">
                 <div class="col">
                     <div id="events-wrapper" class="card table-responsive mt-4 rounded-0 border-top-0">
@@ -73,6 +73,7 @@
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-messaging.js"></script>
     <script src="./script.js"></script>
     <script>
 
@@ -80,7 +81,7 @@
         if (user) {
 
             let eventsRef = fs.collection("users").doc(user.uid).collection('events');
-
+          
             function createNotif(id,name,timestamp,useBox = true){
                 let base = 'https://coragon.herokuapp.com/create';
                 if(timestamp<time(utcDate())+60*60*24*30){
@@ -112,20 +113,44 @@
                 }
             }
 
-            if(Notification.permission !== "granted"){
+            let permission = Notification.permission;
+
+            function getToken(){
+                messaging.getToken().then((currentToken) => {
+                    console.log(currentToken)
+                }).catch((err) => {
+                    console.log('An error occurred while retrieving token. ', err);
+                });
+            }
+
+            if (permission === "granted"){
+                getToken();
+            } else {
                 $(`
-                    <div class="card rounded-0 mt-4 bg-white text-muted">
+                    <div id="permission-warning" class="card rounded-0 mt-4 bg-white text-muted">
                         <div class="card-body p-4">
                             <img class="mr-3 align-text-bottom" width="50" src='img/svg/warning.svg'>
                             <div class="d-block d-sm-inline-block">
                                 <p class="m-0 mt-1 mt-sm-0 small font-weight-bold">Notification Blocked</p>
                                 <p class="m-0 small">Turn on notifications to get event reminder.</p>
-                                <p class="m-0 small">See how to enable it in <a href="https://support.google.com/chrome/answer/3220216" target="_blank">Chrome</a>, <a href="https://support.mozilla.org/en-US/kb/push-notifications-firefox" target="_blank">Firefox</a> or <a href="https://www.windowscentral.com/how-manage-web-notifications-edge-windows-10" target="_blank">Edge</a>.</p>
+                                ${permission === "default" ? `<button id="prompt-notif" class="btn btn-primary btn-sm small border-0 bg-secondary mt-1">Allow Notification</button>` : ``}
+                                ${permission === "denied" ? `<p class="m-0 small">See how to enable it in <a href="https://support.google.com/chrome/answer/3220216" target="_blank">Chrome</a>, <a href="https://support.mozilla.org/en-US/kb/push-notifications-firefox" target="_blank">Firefox</a> or <a href="https://www.windowscentral.com/how-manage-web-notifications-edge-windows-10" target="_blank">Edge</a>.</p>` : ``}
                             </div>
                         </div>
                     </div>
                 `).hide().insertBefore("#events-wrapper").fadeIn("slow");
             }
+
+            $("#prompt-notif").click(function(){
+                Notification.requestPermission(permission => {
+                    if (permission === 'granted') {
+                        $("#permission-warning").fadeOut("slow");
+                        getToken();
+                    } else {
+                        console.log('Unable to get permission to notify.');
+                    }
+                });
+            });
 
             $("#add").click(function(){
                 modal("Add new event", ["title","date","repeat"], {
@@ -253,7 +278,7 @@
                 var event = $("#events").data("data")[id];
                 afterDone(id,event);
             });
-    
+
         } else {
             location.href = "./login";
         }
