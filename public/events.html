@@ -70,7 +70,7 @@
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js"></script>
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-firestore.js"></script>
@@ -80,32 +80,57 @@
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
 
-            let onesig = window.OneSignal || [];
-            onesig.push(()=> {
-                onesig.init({
-                    appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983",
-                });
-            });
-
             let eventsRef = fs.collection("users").doc(user.uid).collection('events');
+            let osgl = window.OneSignal || [];
+            let keys = "Nzc4MzY3MDMtOGZlNi00MTVjLWI5MjItNGNlZDMwNjU0Nzhk";
+            let appId = "12fe1f4e-c50f-4321-961a-3fc7a36b7983";
 
-            function createNotif(id,name,timestamp,useBox = true){
-                let base = 'https://coragon.herokuapp.com/create';
-                if(timestamp<time(utcDate())+60*60*24*30){
-                    if(useBox) notif("Creating notification ...", undefined, undefined, 0)
-                    $.get(`${base}?content=${name} is happening now!&time=${timestamp}`).done(data=>{
-                        eventsRef.doc(id).update({ notif_id: data.notif_id });
+            function createNotif(id, name = "Your event", timestamp = 0, useBox = true){
+                timestamp = timestamp.toString().length === 10 ? Number(timestamp)*1000 : Number(timestamp);
+                if(timestamp < (time(utcDate())+60*60*23*30)*1000){
+                    if(useBox) notif("Creating notification ...", undefined, undefined, 0);
+                    (async () => {
+                        let doc = await fs.collection("users").doc(user.uid).get();
+                        let response = await fetch('https://onesignal.com/api/v1/notifications', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Basic '+keys
+                            },
+                            body: JSON.stringify({
+                                app_id: appId,
+                                include_player_ids: doc.data().onesignal_devices,
+                                url: "https://coragon.web.app/events",
+                                ttl: 86000,
+                                send_after: !!timestamp ? new Date(timestamp) : "",
+                                headings: { "en": "Simpleaf Notification" },
+                                contents: { "en": name+" is happening now!" }
+                            })
+                        });
+                        return await response.json();
+                    })().then(data => {
+                        if(!!id) eventsRef.doc(id).update({ notif_id: data.id });
                         if(useBox) notif("Event notification created!", undefined, "info");
-                    }).fail(xhr=>{
-                        if(useBox) notif("Failed to create notification.", "Error: "+xhr.responseJSON.message, "warning", 0);
+                    }).catch(err => {
+                        if(useBox) notif("Failed to create notification.", "Error: "+err, "warning", 0);
                     });
+                } else {
+                    notif("Can't schedule notification for more than 30 days.", undefined, "warning");
                 }
             }
 
-            function cancelNotif(notif_id){
-                let base = 'https://coragon.herokuapp.com/cancel';
-                $.get(`${base}?notif_id=${notif_id}`).fail(xhr=>{
-                    notif("Unable to delete notification.", "Error: "+xhr.responseJSON.message, "warning", 0);
+            function cancelNotif(notifId){
+                (async () => {
+                    let response = await fetch('https://onesignal.com/api/v1/notifications/'+notifId+'?app_id='+appId, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Basic '+keys
+                        }
+                    });
+                    return await response.json();
+                })().catch(err => {
+                    notif("Unable to delete notification.", "Error: "+err, "warning", 0);
                 });
             }
 
@@ -113,30 +138,51 @@
                 if (obj.repeat==="unrepeat") {
                     eventsRef.doc(id).delete();
                 } else {
-                    eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromMillis(repeatTime(obj.date.toMillis(),obj.repeat)) })
-                    .then(function(){
+                    eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromMillis(repeatTime(obj.date.toMillis(),obj.repeat)) }).then(function(){
                         createNotif(id,obj.name,Number(repeatTime(obj.date.toMillis(),obj.repeat))/1000)
                     });
                 }
             }
 
-            let permission = Notification.permission;
-
-            if (permission !== "granted"){
-                $(`
-                    <div id="permission-warning" class="card rounded-0 mt-4 bg-white text-muted">
-                        <div class="card-body p-4">
-                            <img class="mr-3 align-text-bottom" width="50" src='img/svg/warning.svg'>
-                            <div class="d-block d-sm-inline-block">
-                                <p class="m-0 mt-1 mt-sm-0 small font-weight-bold">Notification Blocked</p>
-                                <p class="m-0 small">Turn on notifications to get event reminder.</p>
-                                ${permission === "default" ? `<button id="prompt-notif" class="btn btn-primary btn-sm small border-0 bg-secondary mt-1">Allow Notification</button>` : ``}
-                                ${permission === "denied" ? `<p class="m-0 small">See how to enable it in <a href="https://support.google.com/chrome/answer/3220216" target="_blank">Chrome</a>, <a href="https://support.mozilla.org/en-US/kb/push-notifications-firefox" target="_blank">Firefox</a> or <a href="https://www.windowscentral.com/how-manage-web-notifications-edge-windows-10" target="_blank">Edge</a>.</p>` : ``}
+            osgl.push(()=> {
+                let storeUserId = () => {
+                    osgl.getUserId(userId => fs.collection("users").doc(user.uid).update({
+                        onesignal_devices: firebase.firestore.FieldValue.arrayUnion(userId)
+                    }));
+                }
+                let showWarning = permission => {
+                    $(`
+                        <div id="permission-warning" class="card rounded-0 mt-4 bg-white text-muted">
+                            <div class="card-body p-4">
+                                <img class="mr-3 align-text-bottom" width="50" src='img/svg/warning.svg'>
+                                <div class="d-block d-sm-inline-block">
+                                    <p class="m-0 mt-1 mt-sm-0 small font-weight-bold">Notification Blocked</p>
+                                    <p class="m-0 small">Turn on notifications to get event reminder.</p>
+                                    ${permission === "default" ? `<button id="prompt-notif" class="btn btn-primary btn-sm small border-0 bg-secondary mt-1">Allow Notification</button>` : ``}
+                                    ${permission === "denied" ? `<p class="m-0 small">See how to enable it in <a href="https://support.google.com/chrome/answer/3220216" target="_blank">Chrome</a>, <a href="https://support.mozilla.org/en-US/kb/push-notifications-firefox" target="_blank">Firefox</a> or <a href="https://www.windowscentral.com/how-manage-web-notifications-edge-windows-10" target="_blank">Edge</a>.</p>` : ``}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `).hide().insertBefore("#events-wrapper").fadeIn("slow");
-            }
+                    `).hide().insertBefore("#events-wrapper").fadeIn("slow");
+                    $("#prompt-notif").click(() => osgl.showNativePrompt());
+                }
+                osgl.init({ appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983" });
+                osgl.getNotificationPermission(permission => {
+                    if (permission === "granted") storeUserId();
+                    else showWarning(permission);
+                });
+                osgl.on('subscriptionChange', subs => {
+                    if(subs){
+                        $("#permission-warning").fadeOut("slow");
+                        storeUserId();
+                    } else {
+                        osgl.getUserId(userId => fs.collection("users").doc(user.uid).update({
+                            onesignal_devices: firebase.firestore.FieldValue.arrayRemove(userId)
+                        }));
+                        showWarning("denied");
+                    }
+                });
+            });
 
             $("#add").click(function(){
                 modal("Add new event", ["title","date","repeat"], {
@@ -146,17 +192,16 @@
                         name: args.title,
                         date: firebase.firestore.Timestamp.fromDate(new Date(args.date)),
                         repeat: args.repeat
-                    })
-                    .then(doc => createNotif(doc.id,args.title,time(args.date)));
+                    }).then(doc => createNotif(doc.id, args.title, time(args.date)));
                 });
             });
 
             eventsRef.get().then(function(once){
                 once.forEach(raw=>{
                     let dt = raw.data();
-                    if (Math.floor(dt.date.toMillis()/1000)<=time(utcDate())-60*60*24) afterDone(raw.id,dt);
-                    if(!dt.hasOwnProperty("notif_id") && time(utcDate())<Math.floor(dt.date.toMillis()/1000)<time(utcDate())+60*60*24*30){
-                        createNotif(raw.id,dt.name,Number(repeatTime(dt.date.toMillis(),dt.repeat))/1000,false);
+                    if (Math.floor(dt.date.toMillis()/1000) <= time(utcDate())-60*60*24) afterDone(raw.id,dt);
+                    if(!dt.hasOwnProperty("notif_id") && time(utcDate()) < Math.floor(dt.date.toMillis()/1000) < time(utcDate())+60*60*23*30){
+                        createNotif(raw.id, dt.name, dt.date.toMillis(), false);
                     }
                 });
                 eventsRef.orderBy('date').onSnapshot(function(data){
@@ -219,8 +264,7 @@
                         name: args.title,
                         date: firebase.firestore.Timestamp.fromDate(new Date(args.date)),
                         repeat: args.repeat
-                    })
-                    .then(function(){
+                    }).then(function(){
                         if(event.name !== args.title || event.date.seconds !== firebase.firestore.Timestamp.fromDate(new Date(args.date)).seconds){
                             if(event.hasOwnProperty("notif_id")) cancelNotif(event.notif_id);
                             createNotif(id,args.title,time(args.date));
@@ -252,8 +296,7 @@
                 modal("Snooze event", ["date"], {
                     dateVal: utcDate(event.date.toMillis())
                 }, args => {
-                    eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromDate(new Date(args.date)) })
-                    .then(function(){
+                    eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromDate(new Date(args.date)) }).then(function(){
                         createNotif(id,event.name,time(args.date))
                     });
                 });
