@@ -70,6 +70,7 @@
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-firestore.js"></script>
@@ -80,6 +81,9 @@
         if (user) {
 
             let goalsRef = fs.collection("users").doc(user.uid).collection('goals');
+            let osgl = window.OneSignal || [];
+
+            osgl.push(()=> osgl.init({ appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983" }) );
 
             $("#add").click(function(){
                 modal("Add new goal", ["title","link"], {
