@@ -13,10 +13,6 @@ const fs = firebase.firestore();
 fs.settings({cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED});
 fs.enablePersistence({synchronizeTabs: true});
 
-$("#logout").click(()=>firebase.auth().signOut());
-$('.navbar-toggler[name=show]').click(()=>$('#navcol').fadeIn());
-$('.navbar-toggler[name=hide]').click(()=>$('#navcol').fadeOut());
-
 function pad(num, size) {
     var s = "00000" + num;
     return s.substr(s.length-size);

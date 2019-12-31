@@ -45,7 +45,7 @@
                 </ul>
                 <hr class="my-3">
                 <ul class="navbar-nav mb-md-3">
-                    <li class="nav-item"><a id="logout" class="nav-link" href="">Logout</a></li>
+                    <li class="nav-item"><a id="logout" class="nav-link" href="javascript:void(0)">Logout</a></li>
                 </ul>
             </div>
         </div>
@@ -109,8 +109,16 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                 save.slideUp();
             });
 
-            osgl.push(()=> osgl.init({ appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983" }) );
-
+            osgl.push(()=> {
+                osgl.init({ appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983" });
+                osgl.getNotificationPermission(permission => {
+                    if (permission === "granted") osgl.getUserId(userId => {
+                        fs.collection("users").doc(user.uid).update({ onesignal_devices: firebase.firestore.FieldValue.arrayUnion(userId) });
+                        sessionStorage.setItem("onesignal-user-id", userId);
+                    });
+                });
+            });
+            
             notesRef.orderBy('pin','desc').onSnapshot(function(data){
                 var elem = '';
                 var cachingData = {};
@@ -182,6 +190,15 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                     });
                 });
             });
+
+            $("#logout").click(() => {
+                let userId = sessionStorage.getItem("onesignal-user-id");
+                fs.collection("users").doc(user.uid).update({
+                    onesignal_devices: firebase.firestore.FieldValue.arrayRemove(userId)
+                }).then(() => firebase.auth().signOut());
+            });
+            $('.navbar-toggler[name=show]').click(() => $('#navcol').fadeIn());
+            $('.navbar-toggler[name=hide]').click(() => $('#navcol').fadeOut());
 
         } else {
             location.href = "./login?ref=notes";
