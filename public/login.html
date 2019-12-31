@@ -48,7 +48,10 @@
     <script>
 
     firebase.auth().onAuthStateChanged(function(user) {
-        if (user) window.location = "./";
+        if (user) {
+            let query = new URLSearchParams(location.search)
+            window.location = query.has("ref") ? "./"+query.get("ref") : "./";
+        }
     });
 
     $(".social-button").click(function(){
