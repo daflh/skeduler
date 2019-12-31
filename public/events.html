@@ -85,44 +85,44 @@
             let keys = "Nzc4MzY3MDMtOGZlNi00MTVjLWI5MjItNGNlZDMwNjU0Nzhk";
             let appId = "12fe1f4e-c50f-4321-961a-3fc7a36b7983";
 
-            function createNotif(id, name = "Your event", timestamp = 0, useBox = true){
-                timestamp = timestamp.toString().length === 10 ? Number(timestamp)*1000 : Number(timestamp);
-                if(timestamp < (time(utcDate())+60*60*23*30)*1000){
-                    if(useBox) notif("Creating notification ...", undefined, undefined, 0);
-                    (async () => {
-                        let doc = await fs.collection("users").doc(user.uid).get();
-                        let response = await fetch('https://onesignal.com/api/v1/notifications', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': 'Basic '+keys
-                            },
-                            body: JSON.stringify({
-                                app_id: appId,
-                                include_player_ids: doc.data().onesignal_devices,
-                                url: "https://coragon.web.app/events",
-                                ttl: 86000,
-                                send_after: !!timestamp ? new Date(timestamp) : "",
-                                chrome_web_badge: "./img/icons/alpha.png",
-                                chrome_web_icon: "./img/icons/192x192.png",
-                                headings: { "en": "Simpleaf Notification" },
-                                contents: { "en": name+" is happening now!" }
-                            })
-                        });
-                        return await response.json();
-                    })().then(data => {
-                        if(!!id) eventsRef.doc(id).update({ notif_id: data.id });
-                        if(useBox) notif("Event notification created!", undefined, "info");
-                    }).catch(err => {
-                        if(useBox) notif("Failed to create notification.", "Error: "+err, "warning", 0);
+            async function createNotif(id, name = "Your event", timestamp = 0){
+                try {
+                    notif("Creating notification ...", undefined, undefined, 0);
+                    timestamp = Number(timestamp);
+                    if(!timestamp) throw new Error("Invalid timestamp, use 10 or 13 digit UNIX Epoch time")
+                    timestamp = timestamp.toString().length === 10 ? timestamp*1000 : timestamp;
+                    if(timestamp >= (time(utcDate())+60*60*23*30)*1000) throw new Error("Can't schedule notification for more than 30 days.");
+                    let doc = await fs.collection("users").doc(user.uid).get();
+                    let response = await fetch('https://onesignal.com/api/v1/notifications', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Basic '+keys
+                        },
+                        body: JSON.stringify({
+                            app_id: appId,
+                            include_player_ids: doc.data().onesignal_devices,
+                            url: "https://coragon.web.app/events",
+                            ttl: 86000,
+                            send_after: !!timestamp ? new Date(timestamp) : "",
+                            chrome_web_badge: "./img/icons/alpha.png",
+                            chrome_web_icon: "./img/icons/192x192.png",
+                            headings: { "en": "Simpleaf Notification" },
+                            contents: { "en": name+" is happening now!" }
+                        })
                     });
-                } else {
-                    notif("Can't schedule notification for more than 30 days.", undefined, "warning");
+                    let data = await response.json();
+                    if(!!id) eventsRef.doc(id).update({ notif_id: data.id }).then(() => {
+                        notif("Event notification created!", undefined, "info");
+                    });
+                } catch (err) {
+                    notif("Failed to create notification.", err, "warning", 0);
                 }
             }
 
-            function cancelNotif(notifId){
-                (async () => {
+            async function cancelNotif(notifId){
+                try {
+                    if(!notifId || notifId.length !== 36) throw new Error("Invalid notification ID.")
                     let response = await fetch('https://onesignal.com/api/v1/notifications/'+notifId+'?app_id='+appId, {
                         method: 'DELETE',
                         headers: {
@@ -130,10 +130,11 @@
                             'Authorization': 'Basic '+keys
                         }
                     });
-                    return await response.json();
-                })().catch(err => {
-                    notif("Unable to delete notification.", "Error: "+err, "warning", 0);
-                });
+                    let json = await response.json();
+                    if(json.hasOwnProperty("errors")) throw new Error(json.errors)
+                } catch (err) {
+                    notif("Unable to delete notification.", err, "warning", 0);
+                }
             }
 
             function afterDone(id,obj){
@@ -203,9 +204,6 @@
                 once.forEach(raw=>{
                     let dt = raw.data();
                     if (Math.floor(dt.date.toMillis()/1000) <= time(utcDate())-60*60*24) afterDone(raw.id,dt);
-                    if(!dt.hasOwnProperty("notif_id") && time(utcDate()) < Math.floor(dt.date.toMillis()/1000) < time(utcDate())+60*60*23*30){
-                        createNotif(raw.id, dt.name, dt.date.toMillis(), false);
-                    }
                 });
                 eventsRef.orderBy('date').onSnapshot(function(data){
                     var elem = '';
