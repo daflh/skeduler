@@ -122,7 +122,7 @@
                 osgl.init({ appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983" });
                 osgl.getNotificationPermission(permission => {
                     if (permission === "granted") osgl.getUserId(userId => {
-                        fs.collection("users").doc(user.uid).update({ onesignal_devices: firebase.firestore.FieldValue.arrayUnion(userId) });
+                        fs.collection("users").doc(user.uid).set({ onesignal_devices: firebase.firestore.FieldValue.arrayUnion(userId) }, {merge: true});
                         sessionStorage.setItem("onesignal-user-id", userId);
                     });
                 });

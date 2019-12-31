@@ -147,7 +147,7 @@
             osgl.push(()=> {
                 let storeUserId = () => {
                     osgl.getUserId(userId => {
-                        fs.collection("users").doc(user.uid).update({ onesignal_devices: firebase.firestore.FieldValue.arrayUnion(userId) });
+                        fs.collection("users").doc(user.uid).set({ onesignal_devices: firebase.firestore.FieldValue.arrayUnion(userId) }, {merge: true});
                         sessionStorage.setItem("onesignal-user-id", userId);
                     });
                 }
@@ -177,9 +177,9 @@
                         $("#permission-warning").fadeOut("slow");
                         storeUserId();
                     } else {
-                        osgl.getUserId(userId => fs.collection("users").doc(user.uid).update({
+                        osgl.getUserId(userId => fs.collection("users").doc(user.uid).set({
                             onesignal_devices: firebase.firestore.FieldValue.arrayRemove(userId)
-                        }));
+                        }, {merge: true}));
                         showWarning("denied");
                     }
                 });
