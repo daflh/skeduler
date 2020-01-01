@@ -135,6 +135,7 @@
                 } else {
                     elem += "<div id='goals' class='small my-3 mx-4 text-center'>No goal has been added yet</div>";
                 }
+                
                 goals.outerHTML = elem;
                 sessionStorage.goalsData = JSON.stringify(cachingData);
             });

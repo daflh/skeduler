@@ -257,6 +257,7 @@
                     } else {
                         elem += "<div id='events' class='small my-3 mx-4 text-center'>No event has been added yet</div>";
                     }
+                    
                     events.outerHTML = elem;
                     sessionStorage.eventsData = JSON.stringify(cachingData);
                 });
