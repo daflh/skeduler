@@ -159,9 +159,10 @@
                         });
                     });
                 } else if (t && t.classList.contains("up") || t.classList.contains("down")) {
-                    let togg = t.classList.contains("up") ? t.parentNode.parentNode.previousElementSibling.getAttribute("data-id") : t.parentNode.parentNode.nextElementSibling.getAttribute("data-id");
-                    goalsRef.doc(id).update({ sort: JSON.parse(sessionStorage.goalsData)[togg].sort });
-                    goalsRef.doc(togg).update({ sort: JSON.parse(sessionStorage.goalsData)[id].sort });
+                    let idZ = t.classList.contains("up") ? t.parentNode.parentNode.previousElementSibling.getAttribute("data-id") : t.parentNode.parentNode.nextElementSibling.getAttribute("data-id");
+                    let goalZ = JSON.parse(sessionStorage.goalsData)[idZ];
+                    goalsRef.doc(id).update({ sort: goalZ.sort });
+                    goalsRef.doc(idZ).update({ sort: goal.sort });
 
                 }
             })
