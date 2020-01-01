@@ -69,7 +69,6 @@
             </div>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
@@ -95,7 +94,7 @@
                 });
             });
 
-            $("#add").click(function(){
+            document.getElementById("add").addEventListener("click", () => {
                 modal("Add new goal", ["title","link"], {
                     titlePl: "Goal Name",
                     linkPl: "Redirect Link (Optional)"
@@ -111,6 +110,7 @@
             goalsRef.orderBy('sort').onSnapshot(function(data){
                 var elem = '';
                 var cachingData = {};
+                var goals = document.getElementById("goals");
                 if(!data.empty){
                     elem += "<ol id='goals' class='list-group list-group-flush'>";
                     data.forEach(v=>{
@@ -132,41 +132,41 @@
                 } else {
                     elem += "<div id='goals' class='small my-3 mx-4 text-center'>No goal has been added yet</div>";
                 }
-                $('#goals').replaceWith(elem);
-                $("#goals").data("data", cachingData);
+                goals.outerHTML = elem;
+                sessionStorage.goalsData = JSON.stringify(cachingData);
             });
 
-            $(document).on("click", ".edit", function(){
-                var id = $(this).parents("li").attr("data-id");
-                var goal = $("#goals").data("data")[id];
-                modal("Edit goal", ["title","link"], {
-                    titlePl: "Goal Name",
-                    titleVal: goal.name,
-                    linkPl: "Redirect Link (Optional)",
-                    linkVal: goal.link
-                }, args => goalsRef.doc(id).update({
-                    name: args.title,
-                    link: args.link
-                }));
-            });
-
-            $(document).on("click", ".delete", function(){
-                var id = $(this).parents("li").attr("data-id");
-                var expire = new Date(time()*1000+7000);
-                document.cookie="goals_"+id+"="+JSON.stringify($("#goals").data("data")[id])+";expires="+expire.toUTCString()+";path=/";
-                goalsRef.doc(id).delete().then(function(){
-                    notif("Goal successfully deleted!", undefined, "info", undefined, function(){
-                        goalsRef.doc(id).set(JSON.parse(getCookie("goals_"+id)))
+            document.addEventListener("click", function(evt){
+                let t = evt.target;
+                if (t && t.classList.contains("edit")) {
+                    var id = t.parentNode.parentNode.getAttribute("data-id");
+                    var goal = JSON.parse(sessionStorage.goalsData)[id];
+                    modal("Edit goal", ["title","link"], {
+                        titlePl: "Goal Name",
+                        titleVal: goal.name,
+                        linkPl: "Redirect Link (Optional)",
+                        linkVal: goal.link
+                    }, args => goalsRef.doc(id).update({
+                        name: args.title,
+                        link: args.link
+                    }));
+                } else if (t && t.classList.contains("delete")) {
+                    var id = t.parentNode.parentNode.getAttribute("data-id");
+                    var expire = new Date(time()*1000+7000);
+                    document.cookie="goals_"+id+"="+JSON.stringify(JSON.parse(sessionStorage.goalsData)[id])+";expires="+expire.toUTCString()+";path=/";
+                    goalsRef.doc(id).delete().then(function(){
+                        notif("Goal successfully deleted!", undefined, "info", undefined, function(){
+                            goalsRef.doc(id).set(JSON.parse(getCookie("goals_"+id)))
+                        });
                     });
-                });
-            });
+                } else if (t && t.classList.contains("up") || t.classList.contains("down")) {
+                    var thisID = t.parentNode.parentNode.getAttribute("data-id");
+                    var oppID = t.classList.contains("up") ? t.parentNode.parentNode.previousElementSibling.getAttribute("data-id") : t.parentNode.parentNode.nextElementSibling.getAttribute("data-id");
+                    goalsRef.doc(thisID).update({ sort: JSON.parse(sessionStorage.goalsData)[oppID].sort });
+                    goalsRef.doc(oppID).update({ sort: JSON.parse(sessionStorage.goalsData)[thisID].sort });
 
-            $(document).on("click", ".up,.down",function(e){
-                var thisID = $(this).parents("li").attr("data-id");
-                var oppID = e.target.classList.contains("up")?$(this).parents("li").prev().attr("data-id"):$(this).parents("li").next().attr("data-id");
-                goalsRef.doc(thisID).update({ sort: $("#goals").data("data")[oppID].sort });
-                goalsRef.doc(oppID).update({ sort: $("#goals").data("data")[thisID].sort });
-            });
+                }
+            })
 
         } else {
             location.href = "./login?ref=goals";
