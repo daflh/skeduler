@@ -69,7 +69,6 @@
             </div>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
@@ -143,8 +142,8 @@
                 if (obj.repeat==="unrepeat") {
                     eventsRef.doc(id).delete();
                 } else {
-                    eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromMillis(repeatTime(obj.date.toMillis(),obj.repeat)) }).then(function(){
-                        createNotif(id,obj.name,Number(repeatTime(obj.date.toMillis(),obj.repeat))/1000)
+                    eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromMillis(repeatTime(obj.date.seconds*1000,obj.repeat)) }).then(function(){
+                        createNotif(id,obj.name,Number(repeatTime(obj.date.seconds*1000,obj.repeat))/1000)
                     });
                 }
             }
@@ -157,8 +156,8 @@
                     });
                 }
                 let showWarning = permission => {
-                    $(`
-                        <div id="permission-warning" class="card rounded-0 mt-4 bg-white text-muted">
+                    let element = `
+                        <div id="permission-warning" class="card rounded-0 mt-4 bg-white text-muted fade hide opacity-0">
                             <div class="card-body p-4">
                                 <img class="mr-3 align-text-bottom" width="50" src='img/svg/warning.svg'>
                                 <div class="d-block d-sm-inline-block">
@@ -169,17 +168,22 @@
                                 </div>
                             </div>
                         </div>
-                    `).hide().insertBefore("#events-wrapper").fadeIn("slow");
-                    $("#prompt-notif").click(() => osgl.showNativePrompt());
+                    `;
+
+                    document.getElementById("events-wrapper").insertAdjacentHTML("beforebegin", element);
+                    let pw = document.getElementById("permission-warning");
+                    pw.style.display = "block";
+                    setTimeout(() => pw.style.opacity = 1, 10);
+
+                    document.getElementById("prompt-notif").addEventListener("click", () => osgl.showNativePrompt());
                 }
                 osgl.init({ appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983" });
-                osgl.getNotificationPermission(permission => {
-                    if (permission === "granted") storeUserId();
-                    else showWarning(permission);
-                });
+                osgl.getNotificationPermission(pmsn => pmsn === "granted" ? storeUserId() : showWarning(permission));
                 osgl.on('subscriptionChange', subs => {
                     if(subs){
-                        $("#permission-warning").fadeOut("slow");
+                        let pw = document.getElementById("permission-warning");
+                        pw.style.opacity = 0;
+                        setTimeout(() => pw.style.display = "none", 600);
                         storeUserId();
                     } else {
                         osgl.getUserId(userId => fs.collection("users").doc(user.uid).set({
@@ -190,7 +194,7 @@
                 });
             });
 
-            $("#add").click(function(){
+            document.getElementById("add").addEventListener("click", () => {
                 modal("Add new event", ["title","date","repeat"], {
                     titlePl: "Event Name"
                 }, args => {
@@ -205,11 +209,12 @@
             eventsRef.get().then(function(once){
                 once.forEach(raw=>{
                     let dt = raw.data();
-                    if (Math.floor(dt.date.toMillis()/1000) <= time(utcDate())-60*60*24) afterDone(raw.id,dt);
+                    if (Math.floor(dt.date.seconds) <= time(utcDate())-60*60*24) afterDone(raw.id,dt);
                 });
                 eventsRef.orderBy('date').onSnapshot(function(data){
                     var elem = '';
                     var cachingData = {};
+                    var events = document.getElementById("events");
                     if(!data.empty){
                         elem += `
                             <table id="events" class="table align-items-center table-flush">
@@ -226,12 +231,12 @@
                             let d = v.data();
                             elem += "<tr data-id='"+v.id+"'>";
                                 elem += "<td title='"+d.date.toDate()+"'>";
-                                    elem += readableDate(d.date.toMillis());
+                                    elem += readableDate(d.date.seconds*1000);
                                     elem += d.repeat !== "unrepeat" ? " <img class='d-none d-md-inline repeat' title='Repeats "+d.repeat+"' src='img/svg/repeat.svg'> <span class='d-inline d-md-none'>("+capitalize(d.repeat)+")</span>" : "";
                                 elem += "</td>";
                                 elem += "<th>"+d.name+"</th>";
                                 elem += "<td>";
-                                    if (Math.floor(d.date.toMillis()/1000)>time(utcDate())) {
+                                    if (Math.floor(d.date.seconds)>time(utcDate())) {
                                     elem += "<img title='Edit' class='edit pointer' src='img/svg/edit.svg'>";
                                     elem += "<img title='Delete' class='delete ml-3 pointer' src='img/svg/delete.svg'>";
                                     } else {
@@ -249,66 +254,57 @@
                     } else {
                         elem += "<div id='events' class='small my-3 mx-4 text-center'>No event has been added yet</div>";
                     }
-                    $('#events').replaceWith(elem);
-                    $("#events").data("data", cachingData);
+                    events.outerHTML = elem;
+                    sessionStorage.eventsData = JSON.stringify(cachingData);
                 });
             });
 
-            $(document).on("click", ".edit", function(){
-                var id = $(this).parents("tr").attr("data-id");
-                var event = $("#events").data("data")[id];
-                modal("Edit event", ["title","date","repeat"], {
-                    titlePl: "Event Name",
-                    titleVal: event.name,
-                    dateVal: utcDate(event.date.toMillis()),
-                    repeatVal: event.repeat
-                }, args => {
-                    eventsRef.doc(id).update({
-                        name: args.title,
-                        date: firebase.firestore.Timestamp.fromDate(new Date(args.date)),
-                        repeat: args.repeat
-                    }).then(function(){
-                        if(event.name !== args.title || event.date.seconds !== firebase.firestore.Timestamp.fromDate(new Date(args.date)).seconds){
-                            if(event.hasOwnProperty("notif_id")) cancelNotif(event.notif_id);
-                            createNotif(id,args.title,time(args.date));
-                        }
-                    });
-                });
-            });
-
-            $(document).on("click", ".delete", function(){
-                var id = $(this).parents("tr").attr("data-id");
-                var expire = new Date(time()*1000+11000);
-                var event = $("#events").data("data")[id];
-                document.cookie="events_"+id+"="+JSON.stringify(event)+";expires="+expire.toUTCString()+";path=/";
-                eventsRef.doc(id).delete().then(function(){
-                    if(event.hasOwnProperty("notif_id")) cancelNotif(event.notif_id);
-                    notif("Event successfully deleted!", undefined, "info", undefined, function(){
-                        let events = JSON.parse(getCookie("events_"+id));
-                        events.date = firebase.firestore.Timestamp.fromMillis(events.date.seconds*1000);
-                        eventsRef.doc(id).set(events).then(function(){
-                            createNotif(id,event.name,Number(event.date.toMillis())/1000)
+            document.addEventListener("click", function(evt){
+                let t = evt.target;
+                let id = t.parentNode.parentNode.getAttribute("data-id");
+                let event = JSON.parse(sessionStorage.eventsData)[id];
+                if (t && t.classList.contains("edit")) {
+                    modal("Edit event", ["title","date","repeat"], {
+                        titlePl: "Event Name",
+                        titleVal: event.name,
+                        dateVal: utcDate(event.date.seconds*1000),
+                        repeatVal: event.repeat
+                    }, args => {
+                        eventsRef.doc(id).update({
+                            name: args.title,
+                            date: firebase.firestore.Timestamp.fromDate(new Date(args.date)),
+                            repeat: args.repeat
+                        }).then(function(){
+                            if(event.name !== args.title || event.date.seconds !== firebase.firestore.Timestamp.fromDate(new Date(args.date)).seconds){
+                                if(event.hasOwnProperty("notif_id")) cancelNotif(event.notif_id);
+                                createNotif(id,args.title,time(args.date));
+                            }
                         });
                     });
-                });
-            });
-
-            $(document).on("click", ".snooze", function(){
-                var id = $(this).parents("tr").attr("data-id");
-                var event = $("#events").data("data")[id];
-                modal("Snooze event", ["date"], {
-                    dateVal: utcDate(event.date.toMillis())
-                }, args => {
-                    eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromDate(new Date(args.date)) }).then(function(){
-                        createNotif(id,event.name,time(args.date))
+                } else if (t && t.classList.contains("delete")) {
+                    let expire = new Date(time()*1000+11000);
+                    document.cookie="events_"+id+"="+JSON.stringify(event)+";expires="+expire.toUTCString()+";path=/";
+                    eventsRef.doc(id).delete().then(function(){
+                        if(event.hasOwnProperty("notif_id")) cancelNotif(event.notif_id);
+                        notif("Event successfully deleted!", undefined, "info", undefined, function(){
+                            let events = JSON.parse(getCookie("events_"+id));
+                            events.date = firebase.firestore.Timestamp.fromMillis(events.date.seconds*1000);
+                            eventsRef.doc(id).set(events).then(function(){
+                                createNotif(id,event.name,Number(event.date.seconds))
+                            });
+                        });
                     });
-                });
-            });
-
-            $(document).on("click", ".done", function(){
-                var id = $(this).parents("tr").attr("data-id");
-                var event = $("#events").data("data")[id];
-                afterDone(id,event);
+                } else if (t && t.classList.contains("snooze")) {
+                    modal("Snooze event", ["date"], {
+                        dateVal: utcDate(event.date.second*1000)
+                    }, args => {
+                        eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromDate(new Date(args.date)) }).then(function(){
+                            createNotif(id,event.name,time(args.date))
+                        });
+                    });
+                } else if (t && t.classList.contains("done")) {
+                    afterDone(id,event);
+                }
             });
     
         } else {
