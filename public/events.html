@@ -89,10 +89,12 @@
             async function createNotif(id, name = "Your event", timestamp = 0){
                 try {
                     notif("Creating notification ...", undefined, undefined, 0);
+
                     timestamp = Number(timestamp);
                     if(!timestamp) throw new Error("Invalid timestamp, use 10 or 13 digit UNIX Epoch time")
                     timestamp = timestamp.toString().length === 10 ? timestamp*1000 : timestamp;
                     if(timestamp >= (time(utcDate())+60*60*23*30)*1000) throw new Error("Can't schedule notification for more than 30 days.");
+                    
                     let doc = await fs.collection("users").doc(user.uid).get();
                     let response = await fetch('https://onesignal.com/api/v1/notifications', {
                         method: 'POST',
@@ -215,6 +217,7 @@
                     var elem = '';
                     var cachingData = {};
                     var events = document.getElementById("events");
+
                     if(!data.empty){
                         elem += `
                             <table id="events" class="table align-items-center table-flush">
@@ -263,6 +266,7 @@
                 let t = evt.target;
                 let id = t.parentNode.parentNode.getAttribute("data-id");
                 let event = JSON.parse(sessionStorage.eventsData)[id];
+
                 if (t && t.classList.contains("edit")) {
                     modal("Edit event", ["title","date","repeat"], {
                         titlePl: "Event Name",
@@ -281,6 +285,7 @@
                             }
                         });
                     });
+
                 } else if (t && t.classList.contains("delete")) {
                     let expire = new Date(time()*1000+11000);
                     document.cookie="events_"+id+"="+JSON.stringify(event)+";expires="+expire.toUTCString()+";path=/";
@@ -294,6 +299,7 @@
                             });
                         });
                     });
+
                 } else if (t && t.classList.contains("snooze")) {
                     modal("Snooze event", ["date"], {
                         dateVal: utcDate(event.date.second*1000)
@@ -302,6 +308,7 @@
                             createNotif(id,event.name,time(args.date))
                         });
                     });
+
                 } else if (t && t.classList.contains("done")) {
                     afterDone(id,event);
                 }

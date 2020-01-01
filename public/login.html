@@ -57,6 +57,7 @@
         el.addEventListener("click", function(){
             let login = this.getAttribute("data-login");
             let provider = login === "google" ? new firebase.auth.GoogleAuthProvider() : new firebase.auth.FacebookAuthProvider();
+            
             firebase.auth().signInWithPopup(provider).catch(err => {
                 let el = document.querySelector(".error-message");
                 el.textContent = err.message;

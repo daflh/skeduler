@@ -88,7 +88,9 @@
                 osgl.init({ appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983" });
                 osgl.getNotificationPermission(permission => {
                     if (permission === "granted") osgl.getUserId(userId => {
-                        fs.collection("users").doc(user.uid).set({ onesignal_devices: firebase.firestore.FieldValue.arrayUnion(userId) }, {merge: true});
+                        fs.collection("users").doc(user.uid).set({
+                            onesignal_devices: firebase.firestore.FieldValue.arrayUnion(userId)
+                        }, {merge: true});
                         sessionStorage.setItem("onesignal-user-id", userId);
                     });
                 });
@@ -111,6 +113,7 @@
                 var elem = '';
                 var cachingData = {};
                 var goals = document.getElementById("goals");
+                
                 if(!data.empty){
                     elem += "<ol id='goals' class='list-group list-group-flush'>";
                     data.forEach(v=>{
@@ -140,6 +143,7 @@
                 let t = evt.target;
                 let id = t.parentNode.parentNode.getAttribute("data-id");
                 let goal = JSON.parse(sessionStorage.goalsData)[id];
+
                 if (t && t.classList.contains("edit")) {
                     modal("Edit goal", ["title","link"], {
                         titlePl: "Goal Name",
@@ -150,6 +154,7 @@
                         name: args.title,
                         link: args.link
                     }));
+
                 } else if (t && t.classList.contains("delete")) {
                     let expire = new Date(time()*1000+7000);
                     document.cookie="goals_"+id+"="+JSON.stringify(goal)+";expires="+expire.toUTCString()+";path=/";
@@ -158,6 +163,7 @@
                             goalsRef.doc(id).set(JSON.parse(getCookie("goals_"+id)))
                         });
                     });
+                    
                 } else if (t && t.classList.contains("up") || t.classList.contains("down")) {
                     let idZ = t.classList.contains("up") ? t.parentNode.parentNode.previousElementSibling.getAttribute("data-id") : t.parentNode.parentNode.nextElementSibling.getAttribute("data-id");
                     let goalZ = JSON.parse(sessionStorage.goalsData)[idZ];

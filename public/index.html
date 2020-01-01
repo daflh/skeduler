@@ -123,7 +123,9 @@
                 osgl.init({ appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983" });
                 osgl.getNotificationPermission(permission => {
                     if (permission === "granted") osgl.getUserId(userId => {
-                        fs.collection("users").doc(user.uid).set({ onesignal_devices: firebase.firestore.FieldValue.arrayUnion(userId) }, {merge: true});
+                        fs.collection("users").doc(user.uid).set({
+                            onesignal_devices: firebase.firestore.FieldValue.arrayUnion(userId)
+                        }, {merge: true});
                         sessionStorage.setItem("onesignal-user-id", userId);
                     });
                 });
@@ -144,12 +146,16 @@
             document.getElementById("exportSelect").addEventListener('change', function(){
                 let v = this.value;
                 let res = {[v]:{}};
-                let eta = document.getElementById("exportTextarea")
+                let eta = document.getElementById("exportTextarea");
+
                 eta.value = "Loading data ...";
                 eta.style.display = "block";
+
                 setTimeout(() => eta.style.opacity = 1, 10);
+
                 autosize(eta);
                 autosize.update(eta);
+                
                 userRef.collection(v).get().then(dt=>{
                     if(dt.empty){
                         res = "No data";
