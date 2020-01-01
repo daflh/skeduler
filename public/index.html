@@ -16,13 +16,13 @@
 <body id="dashboard-page">
     <nav class="navbar navbar-vertical fixed-left navbar-expand-md navbar-light" id="sidenav-main">
         <div class="container-fluid">
-            <button class="navbar-toggler" type="button" name="show">
+            <button class="navbar-toggler" type="button" name="navbarFadeIn">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <a class="navbar-brand pr-3" href="./">
                 <img src="./img/logo.png" alt="Coragon Logo" id="navbar-brand-img">
             </a>
-            <div class="navbar-collapse collapse" id="navcol">
+            <div class="navbar-collapse fade hide" id="navcol">
                 <div class="navbar-collapse-header d-md-none">
                     <div class="row">
                         <div class="col-6 collapse-brand">
@@ -31,7 +31,7 @@
                             </a>
                         </div>
                         <div class="col-6 collapse-close align-self-center">
-                            <button class="navbar-toggler" type="button" name="hide">
+                            <button class="navbar-toggler" type="button" name="navbarFadeOut">
                                 <img title="Close navbar" src='img/svg/close.svg'>
                             </button>
                         </div>
@@ -91,7 +91,7 @@
                                 <option value="goals">Goals</option>
                                 <option value="notes">Notes</option>
                             </select>
-                            <textarea class='form-control data mt-3 hide' readonly></textarea>
+                            <textarea id="exportTextarea" class='form-control mt-3 fade hide' readonly></textarea>
                         </div>
                         <hr class="my-4">
                         <div class="import">
@@ -103,7 +103,6 @@
             </div>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
@@ -118,6 +117,8 @@
             let userRef = fs.collection("users").doc(user.uid);
             let osgl = window.OneSignal || [];
 
+            sessionStorage.setItem("firebase-uid", user.uid);
+
             osgl.push(()=> {
                 osgl.init({ appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983" });
                 osgl.getNotificationPermission(permission => {
@@ -128,7 +129,7 @@
                 });
             });
             
-            $("#user").replaceWith(`
+            document.getElementById("user").outerHTML = `
                 <div id="user" class="card-body row p-0">
                     <div class="col-sm-auto px-3 mb-3 mb-sm-0">
                         <img class="user-photo rounded-circle border" src="${user.photoURL}">
@@ -138,14 +139,17 @@
                         <h6 class="user-email">${user.email}</h6>
                     </div>
                 </div>
-            `);
+            `;
 
-            $("#exportSelect").change(function(){
-                let v = $(this).val();
+            document.getElementById("exportSelect").addEventListener('change', function(){
+                let v = this.value;
                 let res = {[v]:{}};
-                $("textarea.data").fadeIn().val("Loading data ...");
-                autosize($("textarea.data"));
-                autosize.update($("textarea.data"));
+                let eta = document.getElementById("exportTextarea")
+                eta.value = "Loading data ...";
+                eta.style.display = "block";
+                setTimeout(() => eta.style.opacity = 1, 10);
+                autosize(eta);
+                autosize.update(eta);
                 userRef.collection(v).get().then(dt=>{
                     if(dt.empty){
                         res = "No data";
@@ -157,43 +161,42 @@
                         });
                         res = JSON.stringify(res);
                     }
-                    $("textarea.data").val(res).focus(function(){
-                        $(this).select()
+                    eta.value = res;
+                    eta.addEventListener('focus', function(){
+                        this.select();
                     });
-                    autosize.update($("textarea.data"));
+                    autosize.update(eta);
                 });
             });
 
-            $('#importTextarea').keyup(function(){
-                if($(this).val()==="") $('#importSubmit').prop("disabled", true);
-                else $('#importSubmit').removeAttr("disabled");
-                $(this).css("border-color","");
+            let ita = document.getElementById("importTextarea");
+            let isub = document.getElementById("importSubmit");
+
+            ita.addEventListener("keyup", function(){
+                this.value === "" ? isub.disabled = true : isub.disabled = false;
+                this.style.borderColor = null;
             });
 
-            autosize($(".import textarea"));
+            autosize(ita);
 
-            $('#importSubmit').click(function(){
-                var v = JSON.parse($('#importTextarea').val());
-                var col = Object.keys(v).toString();
-                if($.inArray(col,['events','goals','notes']) >= 0){
-                    $.each(v[col],function(doc,dt){
-                        if(dt.hasOwnProperty("date")) dt.date = firebase.firestore.Timestamp.fromMillis(dt.date);
-                        userRef.collection(col).doc(doc).set(dt,{merge:true});
-                    });
+            isub.addEventListener("click", function(){
+                try {
+                    let data = ita.value;
+                    if(!!Number(data) || ['','""','0','[]','{}','true','false'].indexOf(data) >= 0) throw new Error();
+                    data = JSON.parse(data);
+                    if(!Object.keys(data).every(elem => ["events", "goals", "notes"].indexOf(elem) > -1)) throw new Error();
+                    for (let [col, colVal] of Object.entries(data)) {
+                        if(!colVal || typeof colVal != "object" || Object.keys(colVal).length === 0) throw new Error();
+                        for (let [doc, val] of Object.entries(colVal)) {
+                            if(val.hasOwnProperty("date")) val.date = firebase.firestore.Timestamp.fromMillis(val.date);
+                            userRef.collection(col).doc(doc).set(val,{merge:true});
+                        }
+                    }
                     notif("Data successfully imported!", undefined, "info");
-                } else {
-                    $('#importTextarea').css("border-color","#fd8f9a");
+                } catch(err) {
+                    ita.style.borderColor = "#fd8f9a";
                 }
             });
-
-            $("#logout").click(() => {
-                let userId = sessionStorage.getItem("onesignal-user-id");
-                fs.collection("users").doc(user.uid).update({
-                    onesignal_devices: firebase.firestore.FieldValue.arrayRemove(userId)
-                }).then(() => firebase.auth().signOut());
-            });
-            $('.navbar-toggler[name=show]').click(() => $('#navcol').fadeIn());
-            $('.navbar-toggler[name=hide]').click(() => $('#navcol').fadeOut());
 
         } else {
             location.href = "./login";
