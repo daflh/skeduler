@@ -138,9 +138,9 @@
 
             document.addEventListener("click", function(evt){
                 let t = evt.target;
+                let id = t.parentNode.parentNode.getAttribute("data-id");
+                let goal = JSON.parse(sessionStorage.goalsData)[id];
                 if (t && t.classList.contains("edit")) {
-                    var id = t.parentNode.parentNode.getAttribute("data-id");
-                    var goal = JSON.parse(sessionStorage.goalsData)[id];
                     modal("Edit goal", ["title","link"], {
                         titlePl: "Goal Name",
                         titleVal: goal.name,
@@ -151,19 +151,17 @@
                         link: args.link
                     }));
                 } else if (t && t.classList.contains("delete")) {
-                    var id = t.parentNode.parentNode.getAttribute("data-id");
-                    var expire = new Date(time()*1000+7000);
-                    document.cookie="goals_"+id+"="+JSON.stringify(JSON.parse(sessionStorage.goalsData)[id])+";expires="+expire.toUTCString()+";path=/";
+                    let expire = new Date(time()*1000+7000);
+                    document.cookie="goals_"+id+"="+JSON.stringify(goal)+";expires="+expire.toUTCString()+";path=/";
                     goalsRef.doc(id).delete().then(function(){
                         notif("Goal successfully deleted!", undefined, "info", undefined, function(){
                             goalsRef.doc(id).set(JSON.parse(getCookie("goals_"+id)))
                         });
                     });
                 } else if (t && t.classList.contains("up") || t.classList.contains("down")) {
-                    var thisID = t.parentNode.parentNode.getAttribute("data-id");
-                    var oppID = t.classList.contains("up") ? t.parentNode.parentNode.previousElementSibling.getAttribute("data-id") : t.parentNode.parentNode.nextElementSibling.getAttribute("data-id");
-                    goalsRef.doc(thisID).update({ sort: JSON.parse(sessionStorage.goalsData)[oppID].sort });
-                    goalsRef.doc(oppID).update({ sort: JSON.parse(sessionStorage.goalsData)[thisID].sort });
+                    let togg = t.classList.contains("up") ? t.parentNode.parentNode.previousElementSibling.getAttribute("data-id") : t.parentNode.parentNode.nextElementSibling.getAttribute("data-id");
+                    goalsRef.doc(id).update({ sort: JSON.parse(sessionStorage.goalsData)[togg].sort });
+                    goalsRef.doc(togg).update({ sort: JSON.parse(sessionStorage.goalsData)[id].sort });
 
                 }
             })
