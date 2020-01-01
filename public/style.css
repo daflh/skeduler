@@ -6,11 +6,14 @@ body{font-family:'Open Sans', sans-serif;background-color:#F2F5FA;color:#525f7f}
 p{font-size:1rem}
 button,input{border-radius:0!important}
 img{max-width:100%}
-.hide{display:none; opacity:0}
 .pointer{cursor:pointer}
 .disabled{pointer-events: none}
 .small{font-size:80%!important}
+.hide{display:none}
 .fade{transition: opacity 600ms; -webkit-transition: opacity 600ms; -o-transition: opacity 600ms}
+.opacity-0{opacity:0}
+.slide{overflow: hidden; transition: height 600ms; -webkit-transition: height 600ms; -o-transition: height 600ms}
+.height-0{height:0}
 .btn{position:relative;text-transform:none;-webkit-transition:all .15s ease;transition:all .15s ease;letter-spacing:.025em;font-size:.875rem;will-change:transform}
 .main-content{position:relative;padding: 1rem;margin-bottom: 1.5rem}
 .main-content .page-nav{color:rgba(0,0,0,.75);font-size:1.0625rem!important;font-weight:600;line-height: 1.5;margin:0;text-transform: uppercase}
