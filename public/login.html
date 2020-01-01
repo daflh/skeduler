@@ -34,7 +34,7 @@
                                     <span>Login with <b>Facebook</b></span>
                                 </div>
                             </div>
-                            <div class="error-message text-center mb-3 small text-danger hide"></div>
+                            <div class="error-message text-center mb-3 small text-danger fade hide"></div>
                         </div>
                     </div>
                 </div>
@@ -61,7 +61,7 @@
                 let el = document.querySelector(".error-message");
                 el.textContent = err.message;
                 el.style.display = "block";
-                setTimeout(() => el.style.opacity = 1, 1);
+                setTimeout(() => el.style.opacity = 1, 10);
             });
         });
     });

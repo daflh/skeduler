@@ -10,6 +10,7 @@ img{max-width:100%}
 .pointer{cursor:pointer}
 .disabled{pointer-events: none}
 .small{font-size:80%!important}
+.fade{transition: opacity 600ms; -webkit-transition: opacity 600ms; -o-transition: opacity 600ms}
 .btn{position:relative;text-transform:none;-webkit-transition:all .15s ease;transition:all .15s ease;letter-spacing:.025em;font-size:.875rem;will-change:transform}
 .main-content{position:relative;padding: 1rem;margin-bottom: 1.5rem}
 .main-content .page-nav{color:rgba(0,0,0,.75);font-size:1.0625rem!important;font-weight:600;line-height: 1.5;margin:0;text-transform: uppercase}
@@ -62,14 +63,13 @@ img{max-width:100%}
 .notif-overlay .notif-box .text span{font-weight:600}
 #dashboard-page .list-group li{background-color:initial!important;padding:.75rem 0}
 #dashboard-page textarea{max-height:300px}
-#dashboard-page textarea.data{background-color:#f9f9f9}
+#dashboard-page .export textarea{background-color:#f9f9f9}
 #dashboard-page .user-photo{width:80px}
 #dashboard-page .user-name{font-weight:600}
 #login-page,#error-page{position:absolute;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%);-ms-transform:translateY(-50%);width:100%}
 #login-page .container{margin:10vh auto!important}
 #login-page .main-content h1{font-weight:600;font-size:2.25rem}
 #login-page .logo-img{height:4rem}
-#login-page .error-message{transition: opacity 600ms; -webkit-transition: opacity 600ms; -o-transition: opacity 600ms;}
 #events-page table tr>*:first-child{width:10%}
 #events-page table tr>*:last-child{width:5%;text-align:right}
 #events-page table .repeat{width:1em}
@@ -93,7 +93,7 @@ img{max-width:100%}
 }
 @media (max-width:767.98px) {
     .navbar-nav .nav-link{padding:.625rem 0}
-    .navbar-collapse{display:none;padding:1.5rem;background:#fff;box-shadow:0 50px 100px rgba(50,50,93,.1),0 15px 35px rgba(50,50,93,.15),0 5px 15px rgba(0,0,0,.1);width:calc(100% - 1.4rem);position:absolute;top:0;left:0;right:0;z-index:1050;margin:.7rem;overflow-y:auto;height:auto!important}
+    .navbar-collapse{padding:1.5rem;background:#fff;box-shadow:0 50px 100px rgba(50,50,93,.1),0 15px 35px rgba(50,50,93,.15),0 5px 15px rgba(0,0,0,.1);width:calc(100% - 1.4rem);position:absolute;top:0;left:0;right:0;z-index:1050;margin:.7rem;overflow-y:auto;height:auto!important}
     .navbar-collapse .navbar-toggler{position:relative;cursor:pointer;display:inline-block;padding:0}
     .navbar-collapse .navbar-toggler img{width:25px;height:25px}
     .navbar-collapse .navbar-collapse-header{display:block;padding-bottom:1rem;margin-bottom:1rem;border-bottom:1px solid rgba(0,0,0,.1)}
