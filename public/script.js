@@ -142,7 +142,7 @@ function repeatTime(dateTimestamp,repeatEvery) {
 function modal(header, input, options, doneCallback = ()=>{}){
 
     var element = `
-        <div id="modal" class="modal-overlay fade hide">
+        <div id="modal" class="modal-overlay fade hide opacity-0">
             <div class="modal-box">
                 <h2 class="mb-4">${header}</h2>
                 <form id="modal-form" class="form-group mb-4">
@@ -168,10 +168,10 @@ function modal(header, input, options, doneCallback = ()=>{}){
         </div>
     `;
 
+    let mdl;
+
     document.body.insertAdjacentHTML("beforeend", element);
-
-    let mdl = document.getElementById("modal");
-
+    mdl = document.getElementById("modal");
     mdl.style.display = "block";
     setTimeout(() => mdl.style.opacity = 1, 10);
 
@@ -195,59 +195,64 @@ function modal(header, input, options, doneCallback = ()=>{}){
 
 }
 
-function notif(text = "", desc, type = "", time = 5000, undo){
+function notif(text = "", desc, type = "", time = 5000, undoCallback){
 
-    var rand = Math.floor(Math.random() * 10000);
     var element = `
-        <div id="notif" class="notif-overlay" data-box-id="${rand}">
+        <div id="notif" class="notif-overlay fade hide opacity-0">
             <div class="notif-box">
                 <div class="row">
                     <div class="text col align-self-center small">
-                        ${type!==""?`<img class="mr-2" title="Information" src='img/svg/${type}.svg'>`:``}
+                        ${type !== "" ? `<img class="mr-2" title="Information" src='img/svg/${type}.svg'>`:``}
                         <span class="align-middle">${text}</span>
                     </div>
                     <div class="col col-auto align-self-center">
-                        ${undo?`<span class="undo pointer"><img title="Undo" src='img/svg/undo.svg'></span>`:``}
-                        ${desc?`<span class="expand pointer"><img title="See description" src='img/svg/arrow-down.svg'></span>`:``}
+                        ${undoCallback ? `<span class="undo pointer"><img title="Undo" src='img/svg/undo.svg'></span>`:``}
+                        ${desc ? `<span class="expand pointer"><img title="See description" src='img/svg/arrow-down.svg'></span>`:``}
                         <span class="shut pointer"><img title="Close" src='img/svg/close.svg'></span>
                     </div>
                 </div>
-                <div class="row desc" style="display:none">
+                ${desc ? `<div class="row desc slide hide height-0">
                     <div class="col mt-2">
                         <p class="small m-0">${desc}</p>
                     </div>
-                </div>
+                </div>`:``}
             </div>
         </div>
     `;
 
-    if($("#notif").length !== 0) $("#notif").replaceWith(element);
-    else $(element).hide().appendTo("body").fadeIn("fast");
+    let ntf = document.getElementById("notif");
 
-    function closeNotif(boxID){
-        $("#notif[data-box-id="+boxID+"]").fadeOut("fast",function(){
-            $(this).remove();
-        });
+    typeof ntf != 'undefined' && ntf != null ? ntf.outerHTML = element : document.body.insertAdjacentHTML("beforeend", element);
+    ntf = document.getElementById("notif");
+    ntf.style.display = "block";
+    setTimeout(() => ntf.style.opacity = 1, 10);
+
+    let closeNotif = () => {
+        ntf.style.opacity = 0;
+        setTimeout(() => ntf.parentNode.removeChild(ntf), 600);
     }
 
-    if(time !== 0) setTimeout(()=>closeNotif(rand), time);
+    if(time !== 0) setTimeout(closeNotif, time);
 
-    $("#notif .undo").click(()=>{
-        undo();
-        closeNotif(rand);
+    if(undoCallback) ntf.querySelector(".undo").addEventListener("click", () => {
+        undoCallback();
+        closeNotif();
     });
 
-    $("#notif .expand").click(function(){
-        let el = $(".desc");
-        if(el.is(":hidden")){
-            el.slideDown("fast");
-            $(this).children("img").attr("src","img/svg/arrow-up.svg");
+    if(desc) ntf.querySelector(".expand").addEventListener("click", () => {
+        let desc = ntf.querySelector(".desc");
+        let img = ntf.querySelector(".expand img");
+        if(getComputedStyle(desc).display == "none"){
+            desc.style.display = "block";
+            setTimeout(() => desc.style.height = "100%", 10);
+            img.setAttribute("src", "img/svg/arrow-up.svg");
         } else {
-            el.slideUp("fast");
-            $(this).children("img").attr("src","img/svg/arrow-down.svg");
+            desc.style.height = "0";
+            setTimeout(() => desc.style.display = "none", 600);
+            img.setAttribute("src", "img/svg/arrow-down.svg");
         }
     });
 
-    $("#notif .shut").click(()=>closeNotif(rand));
+    ntf.querySelector(".shut").addEventListener("click", closeNotif);
 
 }
