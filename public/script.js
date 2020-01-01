@@ -229,7 +229,10 @@ function notif(text = "", desc, type = "", time = 5000, undoCallback){
 
     let closeNotif = () => {
         ntf.style.opacity = 0;
-        setTimeout(() => ntf.parentNode.removeChild(ntf), 600);
+        setTimeout(() => {
+            ntf = document.getElementById("notif");
+            if(typeof ntf != 'undefined' && ntf != null) ntf.parentNode.removeChild(ntf)
+        }, 600);
     }
 
     if(time !== 0) setTimeout(closeNotif, time);
