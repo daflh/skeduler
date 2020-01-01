@@ -20,7 +20,7 @@ document.getElementsByName("navbarFadeIn")[0].addEventListener("click", () => {
 });
 document.getElementsByName("navbarFadeOut")[0].addEventListener("click", () => {
     navbar.style.opacity = 0;
-    setTimeout(() => navbar.style.display = "none", 600)
+    setTimeout(() => navbar.style.display = "none", 600);
 });
 
 document.getElementById("logout").addEventListener("click", () => {
@@ -139,19 +139,19 @@ function repeatTime(dateTimestamp,repeatEvery) {
     return dt;
 }
 
-function modal(header, input, options, done = ()=>{}){
+function modal(header, input, options, doneCallback = ()=>{}){
 
     var element = `
-        <div id="modal" class="modal-overlay">
+        <div id="modal" class="modal-overlay fade hide">
             <div class="modal-box">
                 <h2 class="mb-4">${header}</h2>
                 <form id="modal-form" class="form-group mb-4">
                     <br/>
-                    ${input.includes("title")?`<input class="form-control" type="text" name="title" value="${options.titleVal||''}" placeholder="${options.titlePl||''}" required><br/>`:``}
-                    ${input.includes("link")?`<input class="form-control" type="text" name="link" value="${options.linkVal||''}" placeholder="${options.linkPl||''}">`:``}
-                    ${input.includes("date")?`<input class="form-control" type="datetime-local" name="date" value="${options.dateVal||''}" min="${utcDate((time()+60)*1000)}" required><br/>`:``}
+                    ${input.includes("title")?`<input class="form-control" type="text" name="modalTitle" value="${options.titleVal||''}" placeholder="${options.titlePl||''}" required><br/>`:``}
+                    ${input.includes("link")?`<input class="form-control" type="text" name="modalLink" value="${options.linkVal||''}" placeholder="${options.linkPl||''}">`:``}
+                    ${input.includes("date")?`<input class="form-control" type="datetime-local" name="modalDate" value="${options.dateVal||''}" min="${utcDate((time()+60)*1000)}" required><br/>`:``}
                     ${input.includes("repeat")?`
-                    <select class="form-control rounded-0" name="repeat">
+                    <select class="form-control rounded-0" name="modalRepeat">
                         <option ${options.repeatVal==='unrepeat'?'selected':''} value="unrepeat">Does not repeat</option>
                         <option ${options.repeatVal==='daily'?'selected':''} value="daily">Daily</option>
                         <option ${options.repeatVal==='weekly'?'selected':''} value="weekly">Weekly</option>
@@ -168,26 +168,30 @@ function modal(header, input, options, done = ()=>{}){
         </div>
     `;
 
-    $(element).hide().appendTo("body").fadeIn();
+    document.body.insertAdjacentHTML("beforeend", element);
 
-    function closeModal(){
-        $("#modal").fadeOut(400, function(){
-            $(this).remove();
-        });
+    let mdl = document.getElementById("modal");
+
+    mdl.style.display = "block";
+    setTimeout(() => mdl.style.opacity = 1, 10);
+
+    let closeModal = () => {
+        mdl.style.opacity = 0;
+        setTimeout(() => mdl.parentNode.removeChild(mdl), 600);
     }
 
-    $("#modal-form").submit(function(){
-        done({
-            title: $("#modal input[name=title]").val() || "",
-            link: $("#modal input[name=link]").val() || "",
-            date: $("#modal input[name=date]").val() || "",
-            repeat: $("#modal select[name=repeat]").val() || ""
+    mdl.querySelector("#modal-form").addEventListener("submit", evt => {
+        evt.preventDefault();
+        doneCallback({
+            title: input.includes("title") ? mdl.querySelector("input[name=modalTitle]").value : "",
+            link: input.includes("link") ? mdl.querySelector("input[name=modalLink]").value : "",
+            date: input.includes("date") ? mdl.querySelector("input[name=modalDate]").value : "",
+            repeat: input.includes("repeat") ? mdl.querySelector("select[name=modalRepeat]").value : ""
         });
         closeModal();
-        return false;
     });
 
-    $("#modal .cancel").click(closeModal);
+    mdl.querySelector(".cancel").addEventListener("click", closeModal);
 
 }
 
