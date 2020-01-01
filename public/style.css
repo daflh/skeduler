@@ -69,6 +69,7 @@ img{max-width:100%}
 #login-page .container{margin:10vh auto!important}
 #login-page .main-content h1{font-weight:600;font-size:2.25rem}
 #login-page .logo-img{height:4rem}
+#login-page .error-message{transition: opacity 600ms; -webkit-transition: opacity 600ms; -o-transition: opacity 600ms;}
 #events-page table tr>*:first-child{width:10%}
 #events-page table tr>*:last-child{width:5%;text-align:right}
 #events-page table .repeat{width:1em}
