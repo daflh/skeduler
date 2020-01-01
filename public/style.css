@@ -6,7 +6,7 @@ body{font-family:'Open Sans', sans-serif;background-color:#F2F5FA;color:#525f7f}
 p{font-size:1rem}
 button,input{border-radius:0!important}
 img{max-width:100%}
-.hide{display:none}
+.hide{display:none; opacity:0}
 .pointer{cursor:pointer}
 .disabled{pointer-events: none}
 .small{font-size:80%!important}
