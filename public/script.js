@@ -177,7 +177,7 @@ function modal(header, input, options, doneCallback = ()=>{}){
         setTimeout(() => mdl.parentNode.removeChild(mdl), 600);
     }
 
-    mdl.querySelector("#modal-form").addEventListener("submit", evt => {
+    document.getElementById("modal-form").addEventListener("submit", evt => {
         evt.preventDefault();
         doneCallback({
             title: input.includes("title") ? mdl.querySelector("input[name=modalTitle]").value : "",
@@ -188,7 +188,7 @@ function modal(header, input, options, doneCallback = ()=>{}){
         closeModal();
     });
 
-    mdl.querySelector(".cancel").addEventListener("click", closeModal);
+    mdl.getElementsByClassName("cancel")[0].addEventListener("click", closeModal);
 
 }
 
@@ -234,13 +234,13 @@ function notif(text = "", desc, type = "", time = 5000, undoCallback){
 
     if(time !== 0) setTimeout(closeNotif, time);
 
-    if(undoCallback) ntf.querySelector(".undo").addEventListener("click", () => {
+    if(undoCallback) ntf.getElementsByClassName("undo")[0].addEventListener("click", () => {
         undoCallback();
         closeNotif();
     });
 
-    if(desc) ntf.querySelector(".expand").addEventListener("click", () => {
-        let desc = ntf.querySelector(".desc");
+    if(desc) ntf.getElementsByClassName("expand")[0].addEventListener("click", () => {
+        let desc = ntf.getElementsByClassName("desc")[0];
         let img = ntf.querySelector(".expand img");
         if(getComputedStyle(desc).display == "none"){
             desc.style.display = "block";
@@ -253,6 +253,6 @@ function notif(text = "", desc, type = "", time = 5000, undoCallback){
         }
     });
 
-    ntf.querySelector(".shut").addEventListener("click", closeNotif);
+    ntf.getElementsByClassName("shut")[0].addEventListener("click", closeNotif);
 
 }

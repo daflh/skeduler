@@ -87,8 +87,9 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
             
             let notesRef = fs.collection("users").doc(user.uid).collection('notes');
             let osgl = window.OneSignal || [];
-            var ta = $("#newNoteForm textarea");
-            var save = $("#newNoteForm .save");
+            let newnote = document.getElementById("newNoteForm");
+            let ta = newnote.getElementsByTagName("textarea")[0];
+            let save = newnote.getElementsByClassName("save")[0];
 
             sessionStorage.setItem("firebase-uid", user.uid);
 
