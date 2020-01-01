@@ -16,13 +16,13 @@
 <body id="goals-page">
     <nav class="navbar navbar-vertical fixed-left navbar-expand-md navbar-light" id="sidenav-main">
         <div class="container-fluid">
-            <button class="navbar-toggler" type="button" name="show">
+            <button class="navbar-toggler" type="button" name="navbarFadeIn">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <a class="navbar-brand pr-3" href="./">
                 <img src="./img/logo.png" alt="Coragon Logo" id="navbar-brand-img">
             </a>
-            <div class="navbar-collapse collapse" id="navcol">
+            <div class="navbar-collapse fade hide" id="navcol">
                 <div class="navbar-collapse-header d-md-none">
                     <div class="row">
                         <div class="col-6 collapse-brand">
@@ -31,7 +31,7 @@
                             </a>
                         </div>
                         <div class="col-6 collapse-close align-self-center">
-                            <button class="navbar-toggler" type="button" name="hide">
+                            <button class="navbar-toggler" type="button" name="navbarFadeOut">
                                 <img title="Close navbar" src='img/svg/close.svg'>
                             </button>
                         </div>
@@ -82,6 +82,8 @@
 
             let goalsRef = fs.collection("users").doc(user.uid).collection('goals');
             let osgl = window.OneSignal || [];
+            
+            sessionStorage.setItem("firebase-uid", user.uid);
 
             osgl.push(()=> {
                 osgl.init({ appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983" });
@@ -165,15 +167,6 @@
                 goalsRef.doc(thisID).update({ sort: $("#goals").data("data")[oppID].sort });
                 goalsRef.doc(oppID).update({ sort: $("#goals").data("data")[thisID].sort });
             });
-
-            $("#logout").click(() => {
-                let userId = sessionStorage.getItem("onesignal-user-id");
-                fs.collection("users").doc(user.uid).update({
-                    onesignal_devices: firebase.firestore.FieldValue.arrayRemove(userId)
-                }).then(() => firebase.auth().signOut());
-            });
-            $('.navbar-toggler[name=show]').click(() => $('#navcol').fadeIn());
-            $('.navbar-toggler[name=hide]').click(() => $('#navcol').fadeOut());
 
         } else {
             location.href = "./login?ref=goals";
