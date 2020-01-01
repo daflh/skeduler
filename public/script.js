@@ -49,16 +49,12 @@ function autoHttp(url){
 }
 
 function time(data){
-    var dt;
-    if(data===undefined || !data) dt = new Date();
-    else dt = new Date(data);
+    var dt = (data === undefined || !data) ? new Date() : new Date(data);
     return Math.floor(dt.getTime()/1000);
 }
 
 function utcDate(data){
-    var dt;
-    if(data===undefined || !data) dt = new Date();
-    else dt = new Date(/^\d+$/.test(data) || typeof data==="number"?Number(data):data);
+    var dt = (data === undefined || !data) ? new Date() : new Date(/^\d+$/.test(data) || typeof data==="number" ? Number(data) : data);
     var theDate = dt.getFullYear()+'-'+pad((dt.getMonth()+1),2)+'-'+pad(dt.getDate(),2);
     var theTime = pad(dt.getHours(),2) + ":" + pad(dt.getMinutes(),2);
     return theDate+'T'+theTime;
@@ -122,15 +118,16 @@ function repeatTime(dateTimestamp,repeatEvery) {
     dateTimestamp = Number(dateTimestamp);
     let dt = dateTimestamp;
     let objectdt = new Date(dateTimestamp);
-    if(repeatEvery==="daily") dt += 60*60*24*1000;
-    else if(repeatEvery==="weekly") dt += 60*60*24*7*1000;
-    else if(repeatEvery==="monthly") {
+    if(repeatEvery==="daily") {
+        dt += 60*60*24*1000;
+    } else if(repeatEvery==="weekly") {
+        dt += 60*60*24*7*1000;
+    } else if(repeatEvery==="monthly") {
         let date = objectdt.getDate();
         objectdt.setMonth(objectdt.getMonth()+1);
         objectdt.setDate(date);
         dt = objectdt.getTime();
-    }
-    else if(repeatEvery==="yearly") {
+    } else if(repeatEvery==="yearly") {
         objectdt.setFullYear(objectdt.getFullYear() + (
             objectdt.getDate() === 29 && objectdt.getMonth() === 1 ? 4 : 1
         ));
