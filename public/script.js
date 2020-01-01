@@ -13,6 +13,24 @@ const fs = firebase.firestore();
 fs.settings({cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED});
 fs.enablePersistence({synchronizeTabs: true});
 
+let navbar = document.getElementById("navcol");
+document.getElementsByName("navbarFadeIn")[0].addEventListener("click", () => {
+    navbar.style.display = "block";
+    setTimeout(() => navbar.style.opacity = 1, 10);
+});
+document.getElementsByName("navbarFadeOut")[0].addEventListener("click", () => {
+    navbar.style.opacity = 0;
+    setTimeout(() => navbar.style.display = "none", 600)
+});
+
+document.getElementById("logout").addEventListener("click", () => {
+    let userId = sessionStorage.getItem("onesignal-user-id");
+    let uid = sessionStorage.getItem("firebase-uid");
+    fs.collection("users").doc(uid).update({
+        onesignal_devices: firebase.firestore.FieldValue.arrayRemove(userId)
+    }).then(() => firebase.auth().signOut());
+});
+
 function pad(num, size) {
     var s = "00000" + num;
     return s.substr(s.length-size);
