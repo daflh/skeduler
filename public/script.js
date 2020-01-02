@@ -144,18 +144,18 @@ function modal(header, input, options, doneCallback = ()=>{}){
                 <h2 class="mb-4">${header}</h2>
                 <form id="modal-form" class="form-group mb-4">
                     <br/>
-                    ${input.includes("title")?`<input class="form-control" type="text" name="modalTitle" value="${options.titleVal||''}" placeholder="${options.titlePl||''}" required><br/>`:``}
-                    ${input.includes("link")?`<input class="form-control" type="text" name="modalLink" value="${options.linkVal||''}" placeholder="${options.linkPl||''}">`:``}
-                    ${input.includes("date")?`<input class="form-control" type="datetime-local" name="modalDate" value="${options.dateVal||''}" min="${utcDate((time()+60)*1000)}" required><br/>`:``}
-                    ${input.includes("repeat")?`
-                    <select class="form-control rounded-0" name="modalRepeat">
-                        <option ${options.repeatVal==='unrepeat'?'selected':''} value="unrepeat">Does not repeat</option>
-                        <option ${options.repeatVal==='daily'?'selected':''} value="daily">Daily</option>
-                        <option ${options.repeatVal==='weekly'?'selected':''} value="weekly">Weekly</option>
-                        <option ${options.repeatVal==='monthly'?'selected':''} value="monthly">Monthly</option>
-                        <option ${options.repeatVal==='yearly'?'selected':''} value="yearly">Yearly</option>
+                    ${input.includes("title") ? `<input class="form-control" type="text" name="title" value="${options.titleVal||''}" placeholder="${options.titlePl||''}" required><br/>`:``}
+                    ${input.includes("link") ? `<input class="form-control" type="text" name="link" value="${options.linkVal||''}" placeholder="${options.linkPl||''}">`:``}
+                    ${input.includes("date") ? `<input class="form-control" type="datetime-local" name="date" value="${options.dateVal||''}" min="${utcDate((time()+60)*1000)}" required><br/>`:``}
+                    ${input.includes("repeat") ? `
+                    <select class="form-control rounded-0" name="repeat">
+                        <option ${options.repeatVal === 'unrepeat' ? 'selected' : ''} value="unrepeat">Does not repeat</option>
+                        <option ${options.repeatVal === 'daily' ? 'selected' : ''} value="daily">Daily</option>
+                        <option ${options.repeatVal === 'weekly' ? 'selected' : ''} value="weekly">Weekly</option>
+                        <option ${options.repeatVal === 'monthly' ? 'selected' : ''} value="monthly">Monthly</option>
+                        <option ${options.repeatVal === 'yearly' ? 'selected' : ''} value="yearly">Yearly</option>
                     </select>
-                    `:``}
+                    ` : ``}
                 </form>
                 <div class="text-right">
                     <button class="btn btn-danger cancel">Cancel</button>
@@ -172,18 +172,19 @@ function modal(header, input, options, doneCallback = ()=>{}){
     mdl.style.display = "block";
     setTimeout(() => mdl.style.opacity = 1, 10);
 
+    let modalForm = document.forms["modal-form"]; 
     let closeModal = () => {
         mdl.style.opacity = 0;
         setTimeout(() => mdl.parentNode.removeChild(mdl), 600);
     }
 
-    document.getElementById("modal-form").addEventListener("submit", evt => {
+    modalForm.addEventListener("submit", evt => {
         evt.preventDefault();
         doneCallback({
-            title: input.includes("title") ? mdl.querySelector("input[name=modalTitle]").value : "",
-            link: input.includes("link") ? mdl.querySelector("input[name=modalLink]").value : "",
-            date: input.includes("date") ? mdl.querySelector("input[name=modalDate]").value : "",
-            repeat: input.includes("repeat") ? mdl.querySelector("select[name=modalRepeat]").value : ""
+            title: input.includes("title") ? modalForm.elements.title.value : "",
+            link: input.includes("link") ? modalForm.elements.link.value : "",
+            date: input.includes("date") ? modalForm.elements.date.value : "",
+            repeat: input.includes("repeat") ? modalForm.elements.repeat.value : ""
         });
         closeModal();
     });
@@ -212,7 +213,7 @@ function notif(text = "", desc, type = "", time = 5000, undoCallback){
                     <div class="col mt-2">
                         <p class="small m-0">${desc}</p>
                     </div>
-                </div>`:``}
+                </div>` : ``}
             </div>
         </div>
     `;
@@ -241,7 +242,7 @@ function notif(text = "", desc, type = "", time = 5000, undoCallback){
 
     if(desc) ntf.getElementsByClassName("expand")[0].addEventListener("click", () => {
         let desc = ntf.getElementsByClassName("desc")[0];
-        let img = ntf.querySelector(".expand img");
+        let img = ntf.getElementsByClassName("expand")[0].firstElementChild;
         if(getComputedStyle(desc).display == "none"){
             desc.style.display = "block";
             setTimeout(() => desc.style.height = "100%", 10);

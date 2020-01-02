@@ -142,7 +142,7 @@
 
             document.addEventListener("click", function(evt){
                 let t = evt.target;
-                let id = t.parentNode.parentNode.getAttribute("data-id");
+                let id = t.parentNode.parentNode.dataset.id;
                 let goal = JSON.parse(sessionStorage.goalsData)[id];
 
                 if (t && t.classList.contains("edit")) {
@@ -166,7 +166,7 @@
                     });
                     
                 } else if (t && t.classList.contains("up") || t.classList.contains("down")) {
-                    let idZ = t.classList.contains("up") ? t.parentNode.parentNode.previousElementSibling.getAttribute("data-id") : t.parentNode.parentNode.nextElementSibling.getAttribute("data-id");
+                    let idZ = t.classList.contains("up") ? t.parentNode.parentNode.previousElementSibling.dataset.id : t.parentNode.parentNode.nextElementSibling.dataset.id;
                     let goalZ = JSON.parse(sessionStorage.goalsData)[idZ];
                     goalsRef.doc(id).update({ sort: goalZ.sort });
                     goalsRef.doc(idZ).update({ sort: goal.sort });

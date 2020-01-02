@@ -265,7 +265,7 @@
 
             document.addEventListener("click", function(evt){
                 let t = evt.target;
-                let id = t.parentNode.parentNode.getAttribute("data-id");
+                let id = t.parentNode.parentNode.dataset.id;
                 let event = JSON.parse(sessionStorage.eventsData)[id];
 
                 if (t && t.classList.contains("edit")) {
