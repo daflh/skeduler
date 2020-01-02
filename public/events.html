@@ -264,11 +264,14 @@
             });
 
             document.addEventListener("click", function(evt){
-                let t = evt.target;
-                let event = JSON.parse(sessionStorage.eventsData)[id];
+                let id, event, t = evt.target;
+
+                if(t.parentNode.parentNode != null && t.parentNode.parentNode.hasAttribute("data-id")){
+                    id = t.parentNode.parentNode.dataset.id;
+                    event = JSON.parse(sessionStorage.eventsData)[id];
+                }
 
                 if (t && t.classList.contains("edit")) {
-                    let id = t.parentNode.parentNode.dataset.id;
                     modal("Edit event", ["title","date","repeat"], {
                         titlePl: "Event Name",
                         titleVal: event.name,
@@ -288,7 +291,6 @@
                     });
 
                 } else if (t && t.classList.contains("delete")) {
-                    let id = t.parentNode.parentNode.dataset.id;
                     let expire = new Date(time()*1000+11000);
                     document.cookie="events_"+id+"="+JSON.stringify(event)+";expires="+expire.toUTCString()+";path=/";
                     eventsRef.doc(id).delete().then(function(){
@@ -303,7 +305,6 @@
                     });
 
                 } else if (t && t.classList.contains("snooze")) {
-                    let id = t.parentNode.parentNode.dataset.id;
                     modal("Snooze event", ["date"], {
                         dateVal: utcDate(event.date.second*1000)
                     }, args => {
@@ -313,7 +314,6 @@
                     });
 
                 } else if (t && t.classList.contains("done")) {
-                    let id = t.parentNode.parentNode.dataset.id;
                     afterDone(id,event);
                 }
             });
