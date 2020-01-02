@@ -142,10 +142,10 @@
 
             document.addEventListener("click", function(evt){
                 let t = evt.target;
-                let id = t.parentNode.parentNode.dataset.id;
                 let goal = JSON.parse(sessionStorage.goalsData)[id];
 
                 if (t && t.classList.contains("edit")) {
+                    let id = t.parentNode.parentNode.dataset.id;
                     modal("Edit goal", ["title","link"], {
                         titlePl: "Goal Name",
                         titleVal: goal.name,
@@ -157,6 +157,7 @@
                     }));
 
                 } else if (t && t.classList.contains("delete")) {
+                    let id = t.parentNode.parentNode.dataset.id;
                     let expire = new Date(time()*1000+7000);
                     document.cookie="goals_"+id+"="+JSON.stringify(goal)+";expires="+expire.toUTCString()+";path=/";
                     goalsRef.doc(id).delete().then(function(){
@@ -166,6 +167,7 @@
                     });
                     
                 } else if (t && t.classList.contains("up") || t.classList.contains("down")) {
+                    let id = t.parentNode.parentNode.dataset.id;
                     let idZ = t.classList.contains("up") ? t.parentNode.parentNode.previousElementSibling.dataset.id : t.parentNode.parentNode.nextElementSibling.dataset.id;
                     let goalZ = JSON.parse(sessionStorage.goalsData)[idZ];
                     goalsRef.doc(id).update({ sort: goalZ.sort });
