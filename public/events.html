@@ -263,11 +263,13 @@
             });
 
             document.addEventListener("click", function(evt){
-                let id, event, t = evt.target;
+                let id, event;
+                let eventsDt = JSON.parse(sessionStorage.eventsData);
+                let t = evt.target;
 
                 if(t.parentNode.parentNode != null && t.parentNode.parentNode.hasAttribute("data-id")){
                     id = t.parentNode.parentNode.dataset.id;
-                    event = JSON.parse(sessionStorage.eventsData)[id];
+                    event = eventsDt[id];
                 }
 
                 if (t && t.classList.contains("edit")) {
