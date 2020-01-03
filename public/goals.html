@@ -112,7 +112,6 @@
             goalsRef.orderBy('sort').onSnapshot(function(data){
                 var elem = '';
                 var cachingData = {};
-                var goals = document.getElementById("goals");
                 
                 if(!data.empty){
                     elem += "<ol id='goals' class='list-group list-group-flush'>";
@@ -136,7 +135,7 @@
                     elem += "<div id='goals' class='small my-3 mx-4 text-center'>No goal has been added yet</div>";
                 }
                 
-                goals.outerHTML = elem;
+                document.getElementById("goals").outerHTML = elem;
                 sessionStorage.goalsData = JSON.stringify(cachingData);
             });
 

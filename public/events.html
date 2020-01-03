@@ -216,7 +216,6 @@
                 eventsRef.orderBy('date').onSnapshot(function(data){
                     var elem = '';
                     var cachingData = {};
-                    var events = document.getElementById("events");
 
                     if(!data.empty){
                         elem += `
@@ -258,7 +257,7 @@
                         elem += "<div id='events' class='small my-3 mx-4 text-center'>No event has been added yet</div>";
                     }
                     
-                    events.outerHTML = elem;
+                    document.getElementById("events").outerHTML = elem;
                     sessionStorage.eventsData = JSON.stringify(cachingData);
                 });
             });
@@ -296,9 +295,9 @@
                     eventsRef.doc(id).delete().then(function(){
                         if(event.hasOwnProperty("notif_id")) cancelNotif(event.notif_id);
                         notif("Event successfully deleted!", undefined, "info", undefined, function(){
-                            let events = JSON.parse(getCookie("events_"+id));
-                            events.date = firebase.firestore.Timestamp.fromMillis(events.date.seconds*1000);
-                            eventsRef.doc(id).set(events).then(function(){
+                            let eventCk = JSON.parse(getCookie("events_"+id));
+                            eventCk.date = firebase.firestore.Timestamp.fromMillis(eventCk.date.seconds*1000);
+                            eventsRef.doc(id).set(eventCk).then(function(){
                                 createNotif(id,event.name,Number(event.date.seconds))
                             });
                         });
