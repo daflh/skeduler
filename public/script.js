@@ -149,8 +149,9 @@ let modal = (header, input, options, doneCallback = () => {}) => {
 
 let notif = (text = "", desc, type = "", time = 5000, undoCallback) => {
 
+    let identifierNum = Math.floor(100000 + Math.random() * 900000);
     let element = `
-        <div id="notif" class="notif-overlay fade hide opacity-0">
+        <div id="notif" class="notif-overlay fade hide opacity-0" data-identifier="${identifierNum}">
             <div class="notif-box">
                 <div class="row">
                     <div class="text col align-self-center small">
@@ -179,15 +180,16 @@ let notif = (text = "", desc, type = "", time = 5000, undoCallback) => {
     ntf.style.display = "block";
     setTimeout(() => ntf.style.opacity = 1, 10);
 
-    let closeNotif = () => {
+    let closeNotif = idNum => {
+        ntf = document.getElementById("notif");
+        if(idNum !== undefined && ntf.dataset.identifier != idNum) return;
         ntf.style.opacity = 0;
         setTimeout(() => {
-            ntf = document.getElementById("notif");
             if(typeof ntf != 'undefined' && ntf != null) ntf.parentNode.removeChild(ntf)
         }, 600);
     }
 
-    if(time !== 0) setTimeout(closeNotif, time);
+    if(time !== 0) setTimeout(() => closeNotif(identifierNum), time);
 
     if(undoCallback) ntf.getElementsByClassName("undo")[0].addEventListener("click", () => {
         undoCallback();
@@ -208,7 +210,7 @@ let notif = (text = "", desc, type = "", time = 5000, undoCallback) => {
         }
     });
 
-    ntf.getElementsByClassName("shut")[0].addEventListener("click", closeNotif);
+    ntf.getElementsByClassName("shut")[0].addEventListener("click", () => closeNotif());
 
 }
 
