@@ -214,8 +214,8 @@
                     if (Math.floor(dt.date.seconds) <= time(utcDate())-60*60*24) afterDone(raw.id,dt);
                 });
                 eventsRef.orderBy('date').onSnapshot(function(data){
-                    var elem = '';
-                    var cachingData = {};
+                    let elem = '';
+                    let cachingData = {};
 
                     if(!data.empty){
                         elem += `

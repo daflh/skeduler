@@ -110,8 +110,8 @@
             });
 
             goalsRef.orderBy('sort').onSnapshot(function(data){
-                var elem = '';
-                var cachingData = {};
+                let elem = '';
+                let cachingData = {};
                 
                 if(!data.empty){
                     elem += "<ol id='goals' class='list-group list-group-flush'>";

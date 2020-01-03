@@ -22,16 +22,16 @@ let twoDigit = num => ("0" + num).substr(-2);
 let time = data => Math.floor((data === undefined || !data ? new Date() : new Date(data)).getTime()/1000);
 
 let utcDate = data => {
-    var dt = (data === undefined || !data) ? new Date() : new Date(/^\d+$/.test(data) || typeof data==="number" ? Number(data) : data);
-    var theDate = dt.getFullYear()+'-'+twoDigit((dt.getMonth()+1),2)+'-'+twoDigit(dt.getDate(),2);
-    var theTime = twoDigit(dt.getHours(),2) + ":" + twoDigit(dt.getMinutes(),2);
+    let dt = (data === undefined || !data) ? new Date() : new Date(/^\d+$/.test(data) || typeof data==="number" ? Number(data) : data);
+    let theDate = dt.getFullYear()+'-'+twoDigit((dt.getMonth()+1),2)+'-'+twoDigit(dt.getDate(),2);
+    let theTime = twoDigit(dt.getHours(),2) + ":" + twoDigit(dt.getMinutes(),2);
     return theDate+'T'+theTime;
 }
 
 let readableDate = data => {
     const dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
     const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-    var dt = new Date(data);
+    let dt = new Date(data);
     if (time(dt) < time(utcDate())) {
         let condition = {'day':24*60*60,'hour':60*60,'minute':60,'second':1};
         let diff = time() - time(dt);
@@ -92,7 +92,7 @@ let repeatTime = (dateTimestamp, repeatEvery) => {
 
 let modal = (header, input, options, doneCallback = () => {}) => {
 
-    var element = `
+    let element = `
         <div id="modal" class="modal-overlay fade hide opacity-0">
             <div class="modal-box">
                 <h2 class="mb-4">${header}</h2>
@@ -149,7 +149,7 @@ let modal = (header, input, options, doneCallback = () => {}) => {
 
 let notif = (text = "", desc, type = "", time = 5000, undoCallback) => {
 
-    var element = `
+    let element = `
         <div id="notif" class="notif-overlay fade hide opacity-0">
             <div class="notif-box">
                 <div class="row">
