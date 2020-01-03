@@ -23,11 +23,9 @@ String.prototype.extractNumber = function(){
 }
 
 String.prototype.toUrl = function(){
-    if(!this.includes(".")){
-        throw new Error("Invalid url");
-        return;
-    }
-    return !this.match(/^[a-zA-Z]+:\/\//) ? ('http://' + this) : ('' + this);
+    let str = this;
+    if(!str.includes(".")) str += ".com";
+    return !str.match(/^[a-zA-Z]+:\/\//) ? ('http://' + str) : ('' + str);
 }
 
 let twoDigit = num => ("0" + num).substr(-2);
