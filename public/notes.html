@@ -62,9 +62,9 @@
                     <div id="notes-wrapper" class="mt-4">
                         <div id="newNote">
                             <form id="newNoteForm" class="form-group textbox mx-auto" name="note-form">
-                                <textarea class="form-control py-3 px-4" placeholder="Title
+                                <textarea class="form-control py-3 px-4" name="newNoteTextarea" placeholder="Title
 Write new note here ..." rows="2" spellcheck="false" required></textarea>
-                                <div class="save pointer hide opacity-0">Close</div>
+                                <div class="save pointer slide hide height-0">Close</div>
                             </form>
                         </div>
                         <div id="notes" class='small mt-3 py-3 px-4 bg-white text-center'>Loading data ...</div>
@@ -73,7 +73,6 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
             </div>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
@@ -87,36 +86,44 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
             
             let notesRef = fs.collection("users").doc(user.uid).collection('notes');
             let osgl = window.OneSignal || [];
-            let newnote = document.getElementById("newNoteForm");
-            let ta = newnote.getElementsByTagName("textarea")[0];
-            let save = newnote.getElementsByClassName("save")[0];
+            let newnote = document.forms.newNoteForm;
+            let ta = newnote.elements.newNoteTextarea;
+            let save = newnote.lastElementChild;
 
             sessionStorage.setItem("firebase-uid", user.uid);
 
-            ta.keyup(function(){
-                if($(this).val()!=="") save.slideDown();
-                else save.slideUp();
+            ta.addEventListener("keyup", function(){
+                if(this.value !== "") {
+                    save.style.display = "block";
+                    setTimeout(() => save.style.height = "100%", 10);
+                } else {
+                    save.style.height = "0";
+                    setTimeout(() => save.style.display = "none", 600);
+                }
             });
 
             autosize(ta);
 
-            save.click(function(){
-                if(!!ta.val().replace(/\s/g, '').length){
+            save.addEventListener("click", () => {
+                if(ta.value.replace(/\s/g, '').length > 0){
                     notesRef.add({
-                        data: ta.val(),
+                        data: ta.value,
                         pin: false
                     });
                 }
-                ta.val("");
+                ta.value = "";
                 autosize.update(ta);
-                save.slideUp();
+                save.style.height = "0";
+                setTimeout(() => save.style.display = "none", 600);
             });
 
             osgl.push(()=> {
                 osgl.init({ appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983" });
                 osgl.getNotificationPermission(permission => {
                     if (permission === "granted") osgl.getUserId(userId => {
-                        fs.collection("users").doc(user.uid).set({ onesignal_devices: firebase.firestore.FieldValue.arrayUnion(userId) }, {merge: true});
+                        fs.collection("users").doc(user.uid).set({
+                            onesignal_devices: firebase.firestore.FieldValue.arrayUnion(userId)
+                        }, {merge: true});
                         sessionStorage.setItem("onesignal-user-id", userId);
                     });
                 });
@@ -125,6 +132,7 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
             notesRef.orderBy('pin','desc').onSnapshot(function(data){
                 var elem = '';
                 var cachingData = {};
+
                 if(!data.empty){
                     var noteTitle, noteData;
                     elem += "<ul id='notes' class='list-group list-group-flush'>";
@@ -140,7 +148,7 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                                 elem += "</span>";
                             elem += "</div>";
                             elem += "<div class='snippet mt-2'>";
-                                elem += snippet.length<150?snippet:snippet.substring(0,150)+" ...";
+                                elem += snippet.length < 150 ? snippet : snippet.substring(0,150) + " ...";
                             elem += "</div>";
                         elem += "</li>";
                         cachingData[v.id] = d;
@@ -149,49 +157,68 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                 } else {
                     elem += "<div id='notes' class='small mt-3 py-3 px-4 bg-white text-center'>You don't have a note</div>";
                 }
-                $('#notes').replaceWith(elem);
-                $("#notes").data("data", cachingData);
+
+                document.getElementById("notes").outerHTML = elem;
+                sessionStorage.notesData = JSON.stringify(cachingData);
             });
 
-            $(document).on("click","#notes li",function(e){
-                if(!(e.target.classList.contains("delete") || e.target.classList.contains("pin"))){
-                    var dtid = this.getAttribute("data-id");
-                    var val = $("#notes").data("data")[dtid].data;
-                    $(`
-                        <div id="note-edit" class="note-edit-overlay">
-                            <div class="note-edit-box">
-                                <textarea class="form-control p-4" placeholder="Title\nEdit your note ..." spellcheck="false" required>${val}</textarea>
-                                <div class="edit-close pointer py-3 px-4 text-right">Close</div>
-                            </div>
-                        </div>
-                    `).hide().appendTo("body").fadeIn();
-                    Array.prototype.forEach.call($("#note-edit textarea"), elem => elem.placeholder = elem.placeholder.replace(/\\n/g, '\n'));
-                    autosize($("#note-edit textarea"));
-                    $("#note-edit .edit-close").click(function(){
-                        if(!!$("#note-edit textarea").val().replace(/\s/g, '').length){
-                            notesRef.doc(dtid).update({ data: $("#note-edit textarea").val() });
-                        }
-                        $("#note-edit").fadeOut("fast", function(){
-                            $(this).remove();
+            document.addEventListener("click", function(evt){
+                let id, note;
+                let notesDt = JSON.parse(sessionStorage.notesData);
+                let t = evt.target;
+
+                if(t && evt.path.some(el => el.id === "notes")){
+
+                    if(t.parentNode.parentNode.parentNode != null && t.parentNode.parentNode.parentNode.hasAttribute("data-id")){
+                        id = t.parentNode.parentNode.parentNode.dataset.id;
+                        note = notesDt[id];
+                    }
+
+                    if (t.classList.contains("pin")) {
+                        notesRef.doc(id).update({ pin: !note.pin });
+
+                    } else if (t.classList.contains("delete")) {
+                        var expire = new Date(time()*1000+7000);
+                        document.cookie="notes_"+id+"="+JSON.stringify(note)+";expires="+expire.toUTCString()+";path=/";
+                        notesRef.doc(id).delete().then(function(){
+                            notif("Notes successfully deleted!", undefined, "info", undefined, function(){
+                                notesRef.doc(id).set(JSON.parse(getCookie("notes_"+id)))
+                            });
                         });
-                    });
+
+                    } else if (t.id !== "notes") {
+                        id = evt.path.find(el => el.hasAttribute("data-id")).dataset.id;
+                        var val = notesDt[id].data;
+                        let editBoxElement = `
+                            <div id="note-edit" class="note-edit-overlay fade hide opacity-0">
+                                <div class="note-edit-box">
+                                    <textarea class="form-control p-4" placeholder="Title\nEdit your note ..." spellcheck="false" required>${val}</textarea>
+                                    <div class="edit-close pointer py-3 px-4 text-right">Close</div>
+                                </div>
+                            </div>
+                        `;
+
+                        let editBox;
+
+                        document.body.insertAdjacentHTML("beforeend", editBoxElement);
+                        editBox = document.getElementById("note-edit");
+                        editBox.style.display = "block";
+                        setTimeout(() => editBox.style.opacity = 1, 10);
+
+                        let ta = editBox.firstElementChild.firstElementChild;
+
+                        Array.prototype.forEach.call(ta, elem => elem.placeholder = elem.placeholder.replace(/\\n/g, '\n'));
+
+                        autosize(ta);
+                        
+                        editBox.getElementsByClassName("edit-close")[0].addEventListener("click", () => {
+                            if(!!ta.value.replace(/\s/g, '').length) notesRef.doc(id).update({ data: ta.value });
+                            editBox.style.opacity = 0;
+                            setTimeout(() => editBox.parentNode.removeChild(editBox), 600);
+                        });
+
+                    }
                 }
-            });
-
-            $(document).on("click", ".pin", function(){
-                var id = $(this).parents("li").attr("data-id");
-                notesRef.doc(id).update({ pin: !$("#notes").data("data")[id].pin });
-            });
-
-            $(document).on("click", ".delete", function(){
-                var id = $(this).parents("li").attr("data-id");
-                var expire = new Date(time()*1000+7000);
-                document.cookie="notes_"+id+"="+JSON.stringify($("#notes").data("data")[id])+";expires="+expire.toUTCString()+";path=/";
-                notesRef.doc(id).delete().then(function(){
-                    notif("Notes successfully deleted!", undefined, "info", undefined, function(){
-                        notesRef.doc(id).set(JSON.parse(getCookie("notes_"+id)))
-                    });
-                });
             });
 
         } else {
