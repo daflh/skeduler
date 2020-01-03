@@ -13,9 +13,22 @@ const fs = firebase.firestore();
 fs.settings({cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED});
 fs.enablePersistence({synchronizeTabs: true});
 
-let capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
+String.prototype.capitalize = function(onlyFirstWord = false) {
+    let cptlzer = word => word.charAt(0).toUpperCase() + word.slice(1);
+    return !onlyFirstWord ? this.split(" ").map(cptlzer).join(" ") : cptlzer(this);
+}
 
-let autoHttp = url => !url.match(/^[a-zA-Z]+:\/\//) ? 'http://' + url : url;
+String.prototype.extractNumber = function(){
+    return Number(this.match(/\d+/g).join(""));
+}
+
+String.prototype.toUrl = function(){
+    if(!this.includes(".")){
+        throw new Error("Invalid url");
+        return;
+    }
+    return !this.match(/^[a-zA-Z]+:\/\//) ? ('http://' + this) : ('' + this);
+}
 
 let twoDigit = num => ("0" + num).substr(-2);
 

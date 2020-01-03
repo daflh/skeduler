@@ -119,7 +119,7 @@
                         let d = v.data();
                         elem += "<li class='list-group-item' data-id='"+v.id+"'>";
                             elem += "<span>";
-                                elem += d.link !== "" ? "<a href='"+autoHttp(d.link)+"' target='_blank'>"+d.name+"</a>" : d.name;
+                                elem += d.link !== "" ? "<a href='"+d.link.toUrl()+"' target='_blank'>"+d.name+"</a>" : d.name;
                             elem += "</span>";
                             elem += "<span class='action float-right pl-2'>";
                                 elem += "<img class='up' src='img/svg/arrow-up.svg'>";
