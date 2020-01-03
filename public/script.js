@@ -13,54 +13,22 @@ const fs = firebase.firestore();
 fs.settings({cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED});
 fs.enablePersistence({synchronizeTabs: true});
 
-let navbar = document.getElementById("navcol");
-document.getElementsByName("navbarFadeIn")[0].addEventListener("click", () => {
-    navbar.style.display = "block";
-    setTimeout(() => navbar.style.opacity = 1, 10);
-});
-document.getElementsByName("navbarFadeOut")[0].addEventListener("click", () => {
-    navbar.style.opacity = 0;
-    setTimeout(() => navbar.style.display = "none", 600);
-});
+let capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
 
-document.getElementById("logout").addEventListener("click", () => {
-    let userId = sessionStorage.getItem("onesignal-user-id");
-    let uid = sessionStorage.getItem("firebase-uid");
-    fs.collection("users").doc(uid).update({
-        onesignal_devices: firebase.firestore.FieldValue.arrayRemove(userId)
-    }).then(() => firebase.auth().signOut());
-});
+let autoHttp = url => !url.match(/^[a-zA-Z]+:\/\//) ? 'http://' + url : url;
 
-function pad(num, size) {
-    var s = "00000" + num;
-    return s.substr(s.length-size);
-}
+let twoDigit = num => ("0" + num).substr(-2);
 
-function capitalize(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
+let time = data => Math.floor((data === undefined || !data ? new Date() : new Date(data)).getTime()/1000);
 
-function autoHttp(url){
-    if(!url.match(/^[a-zA-Z]+:\/\//)){
-        return 'http://' + url;
-    } else {
-        return url;
-    }
-}
-
-function time(data){
-    var dt = (data === undefined || !data) ? new Date() : new Date(data);
-    return Math.floor(dt.getTime()/1000);
-}
-
-function utcDate(data){
+let utcDate = data => {
     var dt = (data === undefined || !data) ? new Date() : new Date(/^\d+$/.test(data) || typeof data==="number" ? Number(data) : data);
-    var theDate = dt.getFullYear()+'-'+pad((dt.getMonth()+1),2)+'-'+pad(dt.getDate(),2);
-    var theTime = pad(dt.getHours(),2) + ":" + pad(dt.getMinutes(),2);
+    var theDate = dt.getFullYear()+'-'+twoDigit((dt.getMonth()+1),2)+'-'+twoDigit(dt.getDate(),2);
+    var theTime = twoDigit(dt.getHours(),2) + ":" + twoDigit(dt.getMinutes(),2);
     return theDate+'T'+theTime;
 }
 
-function readableDate(data){
+let readableDate = data => {
     const dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
     const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     var dt = new Date(data);
@@ -82,7 +50,7 @@ function readableDate(data){
     } else {
         let daynm = dayNames[dt.getDay()];
         let datmon = parseInt(dt.getDate(),10)+" "+monthNames[Number(parseInt(dt.getMonth(),10))];
-        let minsec = pad(dt.getHours(),2)+":"+pad(dt.getMinutes(),2);
+        let minsec = twoDigit(dt.getHours(),2)+":"+twoDigit(dt.getMinutes(),2);
         if (new Date().getFullYear() === dt.getFullYear()) {
             let sameMonth = new Date().getMonth() === dt.getMonth();
             let tomo = new Date();
@@ -100,7 +68,7 @@ function readableDate(data){
     }
 }
 
-function getCookie(cname) {
+let getCookie = cname => {
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
     var ca = decodedCookie.split(';');
@@ -114,7 +82,7 @@ function getCookie(cname) {
     return "";
 }
 
-function repeatTime(dateTimestamp,repeatEvery) {
+let repeatTime = (dateTimestamp, repeatEvery) => {
     dateTimestamp = Number(dateTimestamp);
     let dt = dateTimestamp;
     let objectdt = new Date(dateTimestamp);
@@ -136,7 +104,7 @@ function repeatTime(dateTimestamp,repeatEvery) {
     return dt;
 }
 
-function modal(header, input, options, doneCallback = ()=>{}){
+let modal = (header, input, options, doneCallback = () => {}) => {
 
     var element = `
         <div id="modal" class="modal-overlay fade hide opacity-0">
@@ -193,7 +161,7 @@ function modal(header, input, options, doneCallback = ()=>{}){
 
 }
 
-function notif(text = "", desc, type = "", time = 5000, undoCallback){
+let notif = (text = "", desc, type = "", time = 5000, undoCallback) => {
 
     var element = `
         <div id="notif" class="notif-overlay fade hide opacity-0">
@@ -257,3 +225,23 @@ function notif(text = "", desc, type = "", time = 5000, undoCallback){
     ntf.getElementsByClassName("shut")[0].addEventListener("click", closeNotif);
 
 }
+
+let navbar = document.getElementById("navcol");
+
+document.getElementsByName("navbarFadeIn")[0].addEventListener("click", () => {
+    navbar.style.display = "block";
+    setTimeout(() => navbar.style.opacity = 1, 10);
+});
+
+document.getElementsByName("navbarFadeOut")[0].addEventListener("click", () => {
+    navbar.style.opacity = 0;
+    setTimeout(() => navbar.style.display = "none", 600);
+});
+
+document.getElementById("logout").addEventListener("click", () => {
+    let userId = sessionStorage.getItem("onesignal-user-id");
+    let uid = sessionStorage.getItem("firebase-uid");
+    fs.collection("users").doc(uid).update({
+        onesignal_devices: firebase.firestore.FieldValue.arrayRemove(userId)
+    }).then(() => firebase.auth().signOut());
+});
