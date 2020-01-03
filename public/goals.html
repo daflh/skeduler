@@ -161,11 +161,10 @@
                     }));
 
                 } else if (t && t.classList.contains("delete")) {
-                    let expire = new Date(time()*1000+7000);
-                    document.cookie="goals_"+id+"="+JSON.stringify(goal)+";expires="+expire.toUTCString()+";path=/";
-                    goalsRef.doc(id).delete().then(function(){
-                        notif("Goal successfully deleted!", undefined, "info", undefined, function(){
-                            goalsRef.doc(id).set(JSON.parse(getCookie("goals_"+id)))
+                    sessionStorage.setItem("deletedGoal_"+id, JSON.stringify(goal));
+                    goalsRef.doc(id).delete().then(() => {
+                        notif("Goal successfully deleted!", undefined, "info", undefined, () => {
+                            goalsRef.doc(id).set(JSON.parse(sessionStorage["deletedGoal_"+id]));
                         });
                     });
                     

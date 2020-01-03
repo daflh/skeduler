@@ -178,11 +178,10 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                         notesRef.doc(id).update({ pin: !note.pin });
 
                     } else if (t.classList.contains("delete")) {
-                        var expire = new Date(time()*1000+7000);
-                        document.cookie="notes_"+id+"="+JSON.stringify(note)+";expires="+expire.toUTCString()+";path=/";
-                        notesRef.doc(id).delete().then(function(){
-                            notif("Notes successfully deleted!", undefined, "info", undefined, function(){
-                                notesRef.doc(id).set(JSON.parse(getCookie("notes_"+id)))
+                        sessionStorage.setItem("deletedNote_"+id, JSON.stringify(note));
+                        notesRef.doc(id).delete().then(() => {
+                            notif("Notes successfully deleted!", undefined, "info", undefined, () => {
+                                notesRef.doc(id).set(JSON.parse(sessionStorage["deletedNote_"+id]));
                             });
                         });
 

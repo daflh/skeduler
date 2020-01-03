@@ -292,16 +292,13 @@
                     });
 
                 } else if (t && t.classList.contains("delete")) {
-                    let expire = new Date(time()*1000+11000);
-                    document.cookie="events_"+id+"="+JSON.stringify(event)+";expires="+expire.toUTCString()+";path=/";
-                    eventsRef.doc(id).delete().then(function(){
+                    sessionStorage.setItem("deletedEvent_"+id, JSON.stringify(event));
+                    eventsRef.doc(id).delete().then(() => {
                         if(event.hasOwnProperty("notif_id")) cancelNotif(event.notif_id);
-                        notif("Event successfully deleted!", undefined, "info", undefined, function(){
-                            let eventCk = JSON.parse(getCookie("events_"+id));
-                            eventCk.date = firebase.firestore.Timestamp.fromMillis(eventCk.date.seconds*1000);
-                            eventsRef.doc(id).set(eventCk).then(function(){
-                                createNotif(id,event.name,Number(event.date.seconds))
-                            });
+                        notif("Event successfully deleted!", undefined, "info", undefined, () => {
+                            let backup = JSON.parse(sessionStorage["deletedEvent_"+id]);
+                            backup.date = firebase.firestore.Timestamp.fromMillis(backup.date.seconds*1000);
+                            eventsRef.doc(id).set(backup).then(() => createNotif(id,event.name,Number(event.date.seconds)));
                         });
                     });
 
