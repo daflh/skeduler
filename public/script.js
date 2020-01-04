@@ -101,6 +101,28 @@ let repeatTime = (dateTimestamp, repeatEvery) => {
     return dt;
 }
 
+let textareaHeightAuto = elem => {
+    let resize = () => {
+        let offset = elem.offsetHeight - elem.clientHeight;
+        elem.style.height = 'auto';
+        elem.style.height = (elem.scrollHeight + offset) + 'px';
+    }
+    
+    elem.addEventListener('input', resize);
+    elem.addEventListener('change', resize);
+    elem.addEventListener('cut', () => setTimeout(resize));
+    elem.addEventListener('paste', () => setTimeout(resize));
+    elem.addEventListener('drop', () => setTimeout(resize));
+    elem.addEventListener('keydown', () => setTimeout(resize));
+    window.addEventListener('resize', () => setTimeout(resize));
+    resize();
+
+    let belowMaxHeight = elem.scrollHeight < parseFloat(getComputedStyle(elem).maxHeight);
+    elem.style.overflow = belowMaxHeight ? "hidden" : "visible";
+    elem.style.overflowWrap = "break-word";
+    elem.style.resize = "none";
+}
+
 let modal = (header, input, options, doneCallback = () => {}) => {
 
     let element = `

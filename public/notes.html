@@ -77,7 +77,6 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-firestore.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/autosize@4.0.2/dist/autosize.min.js"></script>
     <script src="./script.js"></script>
     <script>
 
@@ -102,7 +101,7 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                 }
             });
 
-            autosize(ta);
+            textareaHeightAuto(ta);
 
             save.addEventListener("click", () => {
                 if(ta.value.replace(/\s/g, '').length > 0){
@@ -112,7 +111,7 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                     });
                 }
                 ta.value = "";
-                autosize.update(ta);
+                textareaHeightAuto(ta);
                 save.style.height = "0";
                 setTimeout(() => save.style.display = "none", 600);
             });
@@ -208,7 +207,7 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
 
                         Array.prototype.forEach.call(ta, elem => elem.placeholder = elem.placeholder.replace(/\\n/g, '\n'));
 
-                        autosize(ta);
+                        textareaHeightAuto(ta);
                         
                         editBox.getElementsByClassName("edit-close")[0].addEventListener("click", () => {
                             if(!!ta.value.replace(/\s/g, '').length) notesRef.doc(id).update({ data: ta.value });

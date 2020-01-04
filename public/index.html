@@ -107,7 +107,6 @@
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-firestore.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/autosize@4.0.2/dist/autosize.min.js"></script>
     <script src="./script.js"></script>
     <script>
 
@@ -153,8 +152,7 @@
 
                 setTimeout(() => eta.style.opacity = 1, 10);
 
-                autosize(eta);
-                autosize.update(eta);
+                textareaHeightAuto(eta);
                 
                 userRef.collection(v).get().then(dt=>{
                     if(dt.empty){
@@ -171,19 +169,19 @@
                     eta.addEventListener('focus', function(){
                         this.select();
                     });
-                    autosize.update(eta);
+                    textareaHeightAuto(eta);
                 });
             });
 
             let ita = document.getElementById("importTextarea");
             let isub = document.getElementById("importSubmit");
 
+            textareaHeightAuto(ita);
+
             ita.addEventListener("keyup", function(){
-                this.value === "" ? isub.disabled = true : isub.disabled = false;
+                isub.disabled = this.value === "" ? true : false;
                 this.style.borderColor = null;
             });
-
-            autosize(ita);
 
             isub.addEventListener("click", function(){
                 try {
