@@ -95,6 +95,7 @@
                     timestamp = timestamp.toString().length === 10 ? timestamp*1000 : timestamp;
                     if(timestamp >= (time(utcDate())+60*60*23*30)*1000) throw new Error("Can't schedule notification for more than 30 days.");
                     
+                    let siteUrl = "https://coragon.web.app";
                     let doc = await fs.collection("users").doc(user.uid).get();
                     let response = await fetch('https://onesignal.com/api/v1/notifications', {
                         method: 'POST',
@@ -105,11 +106,11 @@
                         body: JSON.stringify({
                             app_id: appId,
                             include_player_ids: doc.data().onesignal_devices,
-                            url: "https://coragon.web.app/events",
+                            url: siteUrl + "/events",
                             ttl: 86000,
                             send_after: !!timestamp ? new Date(timestamp) : "",
-                            chrome_web_badge: "./img/icons/alpha.png",
-                            chrome_web_icon: "./img/icons/192x192.png",
+                            chrome_web_badge: siteUrl + "/img/icons/alpha.png",
+                            chrome_web_icon: siteUrl + "/img/icons/192x192.png",
                             headings: { "en": "Simpleaf Notification" },
                             contents: { "en": name+" is happening now!" }
                         })
