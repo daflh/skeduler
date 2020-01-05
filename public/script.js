@@ -99,9 +99,11 @@ let repeatTime = (dateTimestamp, repeatEvery) => {
 
 let textareaHeightAuto = elem => {
     let resize = () => {
+        let belowMaxHeight = elem.scrollHeight < parseFloat(getComputedStyle(elem).maxHeight);
         let offset = elem.offsetHeight - elem.clientHeight;
         elem.style.height = 'auto';
         elem.style.height = (elem.scrollHeight + offset) + 'px';
+        elem.style.overflow = belowMaxHeight ? "hidden" : "visible";
     }
     
     elem.addEventListener('input', resize);
@@ -113,8 +115,6 @@ let textareaHeightAuto = elem => {
     window.addEventListener('resize', () => setTimeout(resize));
     resize();
 
-    let belowMaxHeight = elem.scrollHeight < parseFloat(getComputedStyle(elem).maxHeight);
-    elem.style.overflow = belowMaxHeight ? "hidden" : "visible";
     elem.style.overflowWrap = "break-word";
     elem.style.resize = "none";
 }
