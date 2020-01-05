@@ -18,10 +18,6 @@ String.prototype.capitalize = function(onlyFirstWord = false) {
     return !onlyFirstWord ? this.split(" ").map(cptlzer).join(" ") : cptlzer(this);
 }
 
-String.prototype.extractNumber = function(){
-    return Number(this.match(/\d+/g).join(""));
-}
-
 String.prototype.toUrl = function(){
     let str = this;
     if(!str.includes(".")) str += ".com";
