@@ -82,14 +82,15 @@ img{max-width:100%}
 #goals-page ol li:nth-child(1):before{font-size:1.225rem}
 #goals-page ol li:nth-child(2):before{font-size:1.15rem}
 #goals-page ol li:nth-child(3):before{font-size:1.075rem}
-#notes-page .form-control{border-color:#f3f3f3!important;border-bottom:0;border-radius:0!important}
+#notes-page .form-control{border-color:#f3f3f3!important;border-radius:0!important}
 #notes-page .list-group li{background-color:#fff!important;margin-bottom:.75rem;cursor:pointer;padding:0;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
 #notes-page textarea,textarea:focus{outline:none!important;-webkit-appearance:none!important;box-shadow:none!important}
 #notes-page .textbox{position: relative}
 #notes-page #newNoteForm.textbox{width:70%}
 #notes-page .textbox textarea{color:#495057;outline:none;box-sizing:border-box;resize:none;max-height:250px;font-size:.9rem}
 #notes-page .textbox textarea:first-line{font-weight:700}
-#notes-page .textbox .save{padding:.75rem 1.5rem;font-size:.9rem;background-color:#fff;text-align:right;border:1px solid #f3f3f3}
+#notes-page .textbox .save{background-color:#fff;border: 1px solid #f3f3f3;border-width: 0 1px 0;}
+#notes-page .textbox .save span{display:block; padding:.75rem 1.5rem;font-size:.9rem;text-align:right}
 @media (max-width:575.98px) {
     .modal-overlay .modal-box{width:calc(100% - 25px)}
     .notif-overlay .notif-box{margin:0;width:100%}

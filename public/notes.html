@@ -64,7 +64,9 @@
                             <form id="newNoteForm" class="form-group textbox mx-auto" name="note-form">
                                 <textarea class="form-control py-3 px-4" name="newNoteTextarea" placeholder="Title
 Write new note here ..." rows="2" spellcheck="false" required></textarea>
-                                <div class="save pointer slide hide height-0">Close</div>
+                                <div class="save pointer slide hide height-0">
+                                    <span>Close</span>
+                                </div>
                             </form>
                         </div>
                         <div id="notes" class='small mt-3 py-3 px-4 bg-white text-center'>Loading data ...</div>
@@ -94,7 +96,7 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
             ta.addEventListener("keyup", function(){
                 if(this.value !== "") {
                     save.style.display = "block";
-                    setTimeout(() => save.style.height = "100%", 10);
+                    setTimeout(() => save.style.height = "45.6px");
                 } else {
                     save.style.height = "0";
                     setTimeout(() => save.style.display = "none", 600);

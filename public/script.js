@@ -180,7 +180,7 @@ let modal = (header, input, options, doneCallback = () => {}) => {
 
 }
 
-let notif = (text = "", desc, type = "", time = 5000, undoCallback) => {
+let notif = (text = "", description, type = "", time = 5000, undoCallback) => {
 
     let identifierNum = Math.floor(100000 + Math.random() * 900000);
     let element = `
@@ -193,13 +193,13 @@ let notif = (text = "", desc, type = "", time = 5000, undoCallback) => {
                     </div>
                     <div class="col col-auto align-self-center">
                         ${undoCallback ? `<span class="undo pointer"><img title="Undo" src='img/svg/undo.svg'></span>`:``}
-                        ${desc ? `<span class="expand pointer"><img title="See description" src='img/svg/arrow-down.svg'></span>`:``}
+                        ${description ? `<span class="expand pointer"><img title="See description" src='img/svg/arrow-down.svg'></span>`:``}
                         <span class="shut pointer"><img title="Close" src='img/svg/close.svg'></span>
                     </div>
                 </div>
-                ${desc ? `<div class="row desc slide hide height-0">
+                ${description ? `<div class="row desc slide">
                     <div class="col mt-2">
-                        <p class="small m-0">${desc}</p>
+                        <p class="small m-0">${description}</p>
                     </div>
                 </div>` : ``}
             </div>
@@ -229,19 +229,24 @@ let notif = (text = "", desc, type = "", time = 5000, undoCallback) => {
         closeNotif();
     });
 
-    if(desc) ntf.getElementsByClassName("expand")[0].addEventListener("click", () => {
+    if(description) {
         let desc = ntf.getElementsByClassName("desc")[0];
-        let img = ntf.getElementsByClassName("expand")[0].firstElementChild;
-        if(getComputedStyle(desc).display == "none"){
-            desc.style.display = "block";
-            setTimeout(() => desc.style.height = "100%", 10);
-            img.setAttribute("src", "img/svg/arrow-up.svg");
-        } else {
-            desc.style.height = "0";
-            setTimeout(() => desc.style.display = "none", 600);
-            img.setAttribute("src", "img/svg/arrow-down.svg");
-        }
-    });
+        let expand = ntf.getElementsByClassName("expand")[0];
+        let descHe = desc.offsetHeight;
+        desc.classList.add("hide", "height-0");
+        ntf.getElementsByClassName("expand")[0].addEventListener("click", () => {
+            let img = expand.firstElementChild;
+            if(getComputedStyle(desc).display == "none"){
+                desc.style.display = "block";
+                setTimeout(() => desc.style.height = descHe + "px");
+                img.setAttribute("src", "img/svg/arrow-up.svg");
+            } else {
+                desc.style.height = "0";
+                setTimeout(() => desc.style.display = "none", 600);
+                img.setAttribute("src", "img/svg/arrow-down.svg");
+            }
+        });
+    }
 
     ntf.getElementsByClassName("shut")[0].addEventListener("click", () => closeNotif());
 
