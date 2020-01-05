@@ -94,9 +94,11 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
             sessionStorage.setItem("firebase-uid", user.uid);
 
             ta.addEventListener("keyup", function(){
+                let style = getComputedStyle(save.firstElementChild);
+                let saveHe = parseFloat(style.lineHeight) + parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
                 if(this.value !== "") {
                     save.style.display = "block";
-                    setTimeout(() => save.style.height = "45.6px");
+                    setTimeout(() => save.style.height = saveHe + "px");
                 } else {
                     save.style.height = "0";
                     setTimeout(() => save.style.display = "none", 600);
