@@ -189,7 +189,7 @@ let notif = (text = "", description, type = "", time = 5000, undoCallback) => {
                     </div>
                     <div class="actions col col-auto align-self-center">
                         ${undoCallback ? `<span class="undo pointer"><img title="Undo" src='img/svg/undo.svg'></span>`:``}
-                        ${description ? `<span class="expand pointer"><img title="See description" src='img/svg/arrow-down.svg'></span>`:``}
+                        ${description ? `<span class="expand pointer"><img title="See description" src='img/svg/arrow-up.svg'></span>`:``}
                         <span class="shut pointer"><img title="Close" src='img/svg/close.svg'></span>
                     </div>
                 </div>
@@ -235,11 +235,11 @@ let notif = (text = "", description, type = "", time = 5000, undoCallback) => {
             if(getComputedStyle(desc).display == "none"){
                 desc.style.display = "block";
                 setTimeout(() => desc.style.height = descHe + "px");
-                img.setAttribute("src", "img/svg/arrow-up.svg");
+                img.setAttribute("src", "img/svg/arrow-down.svg");
             } else {
                 desc.style.height = "0";
                 setTimeout(() => desc.style.display = "none", 600);
-                img.setAttribute("src", "img/svg/arrow-down.svg");
+                img.setAttribute("src", "img/svg/arrow-up.svg");
             }
         });
     }
