@@ -184,10 +184,10 @@ let notif = (text = "", description, type = "", time = 5000, undoCallback) => {
             <div class="notif-box">
                 <div class="row">
                     <div class="text col align-self-center small">
-                        ${type !== "" ? `<img class="mr-2" title="Information" src='img/svg/${type}.svg'>`:``}
+                        ${type !== "" ? `<img class="mr-2" title="Information" src='img/svg/levels/${type}.svg'>`:``}
                         <span class="align-middle">${text}</span>
                     </div>
-                    <div class="col col-auto align-self-center">
+                    <div class="actions col col-auto align-self-center">
                         ${undoCallback ? `<span class="undo pointer"><img title="Undo" src='img/svg/undo.svg'></span>`:``}
                         ${description ? `<span class="expand pointer"><img title="See description" src='img/svg/arrow-down.svg'></span>`:``}
                         <span class="shut pointer"><img title="Close" src='img/svg/close.svg'></span>
