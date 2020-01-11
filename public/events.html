@@ -108,9 +108,7 @@
                             include_player_ids: doc.data().onesignal_devices,
                             template_id: "1ff79e8e-fc74-41fb-93ab-01ee4cbc3eff",
                             send_after: !!timestamp ? new Date(timestamp) : "",
-                            contents: {
-                                "en": name+" is happening now!"
-                            }
+                            headings: { "en": name }
                         })
                     });
                     let data = await response.json();
@@ -238,7 +236,8 @@
                             elem += "<tr data-id='"+v.id+"'>";
                                 elem += "<td title='"+d.date.toDate()+"'>";
                                     elem += readableDate(d.date.seconds*1000);
-                                    elem += d.repeat !== "unrepeat" ? " <img class='d-none d-md-inline repeat' title='Repeats "+d.repeat+"' src='img/svg/repeat.svg'> <span class='d-inline d-md-none'>("+d.repeat.capitalize()+")</span>" : "";
+                                    elem += d.repeat !== "unrepeat" ? " <img class='repeat' title='Repeats "+d.repeat+"' src='img/svg/repeat.svg'>" : "";
+                                    elem += d.notif_id ? " <img class='notif-active' title='Notification enabled' src='img/svg/notif.svg'>" : "";
                                 elem += "</td>";
                                 elem += "<th>"+d.name+"</th>";
                                 elem += "<td>";
