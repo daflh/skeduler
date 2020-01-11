@@ -168,6 +168,19 @@ let modal = (header, input, options, doneCallback = () => {}) => {
         setTimeout(() => mdl.parentNode.removeChild(mdl), 600);
     }
 
+    modalForm.elements.date.addEventListener("input", evt => {
+        let val = evt.target.value;
+        let notifInput = modalForm.elements.notif;
+        let dbled;
+        if (time()+60*60*24*29 < time(val)) {
+            notifInput.checked = false;
+            dbled = true;
+        } else {
+            dbled = false;
+        }
+        notifInput.disabled = dbled;
+    })
+
     modalForm.addEventListener("submit", evt => {
         evt.preventDefault();
         doneCallback({
