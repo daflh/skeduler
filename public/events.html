@@ -295,10 +295,13 @@
                     });
 
                 } else if (t && t.classList.contains("delete")) {
+                    let hasNotif = event.hasOwnProperty("notif_id");
                     eventsRef.doc(id).delete().then(() => {
-                        if(event.hasOwnProperty("notif_id")) cancelNotif(event.notif_id);
+                        if(hasNotif) cancelNotif(event.notif_id);
                         notif("Event successfully deleted!", undefined, "info", undefined, () => {
-                            eventsRef.doc(id).set(event).then(() => createNotif(id,event.name,Number(event.date.seconds)));
+                            eventsRef.doc(id).set(event).then(() => {
+                                if(hasNotif) createNotif(id,event.name,Number(event.date.seconds))
+                            });
                         });
                     });
 
