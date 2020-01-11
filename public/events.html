@@ -295,13 +295,10 @@
                     });
 
                 } else if (t && t.classList.contains("delete")) {
-                    sessionStorage.setItem("deletedEvent_"+id, JSON.stringify(event));
                     eventsRef.doc(id).delete().then(() => {
                         if(event.hasOwnProperty("notif_id")) cancelNotif(event.notif_id);
                         notif("Event successfully deleted!", undefined, "info", undefined, () => {
-                            let backup = JSON.parse(sessionStorage["deletedEvent_"+id]);
-                            backup.date = firebase.firestore.Timestamp.fromMillis(backup.date.seconds*1000);
-                            eventsRef.doc(id).set(backup).then(() => createNotif(id,event.name,Number(event.date.seconds)));
+                            eventsRef.doc(id).set(event).then(() => createNotif(id,event.name,Number(event.date.seconds)));
                         });
                     });
 

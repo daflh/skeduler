@@ -161,10 +161,9 @@
                     }));
 
                 } else if (t && t.classList.contains("delete")) {
-                    sessionStorage.setItem("deletedGoal_"+id, JSON.stringify(goal));
                     goalsRef.doc(id).delete().then(() => {
                         notif("Goal successfully deleted!", undefined, "info", undefined, () => {
-                            goalsRef.doc(id).set(JSON.parse(sessionStorage["deletedGoal_"+id]));
+                            goalsRef.doc(id).set(goal);
                         });
                     });
                     

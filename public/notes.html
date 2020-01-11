@@ -181,10 +181,9 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                         notesRef.doc(id).update({ pin: !note.pin });
 
                     } else if (t.classList.contains("delete")) {
-                        sessionStorage.setItem("deletedNote_"+id, JSON.stringify(note));
                         notesRef.doc(id).delete().then(() => {
                             notif("Notes successfully deleted!", undefined, "info", undefined, () => {
-                                notesRef.doc(id).set(JSON.parse(sessionStorage["deletedNote_"+id]));
+                                notesRef.doc(id).set(note);
                             });
                         });
 
