@@ -129,7 +129,7 @@ let modal = (header, input, options, doneCallback = () => {}) => {
                     <br/>
                     ${input.includes("title") ? `<input class="form-control" type="text" name="title" value="${options.titleVal||''}" placeholder="${options.titlePl||''}" required><br/>`:``}
                     ${input.includes("link") ? `<input class="form-control" type="text" name="link" value="${options.linkVal||''}" placeholder="${options.linkPl||''}">`:``}
-                    ${input.includes("date") ? `<input class="form-control" type="datetime-local" name="date" value="${options.dateVal||''}" min="${utcDate((time()+60)*1000)}" required><br/>`:``}
+                    ${input.includes("date") ? `<input class="form-control" type="datetime-local" name="date" value="${options.dateVal||''}" min="${utcDate()}" required><br/>`:``}
                     ${input.includes("repeat") ? `
                     <select class="form-control rounded-0" name="repeat">
                         <option ${options.repeatVal === 'unrepeat' ? 'selected' : ''} value="unrepeat">Does not repeat</option>
@@ -142,7 +142,7 @@ let modal = (header, input, options, doneCallback = () => {}) => {
                     ` : ``}
                     ${input.includes("date") ? `
                     <div class="pretty-checkbox" title="Notification can only be used for event that happen in less than 29 days from now">
-                        <input type="checkbox" name="notif" id="notifInput"${options.notif !== false ? ' checked' : ''}>
+                        <input type="checkbox" name="notif" id="notifInput" ${(time()+60*60*24*29 < time(options.dateVal) ? ' disabled' : '') + (options.notif !== false ? ' checked' : '')}>
                         <label for="notifInput">Create notification for this event</label>
                     </div>
                     ` : ``}

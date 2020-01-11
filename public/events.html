@@ -290,9 +290,12 @@
                             date: firebase.firestore.Timestamp.fromDate(new Date(args.date)),
                             repeat: args.repeat
                         }).then(function(){
-                            if(event.name !== args.title || event.date.seconds !== firebase.firestore.Timestamp.fromDate(new Date(args.date)).seconds){
+                            if(args.notif){
+                                if(event.name !== args.title || event.date.seconds !== firebase.firestore.Timestamp.fromDate(new Date(args.date)).seconds || !event.hasOwnProperty("notif_id"))
+                                    createNotif(id,args.title,time(args.date));
+                            } else {
                                 if(event.hasOwnProperty("notif_id")) cancelNotif(event.notif_id);
-                                if(args.notif) createNotif(id,args.title,time(args.date));
+                                eventsRef.doc(id).update({ notif_id: firebase.firestore.FieldValue.delete() });
                             }
                         });
                     });
@@ -301,16 +304,18 @@
                     let hasNotif = event.hasOwnProperty("notif_id");
                     eventsRef.doc(id).delete().then(() => {
                         if(hasNotif) cancelNotif(event.notif_id);
+                        delete event.notif_id;
                         notif("Event successfully deleted!", undefined, "info", undefined, () => {
+                            event.date = firebase.firestore.Timestamp.fromMillis(event.date.seconds*1000);
                             eventsRef.doc(id).set(event).then(() => {
-                                if(hasNotif) createNotif(id,event.name,Number(event.date.seconds))
+                                if(hasNotif) createNotif(id,event.name,Number(event.date.seconds));
                             });
                         });
                     });
 
                 } else if (t && t.classList.contains("snooze")) {
                     modal("Snooze event", ["date"], {
-                        dateVal: utcDate(event.date.second*1000)
+                        dateVal: utcDate()
                     }, args => {
                         eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromDate(new Date(args.date)) }).then(function(){
                             if(args.notif) createNotif(id,event.name,time(args.date))
