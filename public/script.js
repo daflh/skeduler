@@ -168,7 +168,7 @@ let modal = (header, input, options, doneCallback = () => {}) => {
         setTimeout(() => mdl.parentNode.removeChild(mdl), 600);
     }
 
-    modalForm.elements.date.addEventListener("input", evt => {
+    if(input.includes("date")) modalForm.elements.date.addEventListener("input", evt => {
         let val = evt.target.value;
         let notifInput = modalForm.elements.notif;
         let dbled;
