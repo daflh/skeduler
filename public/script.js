@@ -138,6 +138,13 @@ let modal = (header, input, options, doneCallback = () => {}) => {
                         <option ${options.repeatVal === 'monthly' ? 'selected' : ''} value="monthly">Monthly</option>
                         <option ${options.repeatVal === 'yearly' ? 'selected' : ''} value="yearly">Yearly</option>
                     </select>
+                    <br/>
+                    ` : ``}
+                    ${input.includes("date") ? `
+                    <div class="pretty-checkbox" title="Notification can only be used for event that happen in less than 29 days from now">
+                        <input type="checkbox" name="notif" id="notifInput"${options.notif !== false ? ' checked' : ''}>
+                        <label for="notifInput">Create notification for this event</label>
+                    </div>
                     ` : ``}
                 </form>
                 <div class="text-right">
@@ -167,7 +174,8 @@ let modal = (header, input, options, doneCallback = () => {}) => {
             title: input.includes("title") ? modalForm.elements.title.value : "",
             link: input.includes("link") ? modalForm.elements.link.value : "",
             date: input.includes("date") ? modalForm.elements.date.value : "",
-            repeat: input.includes("repeat") ? modalForm.elements.repeat.value : ""
+            repeat: input.includes("repeat") ? modalForm.elements.repeat.value : "",
+            notif: input.includes("date") ? modalForm.elements.notif.checked : ""
         });
         closeModal();
     });

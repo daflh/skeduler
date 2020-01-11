@@ -205,7 +205,9 @@
                         name: args.title,
                         date: firebase.firestore.Timestamp.fromDate(new Date(args.date)),
                         repeat: args.repeat
-                    }).then(doc => createNotif(doc.id, args.title, time(args.date)));
+                    }).then(doc => {
+                        if(args.notif) createNotif(doc.id, args.title, time(args.date));
+                    });
                 });
             });
 
@@ -280,7 +282,8 @@
                         titlePl: "Event Name",
                         titleVal: event.name,
                         dateVal: utcDate(event.date.seconds*1000),
-                        repeatVal: event.repeat
+                        repeatVal: event.repeat,
+                        notif: event.hasOwnProperty("notif_id") ? true : false
                     }, args => {
                         eventsRef.doc(id).update({
                             name: args.title,
@@ -289,7 +292,7 @@
                         }).then(function(){
                             if(event.name !== args.title || event.date.seconds !== firebase.firestore.Timestamp.fromDate(new Date(args.date)).seconds){
                                 if(event.hasOwnProperty("notif_id")) cancelNotif(event.notif_id);
-                                createNotif(id,args.title,time(args.date));
+                                if(args.notif) createNotif(id,args.title,time(args.date));
                             }
                         });
                     });
@@ -310,7 +313,7 @@
                         dateVal: utcDate(event.date.second*1000)
                     }, args => {
                         eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromDate(new Date(args.date)) }).then(function(){
-                            createNotif(id,event.name,time(args.date))
+                            if(args.notif) createNotif(id,event.name,time(args.date))
                         });
                     });
 

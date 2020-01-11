@@ -58,6 +58,13 @@ img{max-width:100%}
 .modal-overlay .modal-box,.note-edit-overlay .note-edit-box{position:absolute;top:50%;right:0;left:0;-webkit-transform:translateY(-50%);transform:translateY(-50%);-ms-transform:translateY(-50%);margin:0 auto;background-color:#fff;box-shadow:0 5px 22px 0 rgba(0,0,0,0.25)}
 .modal-overlay .modal-box{width:450px;padding:3rem 2rem;text-align:center}
 .modal-overlay .modal-box h2{font-weight:600}
+.modal-overlay .modal-box .pretty-checkbox input{position:absolute;visibility: hidden;z-index:-1}
+.modal-overlay .modal-box .pretty-checkbox label{position:relative;padding-left:2em;cursor:pointer}
+.modal-overlay .modal-box .pretty-checkbox label::before, .modal-overlay .modal-box .pretty-checkbox label::after{position:absolute;top:0;left:0;width:1.5em;height:1.5em;transition:.3s all linear;-webkit-transition:.3s all linear}
+.modal-overlay .modal-box .pretty-checkbox label::before{content:" ";border:2px solid #ced4da}
+.modal-overlay .modal-box .pretty-checkbox label::after{content:"\2714";transform:scale(0);-webkit-transform:scale(0)}
+.modal-overlay .modal-box .pretty-checkbox input:checked + label::after{transform:scale(1);-webkit-transform:scale(1)}
+.modal-overlay .modal-box .pretty-checkbox input:disabled, .modal-overlay .modal-box .pretty-checkbox input:disabled + label{opacity:.7}
 .note-edit-overlay .note-edit-box{width:750px}
 .note-edit-overlay .note-edit-box textarea{border:0;border-bottom:1px solid #f3f3f3!important;resize:none;max-height:75vh}
 .note-edit-overlay .note-edit-box textarea:first-line{font-weight:700}
