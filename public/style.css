@@ -6,6 +6,7 @@ body{font-family:'Open Sans', sans-serif;background-color:#F2F5FA;color:#525f7f}
 p{font-size:1rem}
 button,input{border-radius:0!important}
 img{max-width:100%}
+hr{border-color:#f3f3f3}
 .pointer{cursor:pointer}
 .disabled{pointer-events: none}
 .small{font-size:80%!important}
@@ -40,9 +41,9 @@ img{max-width:100%}
 .navbar-vertical .navbar-nav .nav .nav-link{padding-left:3.25rem}
 .navbar-vertical .navbar-nav .nav .nav .nav-link{padding-left:3.75rem}
 .navbar-collapse-header{display:none}
-.card{border:1px solid rgba(0,0,0,.08);border-top:0;border-radius:0!important;box-shadow:0 0 2rem 0 rgba(136,152,170,.15)!important}
+.card{border:0;border-radius:0!important;box-shadow:0 0 2rem 0 rgba(136,152,170,.15)!important}
 .table{color:inherit!important}
-.table thead th{padding-top:.75rem;padding-bottom:.75rem;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #f3f3f3!important;background-color:#fff!important}
+.table thead th{padding-top:.75rem;padding-bottom:.75rem;border-color:#f3f3f3;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #f3f3f3!important;background-color:#fff!important}
 .table td,.table th{font-size:.8125rem;border:0;padding:1rem 1.5rem;vertical-align: middle}
 .table td{white-space:nowrap}
 .table th{white-space:normal;font-weight:600}
@@ -94,12 +95,12 @@ img{max-width:100%}
 #goals-page ol li:nth-child(3):before{font-size:1.075rem}
 #goals-page ol li .action img{width:20px;height:20px}
 #notes-page .form-control{border-color:#f3f3f3!important;border-radius:0!important}
-#notes-page .list-group li{background-color:#fff!important;margin-bottom:.75rem;cursor:pointer;padding:0;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+#notes-page .list-group li{border:0;background-color:#fff!important;margin-bottom:.75rem;cursor:pointer;padding:0;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
 #notes-page .list-group li .actions img{width:20px;height:20px}
 #notes-page textarea,textarea:focus{outline:none!important;-webkit-appearance:none!important;box-shadow:none!important}
 #notes-page .textbox{position: relative}
 #notes-page #newNoteForm.textbox{width:70%}
-#notes-page .textbox textarea{color:#495057;outline:none;box-sizing:border-box;resize:none;max-height:250px;font-size:.9rem}
+#notes-page .textbox textarea{color:#495057;outline:none;border:0;box-sizing:border-box;resize:none;max-height:250px;font-size:.9rem}
 #notes-page .textbox textarea:first-line{font-weight:700}
 #notes-page .textbox .save{background-color:#fff;border: 1px solid #f3f3f3;border-width: 0 1px 0;}
 #notes-page .textbox .save span{display:block; padding:.75rem 1.5rem;font-size:.9rem;text-align:right}
@@ -112,13 +113,13 @@ img{max-width:100%}
     .navbar-collapse{padding:1.5rem;background:#fff;box-shadow:0 50px 100px rgba(50,50,93,.1),0 15px 35px rgba(50,50,93,.15),0 5px 15px rgba(0,0,0,.1);width:calc(100% - 1.4rem);position:absolute;top:0;left:0;right:0;z-index:1050;margin:.7rem;overflow-y:auto;height:auto!important}
     .navbar-collapse .navbar-toggler{position:relative;cursor:pointer;display:inline-block;padding:0}
     .navbar-collapse .navbar-toggler img{width:25px;height:25px}
-    .navbar-collapse .navbar-collapse-header{display:block;padding-bottom:1rem;margin-bottom:1rem;border-bottom:1px solid rgba(0,0,0,.1)}
+    .navbar-collapse .navbar-collapse-header{display:block;padding-bottom:1rem;margin-bottom:1rem;border-bottom:1px solid #f3f3f3}
     .navbar-collapse .collapse-brand img{height:36px}
     .navbar-collapse .collapse-close{text-align:right}
     .note-edit-overlay .note-edit-box{width:calc(100% - 25px)}
     #events-page thead{display:none}
     #events-page tr{margin-bottom:1rem}
-    #events-page tr:not(:last-child){border-bottom:1px solid rgba(0,0,0,.075)}
+    #events-page tr:not(:last-child){border-bottom:1px solid #f3f3f3}
     #events-page td,th{display:block;width:100%!important;white-space:normal!important}
     #events-page tr>*:first-child{padding-bottom:0}
     #events-page tr>*:nth-child(2){font-size:110%}
@@ -137,6 +138,7 @@ img{max-width:100%}
     .navbar-vertical.navbar-expand-md.fixed-left{left:0;border-width:0 1px 0 0}
     .navbar-vertical.navbar-expand-md .navbar-collapse{-webkit-box-flex:1;-ms-flex:1;flex:1;display:-webkit-box!important;display:-ms-flexbox!important;display:flex!important;opacity:1!important;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;margin-left:-1.5rem;margin-right:-1.5rem;padding-left:1.5rem;padding-right:1.5rem}
     .navbar-vertical.navbar-expand-md .navbar-collapse>*{min-width:100%}
+    .navbar-vertical.navbar-expand-md .navbar-collapse hr{border-color:rgba(0,0,0,.1)}
     .navbar-vertical.navbar-expand-md .navbar-nav{-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;margin-left:-1.5rem;margin-right:-1.5rem}
     .navbar-vertical.navbar-expand-md .navbar-nav .nav-link{padding:.65rem 1.5rem}
     .navbar-vertical.navbar-expand-md .navbar-nav .nav-link.active:before{top:.25rem;bottom:.25rem;left:0;right:auto;border-left:2px solid #007bff;border-bottom:0}
