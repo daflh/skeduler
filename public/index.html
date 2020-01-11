@@ -161,6 +161,7 @@
                         dt.docs.map(function(val){
                             let dt = val.data();
                             if(dt.hasOwnProperty("date")) dt.date = dt.date.seconds*1000;
+                            if(dt.hasOwnProperty("notif_id")) delete dt.notif_id;
                             res[v][val.id] = dt;
                         });
                         res = JSON.stringify(res);
