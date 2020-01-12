@@ -187,7 +187,7 @@
             isub.addEventListener("click", function(){
                 try {
                     let data = ita.value;
-                    if(!!Number(data) || ['','""','0','[]','{}','true','false'].indexOf(data) >= 0) throw new Error();
+                    if(!!+data || ['','""','0','[]','{}','true','false'].indexOf(data) >= 0) throw new Error();
                     data = JSON.parse(data);
                     if(!Object.keys(data).every(elem => ["events", "goals", "notes"].indexOf(elem) > -1)) throw new Error();
                     for (let [col, colVal] of Object.entries(data)) {

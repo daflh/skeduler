@@ -90,9 +90,8 @@
                 try {
                     notif("Creating notification ...", undefined, undefined, 0);
 
-                    timestamp = Number(timestamp);
                     if(!timestamp) throw new Error("Invalid timestamp, use 10 or 13 digit UNIX Epoch time")
-                    timestamp = timestamp.toString().length === 10 ? timestamp*1000 : timestamp;
+                    timestamp = timestamp.toString().length === 10 ? +timestamp*1000 : +timestamp;
                     if(timestamp >= (time(utcDate())+60*60*23*30)*1000) throw new Error("Can't schedule notification for more than 30 days.");
                     
                     let siteUrl = "https://coragon.web.app";
@@ -142,7 +141,7 @@
                     eventsRef.doc(id).delete();
                 } else {
                     eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromMillis(repeatTime(obj.date.seconds*1000,obj.repeat)) }).then(function(){
-                        createNotif(id,obj.name,Number(repeatTime(obj.date.seconds*1000,obj.repeat))/1000)
+                        createNotif(id,obj.name,+repeatTime(obj.date.seconds*1000,obj.repeat)/1000)
                     });
                 }
             }
@@ -308,7 +307,7 @@
                         notif("Event successfully deleted!", undefined, "info", undefined, () => {
                             event.date = firebase.firestore.Timestamp.fromMillis(event.date.seconds*1000);
                             eventsRef.doc(id).set(event).then(() => {
-                                if(hasNotif) createNotif(id,event.name,Number(event.date.seconds));
+                                if(hasNotif) createNotif(id,event.name,+event.date.seconds);
                             });
                         });
                     });

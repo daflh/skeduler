@@ -104,7 +104,7 @@
                     goalsRef.add({
                         name: args.title,
                         link: args.link,
-                        sort: Number(""+new Date().getTime()+Math.floor(Math.random()*90+10))
+                        sort: +(""+new Date().getTime()+Math.floor(Math.random()*90+10))
                     });
                 });
             });

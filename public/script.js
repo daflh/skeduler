@@ -56,8 +56,8 @@ let readableDate = data => {
         return "Now!";
     } else {
         let daynm = dayNames[dt.getDay()];
-        let datmon = parseInt(dt.getDate(),10)+" "+monthNames[Number(parseInt(dt.getMonth(),10))];
-        let minsec = twoDigit(dt.getHours(),2)+":"+twoDigit(dt.getMinutes(),2);
+        let datmon = dt.getDate()+" "+monthNames[dt.getMonth()];
+        let minsec = dt.getHours().toString().padStart(2, "0")+":"+dt.getMinutes().toString().padStart(2, "0");
         if (new Date().getFullYear() === dt.getFullYear()) {
             let sameMonth = new Date().getMonth() === dt.getMonth();
             let tomo = new Date();
@@ -76,9 +76,8 @@ let readableDate = data => {
 }
 
 let repeatTime = (dateTimestamp, repeatEvery) => {
-    dateTimestamp = Number(dateTimestamp);
-    let dt = dateTimestamp;
-    let objectdt = new Date(dateTimestamp);
+    let dt = +dateTimestamp;
+    let objectdt = new Date(+dateTimestamp);
     if(repeatEvery==="daily") {
         dt += 60*60*24*1000;
     } else if(repeatEvery==="weekly") {
