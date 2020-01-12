@@ -24,14 +24,13 @@ String.prototype.toUrl = function(){
     return !str.match(/^[a-zA-Z]+:\/\//) ? ('http://' + str) : ('' + str);
 }
 
-let twoDigit = num => ("0" + num).substr(-2);
-
 let time = data => Math.floor((data === undefined || !data ? new Date() : new Date(data)).getTime()/1000);
 
 let utcDate = data => {
-    let dt = (data === undefined || !data) ? new Date() : new Date(/^\d+$/.test(data) || typeof data==="number" ? Number(data) : data);
-    let theDate = dt.getFullYear()+'-'+twoDigit((dt.getMonth()+1),2)+'-'+twoDigit(dt.getDate(),2);
-    let theTime = twoDigit(dt.getHours(),2) + ":" + twoDigit(dt.getMinutes(),2);
+    let twoDig = num => num.toString().padStart(2, "0");
+    let dt = (data === undefined || !data) ? new Date() : new Date(+data);
+    let theDate = dt.getFullYear()+'-'+twoDig(dt.getMonth()+1)+'-'+twoDig(dt.getDate());
+    let theTime = twoDig(dt.getHours()) + ":" + twoDig(dt.getMinutes());
     return theDate+'T'+theTime;
 }
 
