@@ -81,70 +81,8 @@
 
             let eventsRef = fs.collection("users").doc(user.uid).collection('events');
             let osgl = window.OneSignal || [];
-            let keys = "Nzc4MzY3MDMtOGZlNi00MTVjLWI5MjItNGNlZDMwNjU0Nzhk";
-            let appId = "12fe1f4e-c50f-4321-961a-3fc7a36b7983";
             
             sessionStorage.setItem("firebase-uid", user.uid);
-
-            async function createNotif(id, name = "Your event", timestamp = 0){
-                try {
-                    notif("Creating notification ...", undefined, undefined, 0);
-
-                    if(!timestamp) throw new Error("Invalid timestamp, use 10 or 13 digit UNIX Epoch time")
-                    timestamp = timestamp.toString().length === 10 ? +timestamp*1000 : +timestamp;
-                    if(timestamp >= (time(utcDate())+60*60*23*30)*1000) throw new Error("Can't schedule notification for more than 30 days.");
-                    
-                    let siteUrl = "https://coragon.web.app";
-                    let doc = await fs.collection("users").doc(user.uid).get();
-                    let response = await fetch('https://onesignal.com/api/v1/notifications', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Basic '+keys
-                        },
-                        body: JSON.stringify({
-                            app_id: appId,
-                            include_player_ids: doc.data().onesignal_devices,
-                            template_id: "1ff79e8e-fc74-41fb-93ab-01ee4cbc3eff",
-                            send_after: !!timestamp ? new Date(timestamp) : "",
-                            headings: { "en": name }
-                        })
-                    });
-                    let data = await response.json();
-                    if(!!id) eventsRef.doc(id).update({ notif_id: data.id }).then(() => {
-                        notif("Event notification created!", undefined, "info");
-                    });
-                } catch (err) {
-                    notif("Failed to create notification.", err, "warning", 0);
-                }
-            }
-
-            async function cancelNotif(notifId){
-                try {
-                    if(!notifId || notifId.length !== 36) throw new Error("Invalid notification ID.")
-                    let response = await fetch('https://onesignal.com/api/v1/notifications/'+notifId+'?app_id='+appId, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Basic '+keys
-                        }
-                    });
-                    let json = await response.json();
-                    if(json.hasOwnProperty("errors")) throw new Error(json.errors)
-                } catch (err) {
-                    notif("Unable to delete notification.", err, "warning", 0);
-                }
-            }
-
-            function afterDone(id,obj){
-                if (obj.repeat==="unrepeat") {
-                    eventsRef.doc(id).delete();
-                } else {
-                    eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromMillis(repeatTime(obj.date.seconds*1000,obj.repeat)) }).then(function(){
-                        createNotif(id,obj.name,+repeatTime(obj.date.seconds*1000,obj.repeat)/1000)
-                    });
-                }
-            }
 
             osgl.push(()=> {
                 let storeUserId = () => {
@@ -196,6 +134,90 @@
                 });
             });
 
+            let keys = "Nzc4MzY3MDMtOGZlNi00MTVjLWI5MjItNGNlZDMwNjU0Nzhk";
+            let appId = "12fe1f4e-c50f-4321-961a-3fc7a36b7983";
+
+            async function createNotif(id, name = "Your event", timestamp = 0){
+                try {
+                    notif("Creating notification ...", undefined, undefined, 0);
+
+                    if(!timestamp) throw new Error("Invalid timestamp, use 10 or 13 digit UNIX Epoch time")
+                    timestamp = timestamp.toString().length === 10 ? +timestamp*1000 : +timestamp;
+                    if(timestamp >= _d().getTimeM()+60*60*24*29*1000) throw new Error("Can't schedule notification for more than 29 days.");
+                    
+                    let siteUrl = "https://coragon.web.app";
+                    let doc = await fs.collection("users").doc(user.uid).get();
+                    let response = await fetch('https://onesignal.com/api/v1/notifications', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Basic '+keys
+                        },
+                        body: JSON.stringify({
+                            app_id: appId,
+                            include_player_ids: doc.data().onesignal_devices,
+                            template_id: "1ff79e8e-fc74-41fb-93ab-01ee4cbc3eff",
+                            send_after: !!timestamp ? new Date(timestamp) : "",
+                            headings: { "en": name }
+                        })
+                    });
+                    let data = await response.json();
+                    if(!!id) eventsRef.doc(id).update({ notif_id: data.id }).then(() => {
+                        notif("Event notification created!", undefined, "info");
+                    });
+                } catch (err) {
+                    notif("Failed to create notification.", err, "warning", 0);
+                }
+            }
+
+            async function cancelNotif(notifId){
+                try {
+                    if(!notifId || notifId.length !== 36) throw new Error("Invalid notification ID.")
+                    let response = await fetch('https://onesignal.com/api/v1/notifications/'+notifId+'?app_id='+appId, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Basic '+keys
+                        }
+                    });
+                    let json = await response.json();
+                    if(json.hasOwnProperty("errors")) throw new Error(json.errors)
+                } catch (err) {
+                    notif("Unable to delete notification.", err, "warning", 0);
+                }
+            }
+
+            function repeatTime(dateTimestamp, repeatEvery){
+                let dt = +dateTimestamp;
+                let objectdt = new Date(+dateTimestamp);
+                if(repeatEvery==="daily") {
+                    dt += 60*60*24*1000;
+                } else if(repeatEvery==="weekly") {
+                    dt += 60*60*24*7*1000;
+                } else if(repeatEvery==="monthly") {
+                    let date = objectdt.getDate();
+                    objectdt.setMonth(objectdt.getMonth()+1);
+                    objectdt.setDate(date);
+                    dt = objectdt.getTime();
+                } else if(repeatEvery==="yearly") {
+                    objectdt.setFullYear(objectdt.getFullYear() + (
+                        objectdt.getDate() === 29 && objectdt.getMonth() === 1 ? 4 : 1
+                    ));
+                    dt = objectdt.getTime();
+                }
+                return dt;
+            }
+
+            function afterDone(id,obj){
+                if (obj.repeat==="unrepeat") {
+                    eventsRef.doc(id).delete();
+                } else {
+                    eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromMillis(repeatTime(obj.date.seconds*1000,obj.repeat)) }).then(function(){
+                        createNotif(id,obj.name,+repeatTime(obj.date.seconds*1000,obj.repeat)/1000)
+                    });
+                }
+            }
+
             document.getElementById("add").addEventListener("click", () => {
                 modal("Add new event", ["title","date","repeat"], {
                     titlePl: "Event Name"
@@ -205,7 +227,7 @@
                         date: firebase.firestore.Timestamp.fromDate(new Date(args.date)),
                         repeat: args.repeat
                     }).then(doc => {
-                        if(args.notif) createNotif(doc.id, args.title, time(args.date));
+                        if(args.notif) createNotif(doc.id, args.title, _d(args.date).getTimeS());
                     });
                 });
             });
@@ -213,8 +235,8 @@
             eventsRef.get().then(function(once){
                 once.forEach(raw=>{
                     let dt = raw.data();
-                    if (Math.floor(dt.date.seconds) <= time(utcDate())) eventsRef.doc(raw.id).update({ notif_id: firebase.firestore.FieldValue.delete() });
-                    if (Math.floor(dt.date.seconds) <= time(utcDate())-60*60*24) afterDone(raw.id,dt);
+                    if (dt.date.seconds*1000 <= _d().getTimeM()) eventsRef.doc(raw.id).update({ notif_id: firebase.firestore.FieldValue.delete() });
+                    if (dt.date.seconds*1000 <= _d().getTimeM() - 60*60*24*1000) afterDone(raw.id,dt);
                 });
                 eventsRef.orderBy('date').onSnapshot(function(data){
                     let elem = '';
@@ -236,13 +258,13 @@
                             let d = v.data();
                             elem += "<tr data-id='"+v.id+"'>";
                                 elem += "<td title='"+d.date.toDate()+"'>";
-                                    elem += readableDate(d.date.seconds*1000);
+                                    elem += _d(d.date.seconds * 1000).toDateRelativeString();
                                     elem += d.repeat !== "unrepeat" ? " <img class='repeat' title='Repeats "+d.repeat+"' src='img/svg/repeat.svg'>" : "";
                                     elem += d.notif_id ? " <img class='notif-active' title='Notification enabled' src='img/svg/notif.svg'>" : "";
                                 elem += "</td>";
                                 elem += "<th>"+d.name+"</th>";
                                 elem += "<td>";
-                                    if (Math.floor(d.date.seconds)>time(utcDate())) {
+                                    if (d.date.seconds*1000 > _d().getTimeM()) {
                                     elem += "<img title='Edit' class='edit pointer' src='img/svg/edit.svg'>";
                                     elem += "<img title='Delete' class='delete ml-3 pointer' src='img/svg/delete.svg'>";
                                     } else {
@@ -280,7 +302,7 @@
                     modal("Edit event", ["title","date","repeat"], {
                         titlePl: "Event Name",
                         titleVal: event.name,
-                        dateVal: utcDate(event.date.seconds*1000),
+                        dateVal: _d(event.date.seconds * 1000).toISOMinuteString(),
                         repeatVal: event.repeat,
                         notif: event.hasOwnProperty("notif_id") ? true : false
                     }, args => {
@@ -291,7 +313,7 @@
                         }).then(function(){
                             if(args.notif){
                                 if(event.name !== args.title || event.date.seconds !== firebase.firestore.Timestamp.fromDate(new Date(args.date)).seconds || !event.hasOwnProperty("notif_id"))
-                                    createNotif(id,args.title,time(args.date));
+                                    createNotif(id, args.title, _d(args.date).getTimeS());
                             } else {
                                 if(event.hasOwnProperty("notif_id")) cancelNotif(event.notif_id);
                                 eventsRef.doc(id).update({ notif_id: firebase.firestore.FieldValue.delete() });
@@ -314,10 +336,10 @@
 
                 } else if (t && t.classList.contains("snooze")) {
                     modal("Snooze event", ["date"], {
-                        dateVal: utcDate()
+                        dateVal: _d().toISOMinuteString()
                     }, args => {
                         eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromDate(new Date(args.date)) }).then(function(){
-                            if(args.notif) createNotif(id,event.name,time(args.date))
+                            if(args.notif) createNotif(id, event.name, _d(args.date).getTimeS())
                         });
                     });
 

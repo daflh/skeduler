@@ -152,7 +152,7 @@
 
                 setTimeout(() => eta.style.opacity = 1, 10);
 
-                textareaHeightAuto(eta);
+                eta.autoExpand();
                 
                 userRef.collection(v).get().then(dt=>{
                     if(dt.empty){
@@ -170,14 +170,14 @@
                     eta.addEventListener('focus', function(){
                         this.select();
                     });
-                    textareaHeightAuto(eta);
+                    eta.autoExpand();
                 });
             });
 
             let ita = document.getElementById("importTextarea");
             let isub = document.getElementById("importSubmit");
 
-            textareaHeightAuto(ita);
+            ita.autoExpand();
 
             ita.addEventListener("keyup", function(){
                 isub.disabled = this.value === "" ? true : false;

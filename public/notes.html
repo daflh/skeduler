@@ -93,6 +93,18 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
 
             sessionStorage.setItem("firebase-uid", user.uid);
 
+            osgl.push(()=> {
+                osgl.init({ appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983" });
+                osgl.getNotificationPermission(permission => {
+                    if (permission === "granted") osgl.getUserId(userId => {
+                        fs.collection("users").doc(user.uid).set({
+                            onesignal_devices: firebase.firestore.FieldValue.arrayUnion(userId)
+                        }, {merge: true});
+                        sessionStorage.setItem("onesignal-user-id", userId);
+                    });
+                });
+            });
+
             ta.addEventListener("keyup", function(){
                 let style = getComputedStyle(save.firstElementChild);
                 let saveHe = parseFloat(style.lineHeight) + parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
@@ -105,7 +117,7 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                 }
             });
 
-            textareaHeightAuto(ta);
+            ta.autoExpand();
 
             save.addEventListener("click", () => {
                 if(ta.value.replace(/\s/g, '').length > 0){
@@ -115,21 +127,9 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                     });
                 }
                 ta.value = "";
-                textareaHeightAuto(ta);
+                ta.autoExpand();
                 save.style.height = "0";
                 setTimeout(() => save.style.display = "none", 600);
-            });
-
-            osgl.push(()=> {
-                osgl.init({ appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983" });
-                osgl.getNotificationPermission(permission => {
-                    if (permission === "granted") osgl.getUserId(userId => {
-                        fs.collection("users").doc(user.uid).set({
-                            onesignal_devices: firebase.firestore.FieldValue.arrayUnion(userId)
-                        }, {merge: true});
-                        sessionStorage.setItem("onesignal-user-id", userId);
-                    });
-                });
             });
             
             notesRef.orderBy('pin','desc').onSnapshot(function(data){
@@ -212,7 +212,7 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
 
                         Array.prototype.forEach.call(ta, elem => elem.placeholder = elem.placeholder.replace(/\\n/g, '\n'));
 
-                        textareaHeightAuto(ta);
+                        ta.autoExpand();
                         
                         editBox.getElementsByClassName("edit-close")[0].addEventListener("click", () => {
                             if(!!ta.value.replace(/\s/g, '').length) notesRef.doc(id).update({ data: ta.value });

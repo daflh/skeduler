@@ -7,6 +7,7 @@ const config = {
     messagingSenderId: "975187721562",
     appId: "1:975187721562:web:7299b5199bb1b232620763"
 };
+
 firebase.initializeApp(config);
 
 const fs = firebase.firestore();
@@ -24,23 +25,28 @@ String.prototype.toUrl = function(){
     return !str.match(/^[a-zA-Z]+:\/\//) ? ('http://' + str) : ('' + str);
 }
 
-let time = data => Math.floor((data === undefined || !data ? new Date() : new Date(data)).getTime()/1000);
-
-let utcDate = data => {
-    let twoDig = num => num.toString().padStart(2, "0");
-    let dt = (data === undefined || !data) ? new Date() : new Date(+data);
-    let theDate = dt.getFullYear()+'-'+twoDig(dt.getMonth()+1)+'-'+twoDig(dt.getDate());
-    let theTime = twoDig(dt.getHours()) + ":" + twoDig(dt.getMinutes());
-    return theDate+'T'+theTime;
+Date.prototype.getTimeS = function(){
+    return Math.floor(this.getTime()/1000)*1000;
 }
 
-let readableDate = data => {
+Date.prototype.getTimeM = function(){
+    return this.getTimeS() - this.getSeconds()*1000;
+}
+
+Date.prototype.toISOMinuteString = function(){
+    let twoDig = num => num.toString().padStart(2, "0");
+    let dateString = this.getFullYear() + "-" + twoDig(this.getMonth()+1) + "-" + twoDig(this.getDate());
+    let timeString = twoDig(this.getHours()) + ":" + twoDig(this.getMinutes());
+    return dateString+'T'+timeString;
+}
+
+Date.prototype.toDateRelativeString = function(){
     const dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
     const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-    let dt = new Date(data);
-    if (time(dt) < time(utcDate())) {
+    let now = new Date();
+    if (this.getTimeS() < now.getTimeS()) {
         let condition = {'day':24*60*60,'hour':60*60,'minute':60,'second':1};
-        let diff = time() - time(dt);
+        let diff = (now.getTimeS() - this.getTimeS())/1000;
         if(diff < 1) return 'less than 1 second ago';
         for(let key in condition){
             let d = diff / condition[key];
@@ -51,52 +57,35 @@ let readableDate = data => {
                 break;
             }
         }
-    } else if (time(dt) === time(utcDate())) {
+    } else if (this.getTimeS() === now.getTimeS()) {
         return "Now!";
     } else {
-        let daynm = dayNames[dt.getDay()];
-        let datmon = dt.getDate()+" "+monthNames[dt.getMonth()];
-        let minsec = dt.getHours().toString().padStart(2, "0")+":"+dt.getMinutes().toString().padStart(2, "0");
-        if (new Date().getFullYear() === dt.getFullYear()) {
-            let sameMonth = new Date().getMonth() === dt.getMonth();
-            let tomo = new Date();
+        let daynm = dayNames[this.getDay()];
+        let datmon = this.getDate()+" "+monthNames[this.getMonth()];
+        let minsec = this.getHours().toString().padStart(2, "0")+":"+this.getMinutes().toString().padStart(2, "0");
+        if (now.getFullYear() === this.getFullYear()) {
+            let sameMonth = now.getMonth() === this.getMonth();
+            let tomo = now;
             tomo.setDate(tomo.getDate()+1)
-            if (sameMonth && new Date().getDate() === dt.getDate()) {
+            if (sameMonth && now.getDate() === this.getDate()) {
                 return "Today at "+minsec;
-            } else if (sameMonth && tomo.getDate() === dt.getDate()) {
+            } else if (sameMonth && tomo.getDate() === this.getDate()) {
                 return "Tomorrow at "+minsec;
             } else {
                 return daynm+", "+datmon+" at "+minsec;
             }
         } else {
-            return daynm+", "+datmon+" "+dt.getFullYear()+" at "+minsec;
+            return daynm+", "+datmon+" "+this.getFullYear()+" at "+minsec;
         }
     }
 }
 
-let repeatTime = (dateTimestamp, repeatEvery) => {
-    let dt = +dateTimestamp;
-    let objectdt = new Date(+dateTimestamp);
-    if(repeatEvery==="daily") {
-        dt += 60*60*24*1000;
-    } else if(repeatEvery==="weekly") {
-        dt += 60*60*24*7*1000;
-    } else if(repeatEvery==="monthly") {
-        let date = objectdt.getDate();
-        objectdt.setMonth(objectdt.getMonth()+1);
-        objectdt.setDate(date);
-        dt = objectdt.getTime();
-    } else if(repeatEvery==="yearly") {
-        objectdt.setFullYear(objectdt.getFullYear() + (
-            objectdt.getDate() === 29 && objectdt.getMonth() === 1 ? 4 : 1
-        ));
-        dt = objectdt.getTime();
-    }
-    return dt;
-}
+Element.prototype.autoExpand = function(){
+    let elem = this;
 
-let textareaHeightAuto = elem => {
-    let resize = () => {
+    if(elem.tagName !== "TEXTAREA") throw new Error("The 'autoExpand' method can only be used with textarea element.")
+
+    function resize() {
         let belowMaxHeight = elem.scrollHeight < parseFloat(getComputedStyle(elem).maxHeight);
         let offset = elem.offsetHeight - elem.clientHeight;
         elem.style.height = 'auto';
@@ -117,7 +106,7 @@ let textareaHeightAuto = elem => {
     elem.style.resize = "none";
 }
 
-let modal = (header, input, options, doneCallback = () => {}) => {
+function modal(header, input, options, doneCallback = () => {}){
 
     let element = `
         <div id="modal" class="modal-overlay fade hide opacity-0">
@@ -127,7 +116,7 @@ let modal = (header, input, options, doneCallback = () => {}) => {
                     <br/>
                     ${input.includes("title") ? `<input class="form-control" type="text" name="title" value="${options.titleVal||''}" placeholder="${options.titlePl||''}" required><br/>`:``}
                     ${input.includes("link") ? `<input class="form-control" type="text" name="link" value="${options.linkVal||''}" placeholder="${options.linkPl||''}">`:``}
-                    ${input.includes("date") ? `<input class="form-control" type="datetime-local" name="date" value="${options.dateVal||''}" min="${utcDate()}" required><br/>`:``}
+                    ${input.includes("date") ? `<input class="form-control" type="datetime-local" name="date" value="${options.dateVal||''}" min="${new Date().toISOMinuteString()}" required><br/>`:``}
                     ${input.includes("repeat") ? `
                     <select class="form-control rounded-0" name="repeat">
                         <option ${options.repeatVal === 'unrepeat' ? 'selected' : ''} value="unrepeat">Does not repeat</option>
@@ -140,7 +129,7 @@ let modal = (header, input, options, doneCallback = () => {}) => {
                     ` : ``}
                     ${input.includes("date") ? `
                     <div class="pretty-checkbox" title="Notification can only be used for event that happen in less than 29 days from now">
-                        <input type="checkbox" name="notif" id="notifInput" ${(time()+60*60*24*29 < time(options.dateVal) ? ' disabled' : '') + (options.notif !== false ? ' checked' : '')}>
+                        <input type="checkbox" name="notif" id="notifInput" ${(new Date().getTimeS()+60*60*24*29*1000 < new Date(options.dateVal).getTimeS() ? ' disabled' : '') + (options.notif !== false ? ' checked' : '')}>
                         <label for="notifInput">Create notification for this event</label>
                     </div>
                     ` : ``}
@@ -170,7 +159,7 @@ let modal = (header, input, options, doneCallback = () => {}) => {
         let val = evt.target.value;
         let notifInput = modalForm.elements.notif;
         let dbled;
-        if (time()+60*60*24*29 < time(val)) {
+        if (new Date().getTimeS()+60*60*24*29*1000 < new Date(val).getTimeS()) {
             notifInput.checked = false;
             dbled = true;
         } else {
@@ -195,7 +184,7 @@ let modal = (header, input, options, doneCallback = () => {}) => {
 
 }
 
-let notif = (text = "", description, type = "", time = 5000, undoCallback) => {
+function notif(text = "", description, type = "", time = 5000, undoCallback){
 
     let identifierNum = Math.floor(100000 + Math.random() * 900000);
     let element = `
@@ -266,6 +255,8 @@ let notif = (text = "", description, type = "", time = 5000, undoCallback) => {
     ntf.getElementsByClassName("shut")[0].addEventListener("click", () => closeNotif());
 
 }
+
+const _d = (...args) => new (Function.prototype.bind.apply(Date, [Date, ...args]));
 
 let navbar = document.getElementById("navcol");
 
