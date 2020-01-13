@@ -102,7 +102,7 @@ hr{border-color:#f3f3f3}
 #notes-page #newNoteForm.textbox{width:70%}
 #notes-page .textbox textarea{color:#495057;outline:none;border:0;box-sizing:border-box;resize:none;max-height:250px;font-size:.9rem}
 #notes-page .textbox textarea:first-line{font-weight:700}
-#notes-page .textbox .save{background-color:#fff;border: 1px solid #f3f3f3;border-width: 0 1px 0;}
+#notes-page .textbox .save{background-color:#fff;border: 1px solid #f3f3f3;border-width: 1px 0 0 0;}
 #notes-page .textbox .save span{display:block; padding:.75rem 1.5rem;font-size:.9rem;text-align:right}
 @media (max-width:575.98px) {
     .modal-overlay .modal-box{width:calc(100% - 25px)}
