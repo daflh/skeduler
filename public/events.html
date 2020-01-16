@@ -158,7 +158,7 @@
                             include_player_ids: doc.data().onesignal_devices,
                             template_id: "1ff79e8e-fc74-41fb-93ab-01ee4cbc3eff",
                             send_after: !!timestamp ? new Date(timestamp) : "",
-                            headings: { "en": name }
+                            contents: { "en": name }
                         })
                     });
                     let data = await response.json();
