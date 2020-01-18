@@ -114,26 +114,28 @@
                 let cachingData = {};
                 
                 if(!data.empty){
-                    elem += "<ol id='goals' class='list-group list-group-flush'>";
+                    elem += `<ol id='goals' class='list-group list-group-flush'>`;
                     data.forEach(v=>{
                         let d = v.data();
-                        elem += "<li class='list-group-item d-flex' data-id='"+v.id+"'>";
-                            elem += "<span class='align-self-center'>";
-                                elem += d.link !== "" ? "<a href='"+d.link.toUrl()+"' target='_blank'>"+d.name+"</a>" : d.name;
-                            elem += "</span>";
-                            elem += "<span class='action float-right align-self-center ml-auto col-auto pr-0 pl-2'>";
-                                elem += "<img title='Up' class='up' src='img/svg/arrow-up.svg'>";
-                                elem += "<img title='Down' class='down ml-2' src='img/svg/arrow-down.svg'>";
-                                elem += "<img title='Edit' class='edit ml-2' src='img/svg/edit.svg'>";
-                                elem += "<img title='Delete' class='delete ml-2' src='img/svg/delete.svg'>";
-                                elem += "<img title='Actions' class='more ml-3' src='img/svg/more.svg'>";
-                            elem += "</span>";
-                        elem += "</li>";
+                        elem += `
+                            <li class='list-group-item d-flex' data-id='${v.id}'>
+                                <span class='align-self-center'>
+                                    ${d.link !== "" ? `<a href='${d.link.toUrl()}' target='_blank'>${d.name}</a>` : d.name}
+                                </span>
+                                <span class='action float-right align-self-center ml-auto col-auto pr-0 pl-2'>
+                                    <img title='Up' class='up' src='img/svg/arrow-up.svg'>
+                                    <img title='Down' class='down ml-2' src='img/svg/arrow-down.svg'>
+                                    <img title='Edit' class='edit ml-2' src='img/svg/edit.svg'>
+                                    <img title='Delete' class='delete ml-2' src='img/svg/delete.svg'>
+                                    <img title='Actions' class='more ml-3' src='img/svg/more.svg'>
+                                </span>
+                            </li>
+                        `;
                         cachingData[v.id] = d;
                     });
-                    elem += "</ol>";
+                    elem += `</ol>`;
                 } else {
-                    elem += "<div id='goals' class='small my-3 mx-4 text-center'>No goal has been added yet</div>";
+                    elem += `<div id='goals' class='small my-3 mx-4 text-center'>No goal has been added yet</div>`;
                 }
                 
                 document.getElementById("goals").outerHTML = elem;

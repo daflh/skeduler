@@ -256,23 +256,25 @@
                         `;
                         data.forEach(v=>{
                             let d = v.data();
-                            elem += "<tr class='py-3 px-4' data-id='"+v.id+"'>";
-                                elem += "<td class='d-flex align-items-center mb-3 mb-md-0' title='"+d.date.toDate()+"'>";
-                                    elem += _d(d.date.seconds * 1000).toDateRelativeString();
-                                    elem += d.repeat !== "unrepeat" ? " <img class='repeat' title='Repeats "+d.repeat+"' src='img/svg/repeat.svg'>" : "";
-                                    elem += d.notif_id ? " <img class='notif-active' title='Notification enabled' src='img/svg/notif.svg'>" : "";
-                                elem += "</td>";
-                                elem += "<th>"+d.name+"</th>";
-                                elem += "<td class='actions fx-fade opacity-0 d-none d-md-table-cell mt-3 mt-md-0'>";
-                                    if (d.date.seconds*1000 > _d().getTimeM()) {
-                                    elem += "<img title='Edit' class='edit pointer' src='img/svg/edit.svg'>";
-                                    elem += "<img title='Delete' class='delete ml-3 pointer' src='img/svg/delete.svg'>";
-                                    } else {
-                                    if(d.repeat === "unrepeat") elem += "<img title='Snooze' class='snooze mr-3 pointer' src='img/svg/snooze.svg'>";
-                                    elem += "<img title='Done' class='done pointer' src='img/svg/done.svg'>";
-                                    }
-                                elem += "</td>";
-                            elem += "</tr>";
+                            elem += `
+                                <tr class='py-3 px-4' data-id='${v.id}'>
+                                    <td class='date d-flex align-items-center mb-3 mb-md-0' title='${d.date.toDate()}'>
+                                        ${_d(d.date.seconds * 1000).toDateRelativeString()}
+                                        ${d.repeat !== "unrepeat" ? ` <img class='repeat' title='Repeats "+d.repeat+"' src='img/svg/repeat.svg'>` : ``}
+                                        ${d.notif_id ? ` <img class='notif-active' title='Notification enabled' src='img/svg/notif.svg'>` : ``}
+                                    </td>
+                                    <th>${d.name}</th>
+                                    <td class='actions fx-fade opacity-0 d-none d-md-table-cell mt-3 mt-md-0'>
+                                    ${d.date.seconds*1000 > _d().getTimeM() ? `
+                                        <img title='Edit' class='edit pointer' src='img/svg/edit.svg'>
+                                        <img title='Delete' class='delete ml-3 pointer' src='img/svg/delete.svg'>
+                                    ` : `
+                                        ${d.repeat === "unrepeat" ? `<img title='Snooze' class='snooze mr-3 pointer' src='img/svg/snooze.svg'>` : ``}
+                                        <img title='Done' class='done pointer' src='img/svg/done.svg'>
+                                    `}
+                                    </td>
+                                </tr>
+                            `;
                             cachingData[v.id] = d;
                         });
                         elem += `
@@ -280,7 +282,7 @@
                             </table>
                         `;
                     } else {
-                        elem += "<div id='events' class='small my-3 mx-4 text-center'>No event has been added yet</div>";
+                        elem += `<div id='events' class='small my-3 mx-4 text-center'>No event has been added yet</div>`;
                     }
                     
                     document.getElementById("events").outerHTML = elem;
