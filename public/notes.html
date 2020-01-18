@@ -143,9 +143,9 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                         let d = v.data();
                         let snippet = d.data.split("\n").slice(1).join(" ");
                         elem += "<li class='list-group-item py-3 px-4' data-id='"+v.id+"'>";
-                            elem += "<div class='header'>";
+                            elem += "<div class='header d-flex justify-content-between'>";
                                 elem += "<span class='name font-weight-bold'>"+d.data.split("\n")[0]+"</span>";
-                                elem += "<span class='actions float-right'>";
+                                elem += "<span class='actions float-right col-auto pl-2 pr-0'>";
                                     elem += "<img title='Pin to Top' class='pin' src='img/svg/"+(d.pin?"pinned":"unpinned")+".svg'>";
                                     elem += "<img title='Delete' class='delete ml-3' src='img/svg/delete.svg'>";
                                 elem += "</span>";
