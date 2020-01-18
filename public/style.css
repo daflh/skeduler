@@ -11,9 +11,9 @@ hr{border-color:#f3f3f3}
 .disabled{pointer-events: none}
 .small{font-size:80%!important}
 .hide{display:none}
-.fade{transition: opacity 600ms; -webkit-transition: opacity 600ms; -o-transition: opacity 600ms}
+.fx-fade{transition: opacity 600ms; -webkit-transition: opacity 600ms; -o-transition: opacity 600ms}
 .opacity-0{opacity:0}
-.slide{overflow: hidden; transition: height 600ms; -webkit-transition: height 600ms; -o-transition: height 600ms}
+.fx-slide{overflow: hidden; transition: height 600ms; -webkit-transition: height 600ms; -o-transition: height 600ms}
 .height-0{height:0}
 .btn{position:relative;text-transform:none;-webkit-transition:all .15s ease;transition:all .15s ease;letter-spacing:.025em;font-size:.875rem;will-change:transform}
 .main-content{position:relative;padding: 1rem;margin-bottom: 1.5rem}

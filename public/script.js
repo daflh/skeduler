@@ -109,7 +109,7 @@ Element.prototype.autoExpand = function(){
 function modal(header, input, options, doneCallback = () => {}){
 
     let element = `
-        <div id="modal" class="modal-overlay fade hide opacity-0">
+        <div id="modal" class="modal-overlay fx-fade hide opacity-0">
             <div class="modal-box">
                 <h2 class="mb-4">${header}</h2>
                 <form id="modal-form" class="form-group mb-4">
@@ -188,7 +188,7 @@ function notif(text = "", description, type = "", time = 5000, undoCallback){
 
     let identifierNum = Math.floor(100000 + Math.random() * 900000);
     let element = `
-        <div id="notif" class="notif-overlay fade hide opacity-0" data-identifier="${identifierNum}">
+        <div id="notif" class="notif-overlay fx-fade hide opacity-0" data-identifier="${identifierNum}">
             <div class="notif-box">
                 <div class="row">
                     <div class="text col align-self-center small">
@@ -201,7 +201,7 @@ function notif(text = "", description, type = "", time = 5000, undoCallback){
                         <span class="shut pointer"><img title="Close" src='img/svg/close.svg'></span>
                     </div>
                 </div>
-                ${description ? `<div class="row desc slide">
+                ${description ? `<div class="row desc fx-slide">
                     <div class="col mt-2">
                         <p class="small m-0">${description}</p>
                     </div>

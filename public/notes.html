@@ -22,7 +22,7 @@
             <a class="navbar-brand pr-3" href="./">
                 <img src="./img/logo-black.png" alt="Coragon Logo" id="navbar-brand-img">
             </a>
-            <div class="navbar-collapse fade hide opacity-0" id="navcol">
+            <div class="navbar-collapse fx-fade hide opacity-0" id="navcol">
                 <div class="navbar-collapse-header d-md-none">
                     <div class="row">
                         <div class="col-6 collapse-brand">
@@ -64,7 +64,7 @@
                             <form id="newNoteForm" class="form-group textbox mx-auto" name="note-form">
                                 <textarea class="form-control py-3 px-4" name="newNoteTextarea" placeholder="Title
 Write new note here ..." rows="2" spellcheck="false" required></textarea>
-                                <div class="save pointer slide hide height-0">
+                                <div class="save pointer fx-slide hide height-0">
                                     <span>Close</span>
                                 </div>
                             </form>
@@ -191,7 +191,7 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                         id = evt.path.find(el => el.hasAttribute("data-id")).dataset.id;
                         let taValue = notesDt[id].data;
                         let editBoxElement = `
-                            <div id="note-edit" class="note-edit-overlay fade hide opacity-0">
+                            <div id="note-edit" class="note-edit-overlay fx-fade hide opacity-0">
                                 <div class="note-edit-box">
                                     <textarea class="form-control p-4" placeholder="Title\nEdit your note ..." spellcheck="false" required>${taValue}</textarea>
                                     <div class="px-4">
