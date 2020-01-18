@@ -87,13 +87,15 @@ hr{border-color:#f3f3f3}
 #events-page table tr>*:first-child img{width:1em;height:1em}
 #events-page table tr>*:last-child{width:5%;text-align:right}
 #events-page table tr>*:last-child img{width:20px;height:20px}
-#goals-page ol{list-style:none;counter-reset:item}
-#goals-page ol li{counter-increment:item}
-#goals-page ol li:before{margin-right:1rem;content:counter(item);width:1.25rem;font-size:1rem;text-align:center;font-weight:600;display:inline-block}
-#goals-page ol li:nth-child(1):before{font-size:1.225rem}
-#goals-page ol li:nth-child(2):before{font-size:1.15rem}
-#goals-page ol li:nth-child(3):before{font-size:1.075rem}
-#goals-page ol li .action img{width:20px;height:20px}
+#goals-page ol.list-group{list-style:none;counter-reset:item}
+#goals-page ol.list-group > li{counter-increment:item}
+#goals-page ol.list-group > li:before{margin-right:1rem;content:counter(item);font-size:1rem;text-align:center;font-weight:600;display:inline-block}
+#goals-page ol.list-group > li:nth-child(1):before{font-size:1.225rem}
+#goals-page ol.list-group > li:nth-child(2):before{font-size:1.15rem}
+#goals-page ol.list-group > li:nth-child(3):before{font-size:1.075rem}
+#goals-page ol.list-group > li .action > *{width:20px;height:20px}
+#goals-page ol.list-group > li .action > *.more{display:none}
+#goals-page ol.list-group > li .action > *:not(.more){transition: opacity 600ms; -webkit-transition: opacity 600ms; -o-transition: opacity 600ms}
 #notes-page .form-control{border-color:#f3f3f3!important;border-radius:0!important}
 #notes-page .list-group li{border:0;background-color:#fff!important;margin-bottom:.75rem;cursor:pointer;padding:0;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
 #notes-page .list-group li .actions img{width:20px;height:20px}
@@ -107,6 +109,8 @@ hr{border-color:#f3f3f3}
 @media (max-width:575.98px) {
     .modal-overlay .modal-box{width:calc(100% - 25px)}
     .notif-overlay .notif-box{margin:0;width:100%}
+    #goals-page ol.list-group > li .action > *.more{display:inline}
+    #goals-page ol.list-group > li .action > *:not(.more){display:none;opacity:0}
 }
 @media (max-width:767.98px) {
     .navbar-nav .nav-link{padding:.625rem 0}

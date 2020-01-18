@@ -117,15 +117,16 @@
                     elem += "<ol id='goals' class='list-group list-group-flush'>";
                     data.forEach(v=>{
                         let d = v.data();
-                        elem += "<li class='list-group-item' data-id='"+v.id+"'>";
-                            elem += "<span>";
+                        elem += "<li class='list-group-item d-flex' data-id='"+v.id+"'>";
+                            elem += "<span class='align-self-center'>";
                                 elem += d.link !== "" ? "<a href='"+d.link.toUrl()+"' target='_blank'>"+d.name+"</a>" : d.name;
                             elem += "</span>";
-                            elem += "<span class='action float-right pl-2'>";
-                                elem += "<img class='up' src='img/svg/arrow-up.svg'>";
-                                elem += "<img class='down ml-2' src='img/svg/arrow-down.svg'>";
+                            elem += "<span class='action float-right align-self-center ml-auto col-auto pr-0 pl-2'>";
+                                elem += "<img title='Up' class='up' src='img/svg/arrow-up.svg'>";
+                                elem += "<img title='Down' class='down ml-2' src='img/svg/arrow-down.svg'>";
                                 elem += "<img title='Edit' class='edit ml-2' src='img/svg/edit.svg'>";
                                 elem += "<img title='Delete' class='delete ml-2' src='img/svg/delete.svg'>";
+                                elem += "<img title='Actions' class='more ml-3' src='img/svg/more.svg'>";
                             elem += "</span>";
                         elem += "</li>";
                         cachingData[v.id] = d;
@@ -171,6 +172,19 @@
                     let idZ = t.classList.contains("up") ? t.parentNode.parentNode.previousElementSibling.dataset.id : t.parentNode.parentNode.nextElementSibling.dataset.id;
                     goalsRef.doc(id).update({ sort: goalsDt[idZ].sort });
                     goalsRef.doc(idZ).update({ sort: goal.sort });
+
+                } else if (t && t.classList.contains("more")) {
+                    let button = t.parentNode.querySelectorAll("img:not(.more)");
+                    button.forEach(v => {
+                        let vis = getComputedStyle(v).display !== "none";
+                        if(vis){
+                            v.style.opacity = 0;
+                            setTimeout(() => v.style.display = "none", 600);
+                        } else {
+                            v.style.display = "inline";
+                            setTimeout(() => v.style.opacity = 1);
+                        }
+                    });
 
                 }
             });
