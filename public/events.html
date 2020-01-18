@@ -244,26 +244,26 @@
 
                     if(!data.empty){
                         elem += `
-                            <table id="events" class="table align-items-center table-flush">
-                                <thead class="thead-light">
+                            <table id="events" class="table">
+                                <thead>
                                     <tr>
                                         <th scope="col">Date</th>
                                         <th scope="col">Event Name</th>
                                         <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody class="flex-column flex-grow-1">
                         `;
                         data.forEach(v=>{
                             let d = v.data();
-                            elem += "<tr data-id='"+v.id+"'>";
-                                elem += "<td title='"+d.date.toDate()+"'>";
+                            elem += "<tr class='py-3 px-4' data-id='"+v.id+"'>";
+                                elem += "<td class='d-flex align-items-center mb-3 mb-md-0' title='"+d.date.toDate()+"'>";
                                     elem += _d(d.date.seconds * 1000).toDateRelativeString();
                                     elem += d.repeat !== "unrepeat" ? " <img class='repeat' title='Repeats "+d.repeat+"' src='img/svg/repeat.svg'>" : "";
                                     elem += d.notif_id ? " <img class='notif-active' title='Notification enabled' src='img/svg/notif.svg'>" : "";
                                 elem += "</td>";
                                 elem += "<th>"+d.name+"</th>";
-                                elem += "<td>";
+                                elem += "<td class='actions fx-fade opacity-0 d-none d-md-table-cell mt-3 mt-md-0'>";
                                     if (d.date.seconds*1000 > _d().getTimeM()) {
                                     elem += "<img title='Edit' class='edit pointer' src='img/svg/edit.svg'>";
                                     elem += "<img title='Delete' class='delete ml-3 pointer' src='img/svg/delete.svg'>";
@@ -292,6 +292,7 @@
                 let id, event;
                 let eventsDt = JSON.parse(sessionStorage.eventsData);
                 let t = evt.target;
+                let item = evt.path.slice(0,-3).find(el => el.hasAttribute("data-id") && el.getAttribute("data-id") !== null);
 
                 if(t.parentNode.parentNode != null && t.parentNode.parentNode.hasAttribute("data-id")){
                     id = t.parentNode.parentNode.dataset.id;
@@ -345,6 +346,17 @@
 
                 } else if (t && t.classList.contains("done")) {
                     afterDone(id,event);
+                
+                } else if (window.innerWidth < 768 && t && item !== undefined) {
+                    let actions = item.lastElementChild;
+                    if(actions.classList.contains("d-none")){
+                        actions.classList.remove("d-none");
+                        setTimeout(() => actions.classList.remove("opacity-0"));
+                    } else {
+                        actions.classList.add("opacity-0");
+                        setTimeout(() => actions.classList.add("d-none"), 600);
+                    }
+
                 }
             });
     
