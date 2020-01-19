@@ -248,20 +248,21 @@
                                         <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody class="flex-column flex-grow-1">
+                                <tbody>
                         `;
                         data.forEach(v=>{
                             let d = v.data();
+                            let past = d.date.seconds*1000 <= _d().getTimeM();
                             elem += `
-                                <tr class='py-3 px-4' data-id='${v.id}'>
-                                    <td class='date d-flex align-items-center mb-3 mb-md-0' title='${d.date.toDate()}'>
+                                <tr data-id='${v.id}'>
+                                    <td class='date' title='${d.date.toDate()}'>
                                         ${_d(d.date.seconds * 1000).toDateRelativeString()}
                                         ${d.repeat !== "unrepeat" ? ` <img class='repeat' title='Repeats "+d.repeat+"' src='img/svg/repeat.svg'>` : ``}
                                         ${d.notif_id ? ` <img class='notif-active' title='Notification enabled' src='img/svg/notif.svg'>` : ``}
                                     </td>
                                     <th>${d.name}</th>
-                                    <td class='actions'>
-                                    ${d.date.seconds*1000 > _d().getTimeM() ? `
+                                    <td class='actions${past ? " past" : ""}'>
+                                    ${!past ? `
                                         <img title='Edit' class='edit pointer' src='img/svg/edit.svg'>
                                         <img title='Delete' class='delete ml-3 pointer' src='img/svg/delete.svg'>
                                     ` : `
@@ -345,7 +346,7 @@
                 } else if (t && t.classList.contains("done")) {
                     afterDone(id,event);
                 
-                } else if (window.innerWidth < 768 && t && item !== undefined) {
+                } else if (window.innerWidth < 992 && t && item !== undefined) {
                     slide(item.lastElementChild);
 
                 }
