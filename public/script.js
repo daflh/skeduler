@@ -105,12 +105,27 @@ Element.prototype.autoExpand = function(){
     elem.style.resize = "none";
 }
 
-function slide(target, duration = 600) {
-    let display = getComputedStyle(target).display;
-    if (display === 'none') {
+function fade(target, type = '', duration = 600, initial = 'block') {
+    let dn = (type == 'show' || type == 'hide') ? (type == 'show' ? true : false) : getComputedStyle(target).display === 'none';
+    if(dn) target.style.display = initial;
+    target.style.opacity = dn ? 0 : 1;
+    target.style.transitionProperty = 'opacity';
+    target.style.transitionDuration = duration + 'ms';
+    if(dn) window.setTimeout(() => target.style.opacity = 1);
+    if(!dn) target.style.opacity = 0;
+    window.setTimeout(() => {
+        if(!dn) target.style.display = 'none';
+        target.style.removeProperty('opacity');
+        target.style.removeProperty('transition-duration');
+        target.style.removeProperty('transition-property');
+    }, duration);
+}
+
+function slide(target, type = '', duration = 600, initial = 'block') {
+    let dn = (type == 'show' || type == 'hide') ? (type == 'show' ? true : false) : getComputedStyle(target).display === 'none';
+    if(dn) {
         target.style.removeProperty('display');
-        if (display === 'none') display = 'block';
-        target.style.display = display;
+        target.style.display = initial;
         let height = target.offsetHeight;
         target.style.overflow = 'hidden';
         target.style.height = 0;
@@ -157,22 +172,6 @@ function slide(target, duration = 600) {
             target.style.removeProperty('transition-property');
         }, duration);
     }
-}
-
-function fade(target, type = '', duration = 600, initial = 'block') {
-    let dn = (type == 'show' || type == 'hide') ? (type == 'show' ? true : false) : getComputedStyle(target).display === 'none';
-    if(dn) target.style.display = initial;
-    target.style.opacity = dn ? 0 : 1;
-    target.style.transitionProperty = 'opacity';
-    target.style.transitionDuration = duration + 'ms';
-    if(dn) window.setTimeout(() => target.style.opacity = 1);
-    if(!dn) target.style.opacity = 0;
-    window.setTimeout(() => {
-        if(!dn) target.style.display = 'none';
-        target.style.removeProperty('opacity');
-        target.style.removeProperty('transition-duration');
-        target.style.removeProperty('transition-property');
-    }, duration);
 }
 
 function modal(header, input, options, doneCallback = () => {}){
@@ -310,10 +309,10 @@ function notif(text = "", description, type = "", time = 5000, undoCallback){
         let desc = ntf.querySelector(".desc");
         let expand = ntf.querySelector(".expand");
         expand.addEventListener("click", () => {
-            slide(desc);
             let img = expand.firstElementChild;
-            let display = getComputedStyle(desc).display;
-            display == "none" ? img.setAttribute("src", "img/svg/arrow-down.svg") : img.setAttribute("src", "img/svg/arrow-up.svg");
+            let disp = getComputedStyle(desc).display;
+            img.setAttribute("src", disp == "none" ? "img/svg/arrow-down.svg" : "img/svg/arrow-up.svg");
+            slide(desc);
         });
     }
 
