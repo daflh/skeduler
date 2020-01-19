@@ -141,5 +141,5 @@ hr{border-color:#f3f3f3}
     .navbar-vertical.navbar-expand-md .navbar-nav .nav .nav .nav-link{padding-left:4.5rem}
     .navbar-vertical.navbar-expand-md .navbar-brand{display:block;text-align:left;padding-top:0.5rem;padding-bottom:1.5rem}
     .navbar-vertical.navbar-expand-md .navbar-brand-img{max-height:2.5rem}
-    #events-page table tr td.actions{text-align:right}
+    #events-page table tr td.actions{text-align:right;display:table-cell!important}
 }
