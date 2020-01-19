@@ -12,8 +12,6 @@ hr{border-color:#f3f3f3}
 .hide{display:none}
 .fx-fade{transition: opacity 600ms; -webkit-transition: opacity 600ms; -o-transition: opacity 600ms}
 .opacity-0{opacity:0}
-.fx-slide{overflow: hidden; transition: height 600ms; -webkit-transition: height 600ms; -o-transition: height 600ms}
-.height-0{height:0}
 .btn{position:relative;text-transform:none;-webkit-transition:all .15s ease;transition:all .15s ease;letter-spacing:.025em;font-size:.875rem;will-change:transform}
 .main-content{position:relative;padding: 1rem;margin-bottom: 1.5rem}
 .main-content .page-nav{color:rgba(0,0,0,.75);font-size:1.0625rem!important;font-weight:600;line-height: 1.5;margin:0;text-transform: uppercase}
@@ -59,6 +57,7 @@ hr{border-color:#f3f3f3}
 .note-edit-overlay .note-edit-box textarea:first-line{font-weight:700}
 .notif-overlay{position:fixed;width:100%;bottom:0;z-index:9999}
 .notif-overlay .notif-box{position:absolute;bottom:0;padding:1rem 1.5rem;margin:1.5rem;line-height:1.15;background-color:#fff;box-shadow:0 5px 22px 0 rgba(0,0,0,0.25)}
+.notif-overlay .notif-box .desc{display:none;margin-top:.5rem}
 .notif-overlay .notif-box .text span{font-weight:600}
 .notif-overlay .notif-box .text img{width:1.6em;height:1.6rem}
 .notif-overlay .notif-box .actions img{width:1.25em;height:1.25rem}
@@ -97,7 +96,7 @@ hr{border-color:#f3f3f3}
 #notes-page #newNoteForm.textbox{width:70%}
 #notes-page .textbox textarea{color:#495057;outline:none;border:0;box-sizing:border-box;resize:none;max-height:250px;font-size:.9rem}
 #notes-page .textbox textarea:first-line{font-weight:700}
-#notes-page .textbox .save{background-color:#fff;border: 1px solid #f3f3f3;border-width: 1px 0 0 0;}
+#notes-page .textbox .save{background-color:#fff;border: 1px solid #f3f3f3;border-width: 1px 0 0 0;cursor:pointer;display:none}
 #notes-page .textbox .save span{display:block; padding:.75rem 1.5rem;font-size:.9rem;text-align:right}
 @media (max-width:575.98px) {
     .modal-overlay .modal-box{width:calc(100% - 25px)}
@@ -116,9 +115,11 @@ hr{border-color:#f3f3f3}
     .note-edit-overlay .note-edit-box{width:calc(100% - 25px)}
     #events-page table thead{display:none}
     #events-page table tbody{display:flex}
+    #events-page table tr{cursor:pointer}
     #events-page table tr:not(:last-child){border-bottom:1px solid #f3f3f3}
     #events-page table tr td, #events-page table tr th{display:block;width:100%!important;white-space:normal!important;padding:0!important}
     #events-page table tr th{font-size:110%}
+    #events-page table tr td.actions{display:none;margin-top:1rem}
     #notes-page #newNoteForm.textbox{width:100%}
 }
 @media (min-width:768px) {
@@ -141,5 +142,5 @@ hr{border-color:#f3f3f3}
     .navbar-vertical.navbar-expand-md .navbar-nav .nav .nav .nav-link{padding-left:4.5rem}
     .navbar-vertical.navbar-expand-md .navbar-brand{display:block;text-align:left;padding-top:0.5rem;padding-bottom:1.5rem}
     .navbar-vertical.navbar-expand-md .navbar-brand-img{max-height:2.5rem}
-    #events-page table tr td.actions{opacity:1!important;text-align:right}
+    #events-page table tr td.actions{text-align:right}
 }

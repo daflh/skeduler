@@ -264,7 +264,7 @@
                                         ${d.notif_id ? ` <img class='notif-active' title='Notification enabled' src='img/svg/notif.svg'>` : ``}
                                     </td>
                                     <th>${d.name}</th>
-                                    <td class='actions fx-fade opacity-0 d-none d-md-table-cell mt-3 mt-md-0'>
+                                    <td class='actions'>
                                     ${d.date.seconds*1000 > _d().getTimeM() ? `
                                         <img title='Edit' class='edit pointer' src='img/svg/edit.svg'>
                                         <img title='Delete' class='delete ml-3 pointer' src='img/svg/delete.svg'>
@@ -350,14 +350,7 @@
                     afterDone(id,event);
                 
                 } else if (window.innerWidth < 768 && t && item !== undefined) {
-                    let actions = item.lastElementChild;
-                    if(actions.classList.contains("d-none")){
-                        actions.classList.remove("d-none");
-                        setTimeout(() => actions.classList.remove("opacity-0"));
-                    } else {
-                        actions.classList.add("opacity-0");
-                        setTimeout(() => actions.classList.add("d-none"), 600);
-                    }
+                    slide(item.lastElementChild);
 
                 }
             });

@@ -105,6 +105,60 @@ Element.prototype.autoExpand = function(){
     elem.style.resize = "none";
 }
 
+function slide(target, duration = 600) {
+    let display = getComputedStyle(target).display;
+    if (display === 'none') {
+        target.style.removeProperty('display');
+        if (display === 'none') display = 'block';
+        target.style.display = display;
+        let height = target.offsetHeight;
+        target.style.overflow = 'hidden';
+        target.style.height = 0;
+        target.style.paddingTop = 0;
+        target.style.paddingBottom = 0;
+        target.style.marginTop = 0;
+        target.style.marginBottom = 0;
+        target.offsetHeight;
+        target.style.boxSizing = 'border-box';
+        target.style.transitionProperty = "height, margin, padding";
+        target.style.transitionDuration = duration + 'ms';
+        target.style.height = height + 'px';
+        target.style.removeProperty('padding-top');
+        target.style.removeProperty('padding-bottom');
+        target.style.removeProperty('margin-top');
+        target.style.removeProperty('margin-bottom');
+        window.setTimeout(() => {
+            target.style.removeProperty('height');
+            target.style.removeProperty('overflow');
+            target.style.removeProperty('transition-duration');
+            target.style.removeProperty('transition-property');
+        }, duration);
+    } else {
+        target.style.transitionProperty = 'height, margin, padding';
+        target.style.transitionDuration = duration + 'ms';
+        target.style.boxSizing = 'border-box';
+        target.style.height = target.offsetHeight + 'px';
+        target.offsetHeight;
+        target.style.overflow = 'hidden';
+        target.style.height = 0;
+        target.style.paddingTop = 0;
+        target.style.paddingBottom = 0;
+        target.style.marginTop = 0;
+        target.style.marginBottom = 0;
+        window.setTimeout(() => {
+            target.style.display = 'none';
+            target.style.removeProperty('height');
+            target.style.removeProperty('padding-top');
+            target.style.removeProperty('padding-bottom');
+            target.style.removeProperty('margin-top');
+            target.style.removeProperty('margin-bottom');
+            target.style.removeProperty('overflow');
+            target.style.removeProperty('transition-duration');
+            target.style.removeProperty('transition-property');
+        }, duration);
+    }
+}
+
 function modal(header, input, options, doneCallback = () => {}){
 
     let element = `
@@ -195,16 +249,22 @@ function notif(text = "", description, type = "", time = 5000, undoCallback){
                         <span class="align-middle">${text}</span>
                     </div>
                     <div class="actions col col-auto align-self-center">
-                        ${undoCallback ? `<span class="undo pointer"><img title="Undo" src='img/svg/undo.svg'></span>`:``}
-                        ${description ? `<span class="expand pointer"><img title="See description" src='img/svg/arrow-up.svg'></span>`:``}
+                        ${undoCallback ? `
+                        <span class="undo pointer"><img title="Undo" src='img/svg/undo.svg'></span>
+                        `:``}
+                        ${description ? `
+                        <span class="expand pointer"><img title="See description" src='img/svg/arrow-up.svg'></span>
+                        `:``}
                         <span class="shut pointer"><img title="Close" src='img/svg/close.svg'></span>
                     </div>
                 </div>
-                ${description ? `<div class="row desc fx-slide">
-                    <div class="col mt-2">
+                ${description ? `
+                <div class="row desc">
+                    <div class="col">
                         <p class="small m-0">${description}</p>
                     </div>
-                </div>` : ``}
+                </div>
+                ` : ``}
             </div>
         </div>
     `;
@@ -233,21 +293,13 @@ function notif(text = "", description, type = "", time = 5000, undoCallback){
     });
 
     if(description) {
-        let desc = ntf.getElementsByClassName("desc")[0];
-        let expand = ntf.getElementsByClassName("expand")[0];
-        let descHe = desc.offsetHeight;
-        desc.classList.add("hide", "height-0");
-        ntf.getElementsByClassName("expand")[0].addEventListener("click", () => {
+        let desc = ntf.querySelector(".desc");
+        let expand = ntf.querySelector(".expand");
+        expand.addEventListener("click", () => {
+            slide(desc);
             let img = expand.firstElementChild;
-            if(getComputedStyle(desc).display == "none"){
-                desc.style.display = "block";
-                setTimeout(() => desc.style.height = descHe + "px");
-                img.setAttribute("src", "img/svg/arrow-down.svg");
-            } else {
-                desc.style.height = "0";
-                setTimeout(() => desc.style.display = "none", 600);
-                img.setAttribute("src", "img/svg/arrow-up.svg");
-            }
+            let display = getComputedStyle(desc).display;
+            display == "none" ? img.setAttribute("src", "img/svg/arrow-down.svg") : img.setAttribute("src", "img/svg/arrow-up.svg");
         });
     }
 

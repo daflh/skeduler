@@ -64,7 +64,7 @@
                             <form id="newNoteForm" class="form-group textbox mx-auto" name="note-form">
                                 <textarea class="form-control py-3 px-4" name="newNoteTextarea" placeholder="Title
 Write new note here ..." rows="2" spellcheck="false" required></textarea>
-                                <div class="save pointer fx-slide hide height-0">
+                                <div class="save">
                                     <span>Close</span>
                                 </div>
                             </form>
@@ -106,15 +106,8 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
             });
 
             ta.addEventListener("keyup", function(){
-                let style = getComputedStyle(save.firstElementChild);
-                let saveHe = parseFloat(style.lineHeight) + parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
-                if(this.value !== "") {
-                    save.style.display = "block";
-                    setTimeout(() => save.style.height = saveHe + "px");
-                } else {
-                    save.style.height = "0";
-                    setTimeout(() => save.style.display = "none", 600);
-                }
+                let display = getComputedStyle(save).display;
+                if ((display == "none" && this.value !== "") || (display != "none" && this.value === "")) slide(save);
             });
 
             ta.autoExpand();
@@ -128,8 +121,7 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                 }
                 ta.value = "";
                 ta.autoExpand();
-                save.style.height = "0";
-                setTimeout(() => save.style.display = "none", 600);
+                slide(save);
             });
             
             notesRef.orderBy('pin','desc').onSnapshot(function(data){
