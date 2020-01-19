@@ -44,10 +44,9 @@ Date.prototype.toDateRelativeString = function(){
     const dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
     const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     let now = new Date();
-    if (this.getTimeS() < now.getTimeS()) {
+    if (this.getTimeM() < now.getTimeM()) {
         let condition = {'day':24*60*60,'hour':60*60,'minute':60,'second':1};
-        let diff = (now.getTimeS() - this.getTimeS())/1000;
-        if(diff < 1) return 'less than 1 second ago';
+        let diff = (now.getTimeM() - this.getTimeM())/1000;
         for(let key in condition){
             let d = diff / condition[key];
             if(d >= 1){
@@ -57,7 +56,7 @@ Date.prototype.toDateRelativeString = function(){
                 break;
             }
         }
-    } else if (this.getTimeS() === now.getTimeS()) {
+    } else if (this.getTimeM() === now.getTimeM()) {
         return "Now!";
     } else {
         let daynm = dayNames[this.getDay()];
@@ -65,11 +64,11 @@ Date.prototype.toDateRelativeString = function(){
         let minsec = this.getHours().toString().padStart(2, "0")+":"+this.getMinutes().toString().padStart(2, "0");
         if (now.getFullYear() === this.getFullYear()) {
             let sameMonth = now.getMonth() === this.getMonth();
-            let tomo = now;
-            tomo.setDate(tomo.getDate()+1)
+            let tomorrow = new Date(now.getTime());
+            tomorrow.setDate(tomorrow.getDate()+1);
             if (sameMonth && now.getDate() === this.getDate()) {
                 return "Today at "+minsec;
-            } else if (sameMonth && tomo.getDate() === this.getDate()) {
+            } else if (sameMonth && tomorrow.getDate() === this.getDate()) {
                 return "Tomorrow at "+minsec;
             } else {
                 return daynm+", "+datmon+" at "+minsec;
