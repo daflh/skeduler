@@ -207,7 +207,7 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
 
                         ta.autoExpand();
                         
-                        editBox.getElementsByClassName("edit-close")[0].addEventListener("click", () => {
+                        editBox.querySelector(".edit-close").addEventListener("click", () => {
                             if(!!ta.value.replace(/\s/g, '').length) notesRef.doc(id).update({ data: ta.value });
                             editBox.style.opacity = 0;
                             setTimeout(() => editBox.parentNode.removeChild(editBox), 600);

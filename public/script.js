@@ -233,7 +233,7 @@ function modal(header, input, options, doneCallback = () => {}){
         closeModal();
     });
 
-    mdl.getElementsByClassName("cancel")[0].addEventListener("click", closeModal);
+    mdl.querySelector(".cancel").addEventListener("click", closeModal);
 
 }
 
@@ -287,7 +287,7 @@ function notif(text = "", description, type = "", time = 5000, undoCallback){
 
     if(time !== 0) setTimeout(() => closeNotif(identifierNum), time);
 
-    if(undoCallback) ntf.getElementsByClassName("undo")[0].addEventListener("click", () => {
+    if(undoCallback) ntf.querySelector(".undo").addEventListener("click", () => {
         undoCallback();
         closeNotif();
     });
@@ -303,7 +303,7 @@ function notif(text = "", description, type = "", time = 5000, undoCallback){
         });
     }
 
-    ntf.getElementsByClassName("shut")[0].addEventListener("click", () => closeNotif());
+    ntf.querySelector(".shut").addEventListener("click", () => closeNotif());
 
 }
 
@@ -311,12 +311,12 @@ const _d = (...args) => new (Function.prototype.bind.apply(Date, [Date, ...args]
 
 let navbar = document.getElementById("navcol");
 
-document.getElementsByName("navbarFadeIn")[0].addEventListener("click", () => {
+document.querySelector("button[name=navbarFadeIn]").addEventListener("click", () => {
     navbar.style.display = "block";
     setTimeout(() => navbar.style.opacity = 1, 10);
 });
 
-document.getElementsByName("navbarFadeOut")[0].addEventListener("click", () => {
+document.querySelector("button[name=navbarFadeOut]").addEventListener("click", () => {
     navbar.style.opacity = 0;
     setTimeout(() => navbar.style.display = "none", 600);
 });
