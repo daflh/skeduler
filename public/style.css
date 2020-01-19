@@ -10,8 +10,6 @@ hr{border-color:#f3f3f3}
 .disabled{pointer-events: none}
 .small{font-size:80%!important}
 .hide{display:none}
-.fx-fade{transition: opacity 600ms; -webkit-transition: opacity 600ms; -o-transition: opacity 600ms}
-.opacity-0{opacity:0}
 .btn{position:relative;text-transform:none;-webkit-transition:all .15s ease;transition:all .15s ease;letter-spacing:.025em;font-size:.875rem;will-change:transform}
 .main-content{position:relative;padding: 1rem;margin-bottom: 1.5rem}
 .main-content .page-nav{color:rgba(0,0,0,.75);font-size:1.0625rem!important;font-weight:600;line-height: 1.5;margin:0;text-transform: uppercase}
@@ -41,7 +39,7 @@ hr{border-color:#f3f3f3}
 .card{border:0;border-radius:0!important;box-shadow:0 0 2rem 0 rgba(136,152,170,.15)!important}
 .social-button{text-align:center;display:block;cursor:pointer;padding:0.75rem 0}
 .social-button span{margin-left:.25rem}
-.modal-overlay,.note-edit-overlay{position:fixed;width:100%;top:0;bottom:0;z-index:9999;background-color:rgba(0,0,0,.4)}
+.modal-overlay,.note-edit-overlay{position:fixed;display:none;width:100%;top:0;bottom:0;z-index:9999;background-color:rgba(0,0,0,.4)}
 .modal-overlay .modal-box,.note-edit-overlay .note-edit-box{position:absolute;top:50%;right:0;left:0;-webkit-transform:translateY(-50%);transform:translateY(-50%);-ms-transform:translateY(-50%);margin:0 auto;background-color:#fff;box-shadow:0 5px 22px 0 rgba(0,0,0,0.25)}
 .modal-overlay .modal-box{width:450px;padding:3rem 2rem;text-align:center}
 .modal-overlay .modal-box h2{font-weight:600}
@@ -55,21 +53,22 @@ hr{border-color:#f3f3f3}
 .note-edit-overlay .note-edit-box{width:750px}
 .note-edit-overlay .note-edit-box textarea{border:0;border-bottom:1px solid #f3f3f3!important;resize:none;max-height:75vh}
 .note-edit-overlay .note-edit-box textarea:first-line{font-weight:700}
-.notif-overlay{position:fixed;width:100%;bottom:0;z-index:9999}
-.notif-overlay .notif-box{position:absolute;bottom:0;padding:1rem 1.5rem;margin:1.5rem;line-height:1.15;background-color:#fff;box-shadow:0 5px 22px 0 rgba(0,0,0,0.25)}
+.notif-overlay{display:none;position:fixed;width:100%;bottom:0;z-index:9999}
+.notif-overlay .notif-box{position:absolute;bottom:0;padding:1rem 1.5rem;margin:1.5rem;background-color:#fff;box-shadow:0 5px 22px 0 rgba(0,0,0,0.25)}
 .notif-overlay .notif-box .desc{display:none;margin-top:.5rem}
 .notif-overlay .notif-box .text span{font-weight:600}
 .notif-overlay .notif-box .text img{width:1.6em;height:1.6rem}
 .notif-overlay .notif-box .actions img{width:1.25em;height:1.25rem}
 #dashboard-page .list-group li{background-color:initial!important;padding:.75rem 0}
 #dashboard-page textarea{max-height:300px}
-#dashboard-page .export textarea{background-color:#f9f9f9}
+#dashboard-page .export textarea{background-color:#f9f9f9;display:none}
 #dashboard-page .user-photo{width:80px}
 #dashboard-page .user-name{font-weight:600}
 #login-page,#error-page{position:absolute;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%);-ms-transform:translateY(-50%);width:100%}
 #login-page .container{margin:10vh auto!important}
 #login-page .main-content h1{font-weight:600;font-size:2.25rem}
 #login-page .logo-img{height:4rem}
+#login-page .error-message{text-align:center;display:none;margin-bottom:1rem}
 #events-page table{color:inherit!important; margin-bottom:0}
 #events-page table thead th{border-color:#f3f3f3;font-size:.65rem!important;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #f3f3f3!important;background-color:#fff!important}
 #events-page table tr:nth-child(odd){background-color:#fbfbfb}
@@ -106,7 +105,7 @@ hr{border-color:#f3f3f3}
 }
 @media (max-width:767.98px) {
     .navbar-nav .nav-link{padding:.625rem 0}
-    .navbar-collapse{padding:1.5rem;background:#fff;box-shadow:0 50px 100px rgba(50,50,93,.1),0 15px 35px rgba(50,50,93,.15),0 5px 15px rgba(0,0,0,.1);width:calc(100% - 1.4rem);position:absolute;top:0;left:0;right:0;z-index:1050;margin:.7rem;overflow-y:auto;height:auto!important}
+    .navbar-collapse{display:none;padding:1.5rem;background:#fff;box-shadow:0 50px 100px rgba(50,50,93,.1),0 15px 35px rgba(50,50,93,.15),0 5px 15px rgba(0,0,0,.1);width:calc(100% - 1.4rem);position:absolute;top:0;left:0;right:0;z-index:1050;margin:.7rem;overflow-y:auto;height:auto!important}
     .navbar-collapse .navbar-toggler{position:relative;cursor:pointer;display:inline-block;padding:0}
     .navbar-collapse .navbar-toggler img{width:25px;height:25px}
     .navbar-collapse .navbar-collapse-header{display:block;padding-bottom:1rem;margin-bottom:1rem;border-bottom:1px solid #f3f3f3}

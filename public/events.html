@@ -22,7 +22,7 @@
             <a class="navbar-brand pr-3" href="./">
                 <img src="./img/logo-black.png" alt="Coragon Logo" id="navbar-brand-img">
             </a>
-            <div class="navbar-collapse fx-fade hide opacity-0" id="navcol">
+            <div class="navbar-collapse" id="navcol">
                 <div class="navbar-collapse-header d-md-none">
                     <div class="row">
                         <div class="col-6 collapse-brand">
@@ -93,10 +93,10 @@
                 }
                 let showWarning = permission => {
                     let element = `
-                        <div id="permission-warning" class="card rounded-0 mt-4 bg-white text-muted fx-fade hide opacity-0">
-                            <div class="card-body p-4">
-                                <img class="mr-3 align-text-bottom" width="50" src='img/svg/levels/warning.svg'>
-                                <div class="d-block d-sm-inline-block">
+                        <div id="permission-warning" class="card rounded-0 mt-4 bg-white text-muted hide">
+                            <div class="d-flex card-body p-4">
+                                <img class="mr-3" width="50" src='img/svg/levels/warning.svg'>
+                                <div class="align-self-center">
                                     <p class="m-0 mt-1 mt-sm-0 small font-weight-bold">Notification Blocked</p>
                                     <p class="m-0 small">Turn on notifications to get event reminder.</p>
                                     ${permission === "default" ? `<button id="prompt-notif" class="btn btn-primary btn-sm small border-0 bg-secondary mt-1">Allow Notification</button>` : ``}
@@ -111,19 +111,15 @@
                     `;
 
                     document.getElementById("events-wrapper").insertAdjacentHTML("beforebegin", element);
-                    let pw = document.getElementById("permission-warning");
-                    pw.style.display = "block";
-                    setTimeout(() => pw.style.opacity = 1, 10);
+                    fade(document.getElementById("permission-warning"), "show");
 
-                    document.getElementById("prompt-notif").addEventListener("click", () => osgl.showNativePrompt());
+                    if(permission === "default") document.getElementById("prompt-notif").addEventListener("click", () => osgl.showNativePrompt());
                 }
                 osgl.init({ appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983" });
                 osgl.getNotificationPermission(pmsn => pmsn === "granted" ? storeUserId() : showWarning(permission));
                 osgl.on('subscriptionChange', subs => {
                     if(subs){
-                        let pw = document.getElementById("permission-warning");
-                        pw.style.opacity = 0;
-                        setTimeout(() => pw.style.display = "none", 600);
+                        fade(document.getElementById("permission-warning"), "hide");
                         storeUserId();
                     } else {
                         osgl.getUserId(userId => fs.collection("users").doc(user.uid).set({

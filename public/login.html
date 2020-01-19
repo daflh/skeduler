@@ -34,7 +34,7 @@
                                     <span>Login with <b>Facebook</b></span>
                                 </div>
                             </div>
-                            <div class="error-message text-center mb-3 small text-danger fx-fade hide opacity-0"></div>
+                            <div class="error-message small text-danger"></div>
                         </div>
                     </div>
                 </div>
@@ -63,8 +63,7 @@
             firebase.auth().signInWithPopup(provider).catch(err => {
                 let el = document.querySelector(".error-message");
                 el.textContent = err.message;
-                el.style.display = "block";
-                setTimeout(() => el.style.opacity = 1, 10);
+                fade(el, "show");
             });
         });
     });

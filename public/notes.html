@@ -22,7 +22,7 @@
             <a class="navbar-brand pr-3" href="./">
                 <img src="./img/logo-black.png" alt="Coragon Logo" id="navbar-brand-img">
             </a>
-            <div class="navbar-collapse fx-fade hide opacity-0" id="navcol">
+            <div class="navbar-collapse" id="navcol">
                 <div class="navbar-collapse-header d-md-none">
                     <div class="row">
                         <div class="col-6 collapse-brand">
@@ -184,7 +184,7 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                         id = evt.path.find(el => el.hasAttribute("data-id")).dataset.id;
                         let taValue = notesDt[id].data;
                         let editBoxElement = `
-                            <div id="note-edit" class="note-edit-overlay fx-fade hide opacity-0">
+                            <div id="note-edit" class="note-edit-overlay">
                                 <div class="note-edit-box">
                                     <textarea class="form-control p-4" placeholder="Title\nEdit your note ..." spellcheck="false" required>${taValue}</textarea>
                                     <div class="px-4">
@@ -198,8 +198,7 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
 
                         document.body.insertAdjacentHTML("beforeend", editBoxElement);
                         editBox = document.getElementById("note-edit");
-                        editBox.style.display = "block";
-                        setTimeout(() => editBox.style.opacity = 1, 10);
+                        fade(editBox, "show");
 
                         let ta = editBox.firstElementChild.firstElementChild;
 
@@ -209,7 +208,7 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                         
                         editBox.querySelector(".edit-close").addEventListener("click", () => {
                             if(!!ta.value.replace(/\s/g, '').length) notesRef.doc(id).update({ data: ta.value });
-                            editBox.style.opacity = 0;
+                            fade(editBox, "hide", 600)
                             setTimeout(() => editBox.parentNode.removeChild(editBox), 600);
                         });
 

@@ -159,10 +159,26 @@ function slide(target, duration = 600) {
     }
 }
 
+function fade(target, type = '', duration = 600, initial = 'block') {
+    let dn = (type == 'show' || type == 'hide') ? (type == 'show' ? true : false) : getComputedStyle(target).display === 'none';
+    if(dn) target.style.display = initial;
+    target.style.opacity = dn ? 0 : 1;
+    target.style.transitionProperty = 'opacity';
+    target.style.transitionDuration = duration + 'ms';
+    if(dn) window.setTimeout(() => target.style.opacity = 1);
+    if(!dn) target.style.opacity = 0;
+    window.setTimeout(() => {
+        if(!dn) target.style.display = 'none';
+        target.style.removeProperty('opacity');
+        target.style.removeProperty('transition-duration');
+        target.style.removeProperty('transition-property');
+    }, duration);
+}
+
 function modal(header, input, options, doneCallback = () => {}){
 
     let element = `
-        <div id="modal" class="modal-overlay fx-fade hide opacity-0">
+        <div id="modal" class="modal-overlay">
             <div class="modal-box">
                 <h2 class="mb-4">${header}</h2>
                 <form id="modal-form" class="form-group mb-4">
@@ -199,12 +215,11 @@ function modal(header, input, options, doneCallback = () => {}){
 
     document.body.insertAdjacentHTML("beforeend", element);
     mdl = document.getElementById("modal");
-    mdl.style.display = "block";
-    setTimeout(() => mdl.style.opacity = 1, 10);
+    fade(mdl, "show");
 
     let modalForm = document.forms["modal-form"]; 
     let closeModal = () => {
-        mdl.style.opacity = 0;
+        fade(mdl, "hide", 600);
         setTimeout(() => mdl.parentNode.removeChild(mdl), 600);
     }
 
@@ -241,7 +256,7 @@ function notif(text = "", description, type = "", time = 5000, undoCallback){
 
     let identifierNum = Math.floor(100000 + Math.random() * 900000);
     let element = `
-        <div id="notif" class="notif-overlay fx-fade hide opacity-0" data-identifier="${identifierNum}">
+        <div id="notif" class="notif-overlay" data-identifier="${identifierNum}">
             <div class="notif-box">
                 <div class="row">
                     <div class="text col align-self-center small">
@@ -273,13 +288,12 @@ function notif(text = "", description, type = "", time = 5000, undoCallback){
 
     typeof ntf != 'undefined' && ntf != null ? ntf.outerHTML = element : document.body.insertAdjacentHTML("beforeend", element);
     ntf = document.getElementById("notif");
-    ntf.style.display = "block";
-    setTimeout(() => ntf.style.opacity = 1, 10);
+    fade(ntf, "show")
 
     let closeNotif = idNum => {
         ntf = document.getElementById("notif");
         if(idNum !== undefined && ntf.dataset.identifier != idNum) return;
-        ntf.style.opacity = 0;
+        fade(ntf, "hide", 600)
         setTimeout(() => {
             if(typeof ntf != 'undefined' && ntf != null) ntf.parentNode.removeChild(ntf)
         }, 600);
@@ -309,16 +323,8 @@ function notif(text = "", description, type = "", time = 5000, undoCallback){
 
 const _d = (...args) => new (Function.prototype.bind.apply(Date, [Date, ...args]));
 
-let navbar = document.getElementById("navcol");
-
-document.querySelector("button[name=navbarFadeIn]").addEventListener("click", () => {
-    navbar.style.display = "block";
-    setTimeout(() => navbar.style.opacity = 1, 10);
-});
-
-document.querySelector("button[name=navbarFadeOut]").addEventListener("click", () => {
-    navbar.style.opacity = 0;
-    setTimeout(() => navbar.style.display = "none", 600);
+document.querySelectorAll("#sidenav-main button[name^='navbarFade']").forEach(el => {
+    el.addEventListener("click", () => fade(document.getElementById("navcol")));
 });
 
 document.getElementById("logout").addEventListener("click", () => {
