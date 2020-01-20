@@ -183,33 +183,21 @@
                 }
             }
 
-            function repeatTime(dateTimestamp, repeatEvery){
-                let dt = +dateTimestamp;
-                let objectdt = new Date(+dateTimestamp);
-                if(repeatEvery==="daily") {
-                    dt += 60*60*24*1000;
-                } else if(repeatEvery==="weekly") {
-                    dt += 60*60*24*7*1000;
-                } else if(repeatEvery==="monthly") {
-                    let date = objectdt.getDate();
-                    objectdt.setMonth(objectdt.getMonth()+1);
-                    objectdt.setDate(date);
-                    dt = objectdt.getTime();
-                } else if(repeatEvery==="yearly") {
-                    objectdt.setFullYear(objectdt.getFullYear() + (
-                        objectdt.getDate() === 29 && objectdt.getMonth() === 1 ? 4 : 1
-                    ));
-                    dt = objectdt.getTime();
-                }
-                return dt;
-            }
-
-            function afterDone(id,obj){
-                if (obj.repeat==="unrepeat") {
+            function eventDone(id, data){
+                let repeat = data.repeat;
+                if (repeat === "unrepeat") {
                     eventsRef.doc(id).delete();
                 } else {
-                    eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromMillis(repeatTime(obj.date.seconds*1000,obj.repeat)) }).then(function(){
-                        createNotif(id,obj.name,+repeatTime(obj.date.seconds*1000,obj.repeat)/1000)
+                    let nextTime;
+                    let time = data.date.seconds * 1000;
+                    let timeObj = new Date(time);
+                    if (repeat === "daily") nextTime = time + 60*60*24*1000;
+                    else if (repeat === "weekly") nextTime = time + 60*60*24*7*1000;
+                    else if (repeat === "monthly") nextTime = timeObj.setMonth(timeObj.getMonth() + 1);
+                    else if (repeat === "yearly") nextTime = timeObj.setFullYear(timeObj.getFullYear() + 1);
+                    else return;
+                    eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromMillis(nextTime) }).then(function(){
+                        createNotif(id, data.name, nextTime)
                     });
                 }
             }
@@ -232,7 +220,7 @@
                 once.forEach(raw=>{
                     let dt = raw.data();
                     if (dt.date.seconds*1000 <= _d().getTimeM()) eventsRef.doc(raw.id).update({ notif_id: firebase.firestore.FieldValue.delete() });
-                    if (dt.date.seconds*1000 <= _d().getTimeM() - 60*60*24*1000) afterDone(raw.id,dt);
+                    if (dt.date.seconds*1000 <= _d().getTimeM() - 60*60*24*1000) eventDone(raw.id, dt);
                 });
                 eventsRef.orderBy('date').onSnapshot(function(data){
                     let elem = '';
@@ -257,7 +245,7 @@
                                 <tr ${past ? "class='past' " : ""}data-id='${v.id}'>
                                     <td class='date' title='${d.date.toDate()}'>
                                         ${_d(d.date.seconds * 1000).toDateRelativeString()}
-                                        ${d.repeat !== "unrepeat" ? ` <img class='repeat' title='Repeats "+d.repeat+"' src='img/svg/repeat.svg'>` : ``}
+                                        ${d.repeat !== "unrepeat" ? ` <img class='repeat' title='Repeats ${d.repeat}' src='img/svg/repeat.svg'>` : ``}
                                         ${d.notif_id ? ` <img class='notif-active' title='Notification enabled' src='img/svg/notif.svg'>` : ``}
                                     </td>
                                     <th>${d.name}</th>
@@ -344,7 +332,7 @@
                     });
 
                 } else if (t && t.classList.contains("done")) {
-                    afterDone(id,event);
+                    eventDone(id, event);
                 
                 } else if (window.innerWidth < 992 && t && item !== undefined && !item.classList.contains("past")) {
                     slide(item.lastElementChild);
