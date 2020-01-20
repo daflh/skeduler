@@ -254,14 +254,14 @@
                             let d = v.data();
                             let past = d.date.seconds*1000 <= _d().getTimeM();
                             elem += `
-                                <tr data-id='${v.id}'>
+                                <tr ${past ? "class='past' " : ""}data-id='${v.id}'>
                                     <td class='date' title='${d.date.toDate()}'>
                                         ${_d(d.date.seconds * 1000).toDateRelativeString()}
                                         ${d.repeat !== "unrepeat" ? ` <img class='repeat' title='Repeats "+d.repeat+"' src='img/svg/repeat.svg'>` : ``}
                                         ${d.notif_id ? ` <img class='notif-active' title='Notification enabled' src='img/svg/notif.svg'>` : ``}
                                     </td>
                                     <th>${d.name}</th>
-                                    <td class='actions${past ? " past" : ""}'>
+                                    <td class='actions'>
                                     ${!past ? `
                                         <img title='Edit' class='edit pointer' src='img/svg/edit.svg'>
                                         <img title='Delete' class='delete ml-3 pointer' src='img/svg/delete.svg'>
@@ -346,7 +346,7 @@
                 } else if (t && t.classList.contains("done")) {
                     afterDone(id,event);
                 
-                } else if (window.innerWidth < 992 && t && item !== undefined) {
+                } else if (window.innerWidth < 992 && t && item !== undefined && !item.classList.contains("past")) {
                     slide(item.lastElementChild);
 
                 }

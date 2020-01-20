@@ -127,7 +127,7 @@ hr{border-color:#f3f3f3}
     #events-page table tr th{font-size:110%}
     #events-page table tr td.date{margin-bottom:1rem}
     #events-page table tr td.actions{display:none;margin-top:1rem}
-    #events-page table tr td.actions.past{display:block!important;height:initial!important;margin-top:1rem!important}
+    #events-page table tr.past td.actions{display:block}
 }
 
 @media (min-width:768px) {
