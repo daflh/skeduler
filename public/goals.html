@@ -133,10 +133,10 @@
                 modal("Add new goal", ["title", "link"], {
                     titlePlac: "Goal Name",
                     linkPlac: "Redirect Link (Optional)"
-                }, args => {
+                }, ({title: name, link}) => {
                     goalsRef.add({
-                        name: args.title,
-                        link: args.link,
+                        name: name,
+                        link: link,
                         sort: +(""+new Date().getTime()+Math.floor(Math.random()*90+10))
                     });
                 });
@@ -158,9 +158,9 @@
                         titleVal: goal.name,
                         linkPlac: "Redirect Link (Optional)",
                         linkVal: goal.link
-                    }, args => goalsRef.doc(id).update({
-                        name: args.title,
-                        link: args.link
+                    }, ({title: name, link}) => goalsRef.doc(id).update({
+                        name: name,
+                        link: link
                     }));
 
                 } else if (t && t.classList.contains("delete")) {

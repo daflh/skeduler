@@ -242,7 +242,7 @@ function modal(header, input = [], { titleVal = "", titlePlac = "", linkVal = ""
             link: input.includes("link") ? modalForm.elements.link.value : "",
             date: input.includes("date") ? modalForm.elements.date.value : "",
             repeat: input.includes("repeat") ? modalForm.elements.repeat.value : "",
-            notif: input.includes("date") ? modalForm.elements.notif.checked : ""
+            useNotif: input.includes("date") ? modalForm.elements.notif.checked : ""
         });
         closeModal();
     });

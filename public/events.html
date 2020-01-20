@@ -264,13 +264,13 @@
             document.getElementById("add").addEventListener("click", () => {
                 modal("Add new event", ["title", "date", "repeat"], {
                     titlePlac: "Event Name"
-                }, args => {
+                }, ({title: name, date, repeat, useNotif}) => {
                     eventsRef.add({
-                        name: args.title,
-                        date: firebase.firestore.Timestamp.fromDate(new Date(args.date)),
-                        repeat: args.repeat
+                        name: name,
+                        date: firebase.firestore.Timestamp.fromDate(new Date(date)),
+                        repeat: repeat
                     }).then(doc => {
-                        if(args.notif) createNotif(doc.id, args.title, _d(args.date).getTimeS());
+                        if(useNotif) createNotif(doc.id, name, _d(date).getTimeS());
                     });
                 });
             });
@@ -293,15 +293,15 @@
                         dateVal: _d(event.date.seconds * 1000).toISOMinuteString(),
                         repeatVal: event.repeat,
                         notifChecked: event.hasOwnProperty("notif_id") ? true : false
-                    }, args => {
+                    }, ({title: name, date, repeat, useNotif}) => {
                         eventsRef.doc(id).update({
-                            name: args.title,
-                            date: firebase.firestore.Timestamp.fromDate(new Date(args.date)),
-                            repeat: args.repeat
+                            name: name,
+                            date: firebase.firestore.Timestamp.fromDate(new Date(date)),
+                            repeat: repeat
                         }).then(function(){
-                            if(args.notif){
-                                if(event.name !== args.title || event.date.seconds !== firebase.firestore.Timestamp.fromDate(new Date(args.date)).seconds || !event.hasOwnProperty("notif_id"))
-                                    createNotif(id, args.title, _d(args.date).getTimeS());
+                            if (useNotif) {
+                                if(event.name !== name || event.date.seconds !== firebase.firestore.Timestamp.fromDate(new Date(date)).seconds || !event.hasOwnProperty("notif_id"))
+                                    createNotif(id, name, _d(date).getTimeS());
                             } else {
                                 if(event.hasOwnProperty("notif_id")) cancelNotif(event.notif_id);
                                 eventsRef.doc(id).update({ notif_id: firebase.firestore.FieldValue.delete() });
@@ -325,9 +325,9 @@
                 } else if (t && t.classList.contains("snooze")) {
                     modal("Snooze event", ["date"], {
                         dateVal: _d().toISOMinuteString()
-                    }, args => {
-                        eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromDate(new Date(args.date)) }).then(function(){
-                            if(args.notif) createNotif(id, event.name, _d(args.date).getTimeS())
+                    }, ({date, useNotif}) => {
+                        eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromDate(new Date(date)) }).then(function(){
+                            if(useNotif) createNotif(id, event.name, _d(date).getTimeS())
                         });
                     });
 
