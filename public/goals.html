@@ -96,19 +96,6 @@
                 });
             });
 
-            document.getElementById("add").addEventListener("click", () => {
-                modal("Add new goal", ["title","link"], {
-                    titlePl: "Goal Name",
-                    linkPl: "Redirect Link (Optional)"
-                }, args => {
-                    goalsRef.add({
-                        name: args.title,
-                        link: args.link,
-                        sort: +(""+new Date().getTime()+Math.floor(Math.random()*90+10))
-                    });
-                });
-            });
-
             goalsRef.orderBy('sort').onSnapshot(function(data){
                 let elem = '';
                 let cachingData = {};
@@ -142,6 +129,19 @@
                 sessionStorage.goalsData = JSON.stringify(cachingData);
             });
 
+            document.getElementById("add").addEventListener("click", () => {
+                modal("Add new goal", ["title", "link"], {
+                    titlePlac: "Goal Name",
+                    linkPlac: "Redirect Link (Optional)"
+                }, args => {
+                    goalsRef.add({
+                        name: args.title,
+                        link: args.link,
+                        sort: +(""+new Date().getTime()+Math.floor(Math.random()*90+10))
+                    });
+                });
+            });
+
             document.addEventListener("click", function(evt){
                 let id, event;
                 let goalsDt = JSON.parse(sessionStorage.goalsData);
@@ -153,10 +153,10 @@
                 }
 
                 if (t && t.classList.contains("edit")) {
-                    modal("Edit goal", ["title","link"], {
-                        titlePl: "Goal Name",
+                    modal("Edit goal", ["title", "link"], {
+                        titlePlac: "Goal Name",
                         titleVal: goal.name,
-                        linkPl: "Redirect Link (Optional)",
+                        linkPlac: "Redirect Link (Optional)",
                         linkVal: goal.link
                     }, args => goalsRef.doc(id).update({
                         name: args.title,
@@ -165,9 +165,9 @@
 
                 } else if (t && t.classList.contains("delete")) {
                     goalsRef.doc(id).delete().then(() => {
-                        notif("Goal successfully deleted!", undefined, "info", undefined, () => {
+                        notif("Goal successfully deleted!", {type: "info", whenUndo: () => {
                             goalsRef.doc(id).set(goal);
-                        });
+                        }});
                     });
                     
                 } else if (t && t.classList.contains("up") || t.classList.contains("down")) {

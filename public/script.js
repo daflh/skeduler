@@ -105,7 +105,7 @@ Element.prototype.autoExpand = function(){
     elem.style.resize = "none";
 }
 
-function fade(target, type = '', duration = 600, initial = 'block') {
+function fade(target, { type = '', duration = 600, initial = 'block' } = {}) {
     let dn = (type == 'show' || type == 'hide') ? (type == 'show' ? true : false) : getComputedStyle(target).display === 'none';
     if(dn) target.style.display = initial;
     target.style.opacity = dn ? 0 : 1;
@@ -121,7 +121,7 @@ function fade(target, type = '', duration = 600, initial = 'block') {
     }, duration);
 }
 
-function slide(target, type = '', duration = 600, initial = 'block') {
+function slide(target, { type = '', duration = 600, initial = 'block' } = {}) {
     let dn = (type == 'show' || type == 'hide') ? (type == 'show' ? true : false) : getComputedStyle(target).display === 'none';
     if(dn) {
         target.style.removeProperty('display');
@@ -174,7 +174,7 @@ function slide(target, type = '', duration = 600, initial = 'block') {
     }
 }
 
-function modal(header, input, options, doneCallback = () => {}){
+function modal(header, input = [], { titleVal = "", titlePlac = "", linkVal = "", linkPlac = "", dateVal = "", repeatVal = "", notifChecked = true } = {}, whenSubmit = () => {}){
 
     let element = `
         <div id="modal" class="modal-overlay">
@@ -182,22 +182,22 @@ function modal(header, input, options, doneCallback = () => {}){
                 <h2 class="mb-4">${header}</h2>
                 <form id="modal-form" class="form-group mb-4">
                     <br/>
-                    ${input.includes("title") ? `<input class="form-control" type="text" name="title" value="${options.titleVal||''}" placeholder="${options.titlePl||''}" required><br/>`:``}
-                    ${input.includes("link") ? `<input class="form-control" type="text" name="link" value="${options.linkVal||''}" placeholder="${options.linkPl||''}">`:``}
-                    ${input.includes("date") ? `<input class="form-control" type="datetime-local" name="date" value="${options.dateVal||''}" min="${new Date().toISOMinuteString()}" required><br/>`:``}
+                    ${input.includes("title") ? `<input class="form-control" type="text" name="title" value="${titleVal}" placeholder="${titlePlac}" required><br/>`:``}
+                    ${input.includes("link") ? `<input class="form-control" type="text" name="link" value="${linkVal}" placeholder="${linkPlac}">`:``}
+                    ${input.includes("date") ? `<input class="form-control" type="datetime-local" name="date" value="${dateVal}" min="${new Date().toISOMinuteString()}" required><br/>`:``}
                     ${input.includes("repeat") ? `
                     <select class="form-control rounded-0" name="repeat">
-                        <option ${options.repeatVal === 'unrepeat' ? 'selected' : ''} value="unrepeat">Does not repeat</option>
-                        <option ${options.repeatVal === 'daily' ? 'selected' : ''} value="daily">Daily</option>
-                        <option ${options.repeatVal === 'weekly' ? 'selected' : ''} value="weekly">Weekly</option>
-                        <option ${options.repeatVal === 'monthly' ? 'selected' : ''} value="monthly">Monthly</option>
-                        <option ${options.repeatVal === 'yearly' ? 'selected' : ''} value="yearly">Yearly</option>
+                        <option ${repeatVal === 'unrepeat' ? 'selected' : ''} value="unrepeat">Does not repeat</option>
+                        <option ${repeatVal === 'daily' ? 'selected' : ''} value="daily">Daily</option>
+                        <option ${repeatVal === 'weekly' ? 'selected' : ''} value="weekly">Weekly</option>
+                        <option ${repeatVal === 'monthly' ? 'selected' : ''} value="monthly">Monthly</option>
+                        <option ${repeatVal === 'yearly' ? 'selected' : ''} value="yearly">Yearly</option>
                     </select>
                     <br/>
                     ` : ``}
                     ${input.includes("date") ? `
                     <div class="pretty-checkbox" title="Notification can only be used for event that happen in less than 29 days from now">
-                        <input type="checkbox" name="notif" id="notifInput" ${(new Date().getTimeS()+60*60*24*29*1000 < new Date(options.dateVal).getTimeS() ? ' disabled' : '') + (options.notif !== false ? ' checked' : '')}>
+                        <input type="checkbox" name="notif" id="notifInput" ${(new Date().getTimeS()+60*60*24*29*1000 < (dateVal ? new Date(dateVal) : new Date()).getTimeS() ? ' disabled' : '') + (notifChecked === true ? ' checked' : '')}>
                         <label for="notifInput">Create notification for this event</label>
                     </div>
                     ` : ``}
@@ -214,11 +214,11 @@ function modal(header, input, options, doneCallback = () => {}){
 
     document.body.insertAdjacentHTML("beforeend", element);
     mdl = document.getElementById("modal");
-    fade(mdl, "show");
+    fade(mdl, {type: "show"});
 
     let modalForm = document.forms["modal-form"]; 
     let closeModal = () => {
-        fade(mdl, "hide", 600);
+        fade(mdl, {type: "hide", duration: 600});
         setTimeout(() => mdl.parentNode.removeChild(mdl), 600);
     }
 
@@ -237,7 +237,7 @@ function modal(header, input, options, doneCallback = () => {}){
 
     modalForm.addEventListener("submit", evt => {
         evt.preventDefault();
-        doneCallback({
+        whenSubmit({
             title: input.includes("title") ? modalForm.elements.title.value : "",
             link: input.includes("link") ? modalForm.elements.link.value : "",
             date: input.includes("date") ? modalForm.elements.date.value : "",
@@ -251,19 +251,19 @@ function modal(header, input, options, doneCallback = () => {}){
 
 }
 
-function notif(text = "", description, type = "", time = 5000, undoCallback){
+function notif(text = "", {type = "", duration = 5000, description, whenUndo} = {}){
 
     let identifierNum = Math.floor(100000 + Math.random() * 900000);
     let element = `
         <div id="notif" class="notif-overlay" data-identifier="${identifierNum}">
             <div class="notif-box">
                 <div class="row">
-                    <div class="text col align-self-center small">
+                    <div class="text col align-items-center small">
                         ${type !== "" ? `<img class="mr-2" title="Information" src='img/svg/levels/${type}.svg'>`:``}
                         <span class="align-middle">${text}</span>
                     </div>
-                    <div class="actions col col-auto align-self-center">
-                        ${undoCallback ? `
+                    <div class="actions col col-auto align-items-center">
+                        ${whenUndo ? `
                         <span class="undo pointer"><img title="Undo" src='img/svg/undo.svg'></span>
                         `:``}
                         ${description ? `
@@ -287,21 +287,21 @@ function notif(text = "", description, type = "", time = 5000, undoCallback){
 
     typeof ntf != 'undefined' && ntf != null ? ntf.outerHTML = element : document.body.insertAdjacentHTML("beforeend", element);
     ntf = document.getElementById("notif");
-    fade(ntf, "show")
+    fade(ntf, {type: "show"})
 
     let closeNotif = idNum => {
         ntf = document.getElementById("notif");
-        if(idNum !== undefined && ntf.dataset.identifier != idNum) return;
-        fade(ntf, "hide", 600)
+        if(idNum !== undefined && (ntf == null || ntf.dataset.identifier != idNum)) return;
+        fade(ntf, {type: "hide", duration: 600})
         setTimeout(() => {
             if(typeof ntf != 'undefined' && ntf != null) ntf.parentNode.removeChild(ntf)
         }, 600);
     }
 
-    if(time !== 0) setTimeout(() => closeNotif(identifierNum), time);
+    if(duration !== 0) setTimeout(() => closeNotif(identifierNum), duration);
 
-    if(undoCallback) ntf.querySelector(".undo").addEventListener("click", () => {
-        undoCallback();
+    if(whenUndo) ntf.querySelector(".undo").addEventListener("click", () => {
+        whenUndo();
         closeNotif();
     });
 

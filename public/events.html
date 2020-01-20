@@ -111,7 +111,7 @@
                     `;
 
                     document.getElementById("events-wrapper").insertAdjacentHTML("beforebegin", element);
-                    fade(document.getElementById("permission-warning"), "show");
+                    fade(document.getElementById("permission-warning"), {type: "show"});
 
                     if(permission === "default") document.getElementById("prompt-notif").addEventListener("click", () => osgl.showNativePrompt());
                 }
@@ -119,7 +119,7 @@
                 osgl.getNotificationPermission(pmsn => pmsn === "granted" ? storeUserId() : showWarning(permission));
                 osgl.on('subscriptionChange', subs => {
                     if(subs){
-                        fade(document.getElementById("permission-warning"), "hide");
+                        fade(document.getElementById("permission-warning"), {type: "hide"});
                         storeUserId();
                     } else {
                         osgl.getUserId(userId => fs.collection("users").doc(user.uid).set({
@@ -135,7 +135,7 @@
 
             async function createNotif(id, name = "Your event", timestamp = 0){
                 try {
-                    notif("Creating notification ...", undefined, undefined, 0);
+                    notif("Creating notification ...", {duration: 0});
 
                     if(!timestamp) throw new Error("Invalid timestamp, use 10 or 13 digit UNIX Epoch time")
                     timestamp = timestamp.toString().length === 10 ? +timestamp*1000 : +timestamp;
@@ -159,10 +159,10 @@
                     });
                     let data = await response.json();
                     if(!!id) eventsRef.doc(id).update({ notif_id: data.id }).then(() => {
-                        notif("Event notification created!", undefined, "info");
+                        notif("Event notification created!", {type: "info"});
                     });
                 } catch (err) {
-                    notif("Failed to create notification.", err, "warning", 0);
+                    notif("Failed to create notification.", {type: "warning", duration: 0});
                 }
             }
 
@@ -179,7 +179,7 @@
                     let json = await response.json();
                     if(json.hasOwnProperty("errors")) throw new Error(json.errors)
                 } catch (err) {
-                    notif("Unable to delete notification.", err, "warning", 0);
+                    notif("Unable to delete notification.", {type: "warning", duration: 0, description: err});
                 }
             }
 
@@ -201,20 +201,6 @@
                     });
                 }
             }
-
-            document.getElementById("add").addEventListener("click", () => {
-                modal("Add new event", ["title","date","repeat"], {
-                    titlePl: "Event Name"
-                }, args => {
-                    eventsRef.add({
-                        name: args.title,
-                        date: firebase.firestore.Timestamp.fromDate(new Date(args.date)),
-                        repeat: args.repeat
-                    }).then(doc => {
-                        if(args.notif) createNotif(doc.id, args.title, _d(args.date).getTimeS());
-                    });
-                });
-            });
 
             eventsRef.get().then(function(once){
                 once.forEach(raw=>{
@@ -275,6 +261,20 @@
                 });
             });
 
+            document.getElementById("add").addEventListener("click", () => {
+                modal("Add new event", ["title", "date", "repeat"], {
+                    titlePlac: "Event Name"
+                }, args => {
+                    eventsRef.add({
+                        name: args.title,
+                        date: firebase.firestore.Timestamp.fromDate(new Date(args.date)),
+                        repeat: args.repeat
+                    }).then(doc => {
+                        if(args.notif) createNotif(doc.id, args.title, _d(args.date).getTimeS());
+                    });
+                });
+            });
+
             document.addEventListener("click", function(evt){
                 let id, event;
                 let eventsDt = JSON.parse(sessionStorage.eventsData);
@@ -287,12 +287,12 @@
                 }
 
                 if (t && t.classList.contains("edit")) {
-                    modal("Edit event", ["title","date","repeat"], {
-                        titlePl: "Event Name",
+                    modal("Edit event", ["title", "date", "repeat"], {
+                        titlePlac: "Event Name",
                         titleVal: event.name,
                         dateVal: _d(event.date.seconds * 1000).toISOMinuteString(),
                         repeatVal: event.repeat,
-                        notif: event.hasOwnProperty("notif_id") ? true : false
+                        notifChecked: event.hasOwnProperty("notif_id") ? true : false
                     }, args => {
                         eventsRef.doc(id).update({
                             name: args.title,
@@ -314,12 +314,12 @@
                     eventsRef.doc(id).delete().then(() => {
                         if(hasNotif) cancelNotif(event.notif_id);
                         delete event.notif_id;
-                        notif("Event successfully deleted!", undefined, "info", undefined, () => {
+                        notif("Event successfully deleted!", {type: "info", whenUndo: () => {
                             event.date = firebase.firestore.Timestamp.fromMillis(event.date.seconds*1000);
                             eventsRef.doc(id).set(event).then(() => {
                                 if(hasNotif) createNotif(id,event.name,+event.date.seconds);
                             });
-                        });
+                        }});
                     });
 
                 } else if (t && t.classList.contains("snooze")) {

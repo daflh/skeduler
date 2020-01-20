@@ -104,26 +104,6 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                     });
                 });
             });
-
-            ta.addEventListener("keyup", function(){
-                let display = getComputedStyle(save).display;
-                if (display == "none" && this.value !== "") slide(save, "show");
-                if (display != "none" && this.value === "") slide(save, "hide");
-            });
-
-            ta.autoExpand();
-
-            save.addEventListener("click", () => {
-                if(ta.value.replace(/\s/g, '').length > 0){
-                    notesRef.add({
-                        data: ta.value,
-                        pin: false
-                    });
-                }
-                ta.value = "";
-                ta.autoExpand();
-                slide(save, "hide");
-            });
             
             notesRef.orderBy('pin','desc').onSnapshot(function(data){
                 let elem = '';
@@ -159,6 +139,26 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                 sessionStorage.notesData = JSON.stringify(cachingData);
             });
 
+            ta.addEventListener("keyup", function(){
+                let display = getComputedStyle(save).display;
+                if (display == "none" && this.value !== "") slide(save, {type: "show"});
+                if (display != "none" && this.value === "") slide(save, {type: "hide"});
+            });
+
+            ta.autoExpand();
+
+            save.addEventListener("click", () => {
+                if(ta.value.replace(/\s/g, '').length > 0){
+                    notesRef.add({
+                        data: ta.value,
+                        pin: false
+                    });
+                }
+                ta.value = "";
+                ta.autoExpand();
+                slide(save, {type: "hide"});
+            });
+
             document.addEventListener("click", function(evt){
                 let id, note;
                 let notesDt = JSON.parse(sessionStorage.notesData);
@@ -176,9 +176,9 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
 
                     } else if (t.classList.contains("delete")) {
                         notesRef.doc(id).delete().then(() => {
-                            notif("Notes successfully deleted!", undefined, "info", undefined, () => {
+                            notif("Notes successfully deleted!", {type: "info", whenUndo: () => {
                                 notesRef.doc(id).set(note);
-                            });
+                            }});
                         });
 
                     } else if (t.id !== "notes") {
@@ -199,7 +199,7 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
 
                         document.body.insertAdjacentHTML("beforeend", editBoxElement);
                         editBox = document.getElementById("note-edit");
-                        fade(editBox, "show");
+                        fade(editBox, {type: "show"});
 
                         let ta = editBox.firstElementChild.firstElementChild;
 
@@ -209,7 +209,7 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                         
                         editBox.querySelector(".edit-close").addEventListener("click", () => {
                             if(!!ta.value.replace(/\s/g, '').length) notesRef.doc(id).update({ data: ta.value });
-                            fade(editBox, "hide", 600)
+                            fade(editBox, {type: "hide", duration: 600})
                             setTimeout(() => editBox.parentNode.removeChild(editBox), 600);
                         });
 

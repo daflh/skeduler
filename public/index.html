@@ -147,7 +147,7 @@
                 let res = {[v]:{}};
                 let eta = document.getElementById("exportTextarea");
 
-                fade(eta, "show", 300);
+                fade(eta, {type: "show", duration: 300});
                 eta.value = "Loading data ...";
                 eta.autoExpand();
                 
@@ -194,7 +194,7 @@
                             userRef.collection(col).doc(doc).set(val,{merge:true});
                         }
                     }
-                    notif("Data successfully imported!", undefined, "info");
+                    notif("Data successfully imported!", {type: "info"});
                 } catch(err) {
                     ita.style.borderColor = "#fd8f9a";
                 }
