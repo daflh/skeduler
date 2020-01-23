@@ -79,32 +79,6 @@ Date.prototype.toDateRelativeString = function(){
     }
 }
 
-Element.prototype.autoExpand = function(){
-    let elem = this;
-
-    if(elem.tagName !== "TEXTAREA") throw new Error("The 'autoExpand' method can only be used with textarea element.")
-
-    function resize() {
-        let belowMaxHeight = elem.scrollHeight < parseFloat(getComputedStyle(elem).maxHeight);
-        let offset = elem.offsetHeight - elem.clientHeight;
-        elem.style.height = 'auto';
-        elem.style.height = (elem.scrollHeight + offset) + 'px';
-        elem.style.overflow = belowMaxHeight ? "hidden" : "visible";
-    }
-    
-    elem.addEventListener('input', resize);
-    elem.addEventListener('change', resize);
-    elem.addEventListener('cut', () => setTimeout(resize));
-    elem.addEventListener('paste', () => setTimeout(resize));
-    elem.addEventListener('drop', () => setTimeout(resize));
-    elem.addEventListener('keydown', () => setTimeout(resize));
-    window.addEventListener('resize', () => setTimeout(resize));
-    resize();
-
-    elem.style.overflowWrap = "break-word";
-    elem.style.resize = "none";
-}
-
 function fade(target, { type = '', duration = 600, initial = 'block' } = {}) {
     let dn = (type == 'show' || type == 'hide') ? (type == 'show' ? true : false) : getComputedStyle(target).display === 'none';
     if(dn) target.style.display = initial;

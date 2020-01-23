@@ -107,6 +107,7 @@
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-firestore.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/autosize.js/4.0.2/autosize.min.js"></script>
     <script src="./script.js"></script>
     <script>
 
@@ -148,8 +149,11 @@
                 let eta = document.getElementById("exportTextarea");
 
                 fade(eta, {type: "show", duration: 300});
+                
                 eta.value = "Loading data ...";
-                eta.autoExpand();
+
+                autosize(eta);
+                autosize.update(eta);
                 
                 userRef.collection(v).get().then(dt=>{
                     if(dt.empty){
@@ -167,14 +171,14 @@
                     eta.addEventListener('focus', function(){
                         this.select();
                     });
-                    eta.autoExpand();
+                    autosize.update(eta);
                 });
             });
 
             let ita = document.getElementById("importTextarea");
             let isub = document.getElementById("importSubmit");
 
-            ita.autoExpand();
+            autosize(ita);
 
             ita.addEventListener("keyup", function(){
                 isub.disabled = this.value === "" ? true : false;

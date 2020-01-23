@@ -79,6 +79,7 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-firestore.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/autosize.js/4.0.2/autosize.min.js"></script>
     <script src="./script.js"></script>
     <script>
 
@@ -145,7 +146,7 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                 if (display != "none" && this.value === "") slide(save, {type: "hide"});
             });
 
-            ta.autoExpand();
+            autosize(ta);
 
             save.addEventListener("click", () => {
                 if(ta.value.replace(/\s/g, '').length > 0){
@@ -155,7 +156,7 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                     });
                 }
                 ta.value = "";
-                ta.autoExpand();
+                autosize.update(ta);
                 slide(save, {type: "hide"});
             });
 
@@ -205,7 +206,7 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
 
                         Array.prototype.forEach.call(ta, elem => elem.placeholder = elem.placeholder.replace(/\\n/g, '\n'));
 
-                        ta.autoExpand();
+                        autosize(ta);
                         
                         editBox.querySelector(".edit-close").addEventListener("click", () => {
                             if(!!ta.value.replace(/\s/g, '').length) notesRef.doc(id).update({ data: ta.value });
