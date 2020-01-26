@@ -126,7 +126,19 @@
                 document.getElementById("goals").outerHTML = elem;
 
                 sessionStorage.goalsData = JSON.stringify(cachingData);
-                dragula([document.getElementById("goals")]).on("drop", el => {
+
+                let scrollable = true;
+                let listener = function(evt) {
+                    if (!scrollable) evt.preventDefault();
+                };
+
+                document.addEventListener('touchmove', listener, { passive:false });
+
+                dragula([document.getElementById("goals")]).on("drag", () => { 
+                    scrollable = false;
+                }).on("dragend", () => {
+                    scrollable = true;
+                }).on("drop", el => {
                     let data = cachingData;
                     let prev = el.previousElementSibling;
                     let next = el.nextElementSibling;
