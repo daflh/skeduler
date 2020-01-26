@@ -11,6 +11,10 @@ hr{border-color:#f3f3f3}
 .small{font-size:80%!important}
 .hide{display:none}
 .btn{position:relative;text-transform:none;-webkit-transition:all .15s ease;transition:all .15s ease;letter-spacing:.025em;font-size:.875rem;will-change:transform}
+.gu-unselectable{-webkit-user-select:none!important;-moz-user-select:none!important;-ms-user-select:none!important;user-select:none!important}
+.gu-mirror{position:fixed!important;margin:0!important;z-index:9999!important;border:0!important;opacity:.9}
+.gu-hide{display:none!important}
+.gu-transit{opacity:.5}
 .main-content{position:relative;padding: 1rem;margin-bottom: 1.5rem}
 .main-content .page-nav{color:rgba(0,0,0,.75);font-size:1.0625rem!important;font-weight:600;line-height: 1.5;margin:0;text-transform: uppercase}
 .main-content .row:first-child{margin-top:1rem;margin-bottom:.5rem}
@@ -80,14 +84,12 @@ hr{border-color:#f3f3f3}
 #events-page table tbody tr th{white-space:normal;font-weight:600;width:100%}
 #events-page table tr td.actions img{width:20px;height:20px}
 #goals-page ol.list-group{list-style:none;counter-reset:item}
-#goals-page ol.list-group > li{counter-increment:item}
+#goals-page ol.list-group > li{counter-increment:item;cursor:grab}
 #goals-page ol.list-group > li:before{margin-right:1rem;content:counter(item);font-size:1rem;text-align:center;font-weight:600;display:inline-block}
 #goals-page ol.list-group > li:nth-child(1):before{font-size:1.225rem}
 #goals-page ol.list-group > li:nth-child(2):before{font-size:1.15rem}
 #goals-page ol.list-group > li:nth-child(3):before{font-size:1.075rem}
 #goals-page ol.list-group > li .action > *{width:20px;height:20px}
-#goals-page ol.list-group > li .action > *.more{display:none}
-#goals-page ol.list-group > li .action > *:not(.more){transition: opacity 600ms; -webkit-transition: opacity 600ms; -o-transition: opacity 600ms}
 #notes-page .form-control{border-color:#f3f3f3!important;border-radius:0!important}
 #notes-page .list-group li{border:0;background-color:#fff!important;margin-bottom:.75rem;cursor:pointer;padding:0;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
 #notes-page .list-group li .actions img{width:20px;height:20px}
@@ -102,8 +104,6 @@ hr{border-color:#f3f3f3}
 @media (max-width:575.98px) {
     .modal-overlay .modal-box{width:calc(100% - 25px)}
     .notif-overlay .notif-box{margin:0;width:100%}
-    #goals-page ol.list-group > li .action > *.more{display:inline}
-    #goals-page ol.list-group > li .action > *:not(.more){display:none;opacity:0}
 }
 
 @media (max-width:767.98px) {

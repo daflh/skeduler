@@ -73,6 +73,7 @@
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-firestore.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.js"></script>
     <script src="./script.js"></script>
     <script>
 
@@ -110,11 +111,8 @@
                                     ${d.link !== "" ? `<a href='${d.link.toUrl()}' target='_blank'>${d.name}</a>` : d.name}
                                 </span>
                                 <span class='action float-right align-self-center ml-auto col-auto pr-0 pl-2'>
-                                    <img title='Up' class='up' src='img/svg/arrow-up.svg'>
-                                    <img title='Down' class='down ml-2' src='img/svg/arrow-down.svg'>
                                     <img title='Edit' class='edit ml-2' src='img/svg/edit.svg'>
                                     <img title='Delete' class='delete ml-2' src='img/svg/delete.svg'>
-                                    <img title='Actions' class='more ml-3' src='img/svg/more.svg'>
                                 </span>
                             </li>
                         `;
@@ -126,7 +124,16 @@
                 }
                 
                 document.getElementById("goals").outerHTML = elem;
+
                 sessionStorage.goalsData = JSON.stringify(cachingData);
+                dragula([document.getElementById("goals")]).on("drop", el => {
+                    let data = cachingData;
+                    let prev = el.previousElementSibling;
+                    let next = el.nextElementSibling;
+                    prev = prev !== null ? data[prev.dataset.id].sort : data[next.dataset.id].sort - 100000;
+                    next = next !== null ? data[next.dataset.id].sort : prev + 100000;
+                    goalsRef.doc(el.dataset.id).update({ sort: (prev + next) / 2 });
+                });
             });
 
             document.getElementById("add").addEventListener("click", () => {
@@ -137,7 +144,7 @@
                     goalsRef.add({
                         name: name,
                         link: link,
-                        sort: +(""+new Date().getTime()+Math.floor(Math.random()*90+10))
+                        sort: +(+_d() + "" + Math.floor(1000 + Math.random() * 9000))
                     });
                 });
             });
@@ -170,24 +177,6 @@
                         }});
                     });
                     
-                } else if (t && t.classList.contains("up") || t.classList.contains("down")) {
-                    let idZ = t.classList.contains("up") ? t.parentNode.parentNode.previousElementSibling.dataset.id : t.parentNode.parentNode.nextElementSibling.dataset.id;
-                    goalsRef.doc(id).update({ sort: goalsDt[idZ].sort });
-                    goalsRef.doc(idZ).update({ sort: goal.sort });
-
-                } else if (t && t.classList.contains("more")) {
-                    let button = t.parentNode.querySelectorAll("img:not(.more)");
-                    button.forEach(v => {
-                        let vis = getComputedStyle(v).display !== "none";
-                        if(vis){
-                            v.style.opacity = 0;
-                            setTimeout(() => v.style.display = "none", 600);
-                        } else {
-                            v.style.display = "inline";
-                            setTimeout(() => v.style.opacity = 1);
-                        }
-                    });
-
                 }
             });
 
