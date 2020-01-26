@@ -178,7 +178,7 @@ function modal(header, input = [], { titleVal = "", titlePlac = "", linkVal = ""
                 </form>
                 <div class="text-right">
                     <button class="btn btn-danger cancel">Cancel</button>
-                    <button type="submit" form="modal-form" class="btn btn-primary ml-2" autofocus>OK</button>
+                    <button type="submit" name="submit" form="modal-form" class="btn btn-primary ml-2" autofocus>OK</button>
                 </div>
             </div>
         </div>
@@ -219,6 +219,7 @@ function modal(header, input = [], { titleVal = "", titlePlac = "", linkVal = ""
             useNotif: input.includes("date") ? modalForm.elements.notif.checked : ""
         });
         closeModal();
+        modalForm.elements.submit.disabled = true;
     });
 
     mdl.querySelector(".cancel").addEventListener("click", closeModal);
