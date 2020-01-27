@@ -42,7 +42,6 @@ hr{border-color:#f3f3f3}
 .navbar-collapse-header{display:none}
 .card{border:0;border-radius:0!important;box-shadow:0 0 2rem 0 rgba(136,152,170,.15)!important}
 .social-button{text-align:center;display:block;cursor:pointer;padding:0.75rem 0}
-.social-button span{margin-left:.25rem}
 .modal-overlay,.note-edit-overlay{position:fixed;display:none;width:100%;top:0;bottom:0;z-index:9999;background-color:rgba(0,0,0,.4)}
 .modal-overlay .modal-box,.note-edit-overlay .note-edit-box{position:absolute;top:50%;right:0;left:0;-webkit-transform:translateY(-50%);transform:translateY(-50%);-ms-transform:translateY(-50%);margin:0 auto;background-color:#fff;box-shadow:0 5px 22px 0 rgba(0,0,0,0.25)}
 .modal-overlay .modal-box{width:450px;padding:3rem 2rem;text-align:center}
