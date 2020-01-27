@@ -10,9 +10,10 @@ self.addEventListener('install', function(event) {
                 '/goals.html',
                 '/notes.html',
                 '/login.html',
-                '/style.css',
-                '/script.js',
-                '/img/logo.png',
+                '/404.html',
+                '/css/main.css',
+                '/js/main.js',
+                '/img/logo.png'
             ]).then(() => self.skipWaiting());
         })
     );
@@ -27,7 +28,7 @@ self.addEventListener('activate', function(event) {
 self.addEventListener('fetch', function(event) {
     if (event.request.mode === 'navigate' || (event.request.method === 'GET' && event.request.headers.get('accept').includes('text/html'))) {
         event.respondWith(
-            fetch(event.request.url).catch(() => caches.match(offlineUrl))
+            fetch(event.request.url)
         );
     } else {
         event.respondWith(
