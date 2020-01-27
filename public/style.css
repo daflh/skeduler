@@ -68,9 +68,9 @@ hr{border-color:#f3f3f3}
 #dashboard-page .export textarea{background-color:#f9f9f9;display:none}
 #dashboard-page .user-photo{width:80px}
 #dashboard-page .user-name{font-weight:600}
-#login-page,#error-page{position:absolute;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%);-ms-transform:translateY(-50%);width:100%}
+#login-page,#error-page{position:absolute;color:#565656;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%);-ms-transform:translateY(-50%);width:100%}
 #login-page .container{margin:10vh auto!important}
-#login-page .main-content h1{font-weight:600;font-size:2.25rem}
+#login-page .main-content h1{font-weight:600;font-size:2.25rem;color:#565656}
 #login-page .logo-img{height:4rem}
 #login-page .error-message{text-align:center;display:none;margin-bottom:1rem}
 #events-page table{color:inherit!important; margin-bottom:0}

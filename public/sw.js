@@ -13,8 +13,6 @@ self.addEventListener('install', function(event) {
                 '/style.css',
                 '/script.js',
                 '/img/logo.png',
-                '/img/logo-black.png',
-                '/img/icons/64x64.png',
             ]).then(() => self.skipWaiting());
         })
     );
