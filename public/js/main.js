@@ -233,7 +233,7 @@ function notif(text = "", {type = "", duration = 5000, description, whenUndo} = 
         <div id="notif" class="notif-overlay" data-identifier="${identifierNum}">
             <div class="notif-box">
                 <div class="row">
-                    <div class="text col align-items-center small">
+                    <div class="text col align-items-center align-self-center small">
                         ${type !== "" ? `<img class="mr-2" title="Information" src='img/svg/levels/${type}.svg'>`:``}
                         <span class="align-middle">${text}</span>
                     </div>
