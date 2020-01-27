@@ -13,7 +13,7 @@ self.addEventListener('install', function(event) {
                 '/404.html',
                 '/css/main.css',
                 '/js/main.js',
-                '/img/logo.png'
+                '/img/banner.png'
             ]).then(() => self.skipWaiting());
         })
     );
