@@ -234,17 +234,17 @@ function notif(text = "", {type = "", duration = 5000, description, whenUndo} = 
             <div class="notif-box">
                 <div class="row">
                     <div class="text col align-items-center align-self-center small">
-                        ${type !== "" ? `<img class="mr-2" title="Information" src='img/svg/levels/${type}.svg'>`:``}
+                        ${type !== "" ? `<i class="icon ${type} mr-2"></i>`:``}
                         <span class="align-middle">${text}</span>
                     </div>
                     <div class="actions col col-auto align-items-center">
                         ${whenUndo ? `
-                        <span class="undo pointer"><img title="Undo" src='img/svg/undo.svg'></span>
+                        <i class="icon undo" title="Undo"></i>
                         `:``}
                         ${description ? `
-                        <span class="expand pointer"><img title="See description" src='img/svg/arrow-up.svg'></span>
+                        <i class="icon expand arrow-up" title="See description"></i>
                         `:``}
-                        <span class="shut pointer"><img title="Close" src='img/svg/close.svg'></span>
+                        <i class="icon shut" title="Close"></i>
                     </div>
                 </div>
                 ${description ? `
@@ -284,9 +284,13 @@ function notif(text = "", {type = "", duration = 5000, description, whenUndo} = 
         let desc = ntf.querySelector(".desc");
         let expand = ntf.querySelector(".expand");
         expand.addEventListener("click", () => {
-            let img = expand.firstElementChild;
-            let disp = getComputedStyle(desc).display;
-            img.setAttribute("src", disp == "none" ? "img/svg/arrow-down.svg" : "img/svg/arrow-up.svg");
+            if (getComputedStyle(desc).display == "none") {
+                expand.classList.replace("arrow-up", "arrow-down");
+                expand.title = "Hide description";
+            } else {
+                expand.classList.replace("arrow-down", "arrow-up");
+                expand.title = "See description";
+            }
             slide(desc);
         });
     }

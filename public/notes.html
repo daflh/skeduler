@@ -31,9 +31,7 @@
                             </a>
                         </div>
                         <div class="col-6 collapse-close align-self-center">
-                            <button class="navbar-toggler" type="button" name="navbarFadeOut">
-                                <img title="Close navbar" src='img/svg/close.svg'>
-                            </button>
+                            <button class="navbar-toggler" type="button" name="navbarFadeOut"></button>
                         </div>
                     </div>
                 </div>
@@ -122,8 +120,8 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                                 <div class='header d-flex justify-content-between'>
                                     <span class='name font-weight-bold'>${title}</span>
                                     <span class='actions float-right col-auto pl-2 pr-0'>
-                                        <img title='Pin to Top' class='pin' src='img/svg/${d.pin ? "pinned" : "unpinned"}.svg'>
-                                        <img title='Delete' class='delete ml-3' src='img/svg/delete.svg'>
+                                        <i title='${d.pin ? "Unpin" : "Pin to top"}' class='icon pin ${d.pin ? "pinned" : "unpinned"} mr-3'></i>
+                                        <i title='Delete' class='icon delete'></i>
                                     </span>
                                 </div>
                                 <div class='snippet mt-2'>${snippet.length < 150 ? snippet : snippet.substring(0, 150) + " ..."}</div>

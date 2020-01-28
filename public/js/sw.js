@@ -13,7 +13,9 @@ self.addEventListener('install', function(event) {
                 '/404.html',
                 '/css/main.css',
                 '/js/main.js',
-                '/img/banner.png'
+                '/img/icons.svg',
+                '/img/banner.png',
+                '/img/logo/64x64.png'
             ]).then(() => self.skipWaiting());
         })
     );

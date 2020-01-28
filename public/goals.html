@@ -31,9 +31,7 @@
                             </a>
                         </div>
                         <div class="col-6 collapse-close align-self-center">
-                            <button class="navbar-toggler" type="button" name="navbarFadeOut">
-                                <img title="Close navbar" src='img/svg/close.svg'>
-                            </button>
+                            <button class="navbar-toggler" type="button" name="navbarFadeOut"></button>
                         </div>
                     </div>
                 </div>
@@ -55,8 +53,8 @@
             <div class="row">
                 <div class="col d-flex align-items-center justify-content-between justify-content-md-start">
                     <h3 class="page-nav d-inline-block">Goals</h3>
-                    <span id="add" class="ml-3 px-3 py-1 bg-white float-right float-md-none rounded-pill pointer">
-                        <img class="align-text-top" width="22" height="22" title="Close navbar" src="img/svg/add.svg">
+                    <span id="add" class="ml-4 px-3 py-1 bg-white float-right float-md-none rounded-pill pointer">
+                        <i title="Add goal" class="add-button"></i>
                     </span>
                 </div>
             </div>
@@ -111,8 +109,8 @@
                                     ${d.link !== "" ? `<a href='${d.link.toUrl()}' target='_blank'>${d.name}</a>` : d.name}
                                 </span>
                                 <span class='action float-right align-self-center ml-auto col-auto pr-0 pl-2'>
-                                    <img title='Edit' class='edit ml-2' src='img/svg/edit.svg'>
-                                    <img title='Delete' class='delete ml-2' src='img/svg/delete.svg'>
+                                    <i title='Edit' class='icon edit mr-2'></i>
+                                    <i title='Delete' class='icon delete'></i>
                                 </span>
                             </li>
                         `;

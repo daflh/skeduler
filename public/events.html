@@ -31,9 +31,7 @@
                             </a>
                         </div>
                         <div class="col-6 collapse-close align-self-center">
-                            <button class="navbar-toggler" type="button" name="navbarFadeOut">
-                                <img title="Close navbar" src='img/svg/close.svg'>
-                            </button>
+                            <button class="navbar-toggler" type="button" name="navbarFadeOut"></button>
                         </div>
                     </div>
                 </div>
@@ -55,8 +53,8 @@
             <div class="row">
                 <div class="col d-flex align-items-center justify-content-between justify-content-md-start">
                     <h3 class="page-nav d-inline-block">Events</h3>
-                    <span id="add" class="ml-3 px-3 py-1 bg-white float-right float-md-none rounded-pill pointer">
-                        <img class="align-text-top" width="22" height="22" title="Close navbar" src="img/svg/add.svg">
+                    <span id="add" class="ml-4 px-3 py-1 bg-white float-right float-md-none rounded-pill pointer">
+                        <i title="Add event" class="add-button"></i>
                     </span>
                 </div>
             </div>
@@ -94,8 +92,8 @@
                 let showWarning = permission => {
                     let element = `
                         <div id="permission-warning" class="card rounded-0 mt-4 bg-white text-muted hide">
-                            <div class="d-flex card-body p-4">
-                                <img class="mr-3" width="50" src='img/svg/levels/warning.svg'>
+                            <div class="d-flex card-body px-4 py-3">
+                                <i class="permission-icon mr-3 d-none d-sm-block"></i>
                                 <div class="align-self-center">
                                     <p class="m-0 mt-1 mt-sm-0 small font-weight-bold">Notification Blocked</p>
                                     <p class="m-0 small">Turn on notifications to get event reminder.</p>
@@ -231,17 +229,17 @@
                                 <tr ${past ? "class='past' " : ""}data-id='${v.id}'>
                                     <td class='date' title='${d.date.toDate()}'>
                                         ${_d(d.date.seconds * 1000).toDateRelativeString()}
-                                        ${d.repeat !== "unrepeat" ? ` <img class='repeat' title='Repeats ${d.repeat}' src='img/svg/repeat.svg'>` : ``}
-                                        ${d.notif_id ? ` <img class='notif-active' title='Notification enabled' src='img/svg/notif.svg'>` : ``}
+                                        ${d.repeat !== "unrepeat" ? ` <i class='repeat ml-1' title='Repeats ${d.repeat}'></i>` : ``}
+                                        ${d.notif_id ? ` <i class='notif-active ml-1' title='Notification enabled'></i>` : ``}
                                     </td>
                                     <th>${d.name}</th>
                                     <td class='actions'>
                                     ${!past ? `
-                                        <img title='Edit' class='edit pointer' src='img/svg/edit.svg'>
-                                        <img title='Delete' class='delete ml-3 pointer' src='img/svg/delete.svg'>
+                                        <i title='Edit' class='icon edit mr-3'></i>
+                                        <i title='Delete' class='icon delete'></i>
                                     ` : `
-                                        ${d.repeat === "unrepeat" ? `<img title='Snooze' class='snooze mr-3 pointer' src='img/svg/snooze.svg'>` : ``}
-                                        <img title='Done' class='done pointer' src='img/svg/done.svg'>
+                                        ${d.repeat === "unrepeat" ? `<i title='Snooze' class='icon snooze mr-3'></i>` : ``}
+                                        <i title='Done' class='icon done'></i>
                                     `}
                                     </td>
                                 </tr>
