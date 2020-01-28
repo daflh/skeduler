@@ -4,16 +4,33 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Notes – Coragon</title>
     <link rel="shortcut icon" href="./img/logo/64x64.png">
     <link rel="apple-touch-icon" sizes="64x64" href="./img/logo/64x64.png">
     <link rel="manifest" href="./manifest.json">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet" />
     <link href="./css/main.css" rel="stylesheet" />
-    <title>Notes – Coragon</title>
+    <style>
+    
+    .form-control{border-color:#f3f3f3!important;border-radius:0!important}
+    .list-group li{border:0;background-color:#fff!important;margin-bottom:.75rem;cursor:pointer;padding:0;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+    textarea,textarea:focus{outline:none!important;-webkit-appearance:none!important;box-shadow:none!important}
+    .textbox{position: relative}
+    #newNoteForm.textbox{width:70%}
+    .textbox textarea{color:#495057;outline:none;border:0;box-sizing:border-box;resize:none;max-height:250px;font-size:.9rem}
+    .textbox textarea:first-line{font-weight:700}
+    .textbox .save{background-color:#fff;border: 1px solid #f3f3f3;border-width: 1px 0 0 0;cursor:pointer;display:none}
+    .textbox .save span{display:block; padding:.75rem 1.5rem;font-size:.9rem;text-align:right}
+
+    @media (max-width:767.98px) {
+        #newNoteForm.textbox{width:100%}
+    }
+
+    </style>
 </head>
 
-<body id="notes-page">
+<body>
     <nav class="navbar navbar-vertical fixed-left navbar-expand-md navbar-light" id="sidenav-main">
         <div class="container-fluid">
             <button class="navbar-toggler" type="button" name="navbarFadeIn">

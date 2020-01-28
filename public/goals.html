@@ -4,16 +4,26 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Goals – Coragon</title>
     <link rel="shortcut icon" href="./img/logo/64x64.png">
     <link rel="apple-touch-icon" sizes="64x64" href="./img/logo/64x64.png">
     <link rel="manifest" href="./manifest.json">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet" />
     <link href="./css/main.css" rel="stylesheet" />
-    <title>Goals – Coragon</title>
+    <style>
+    
+    ol.list-group{list-style:none;counter-reset:item}
+    ol.list-group > li{counter-increment:item;cursor:grab}
+    ol.list-group > li:before{margin-right:1rem;content:counter(item);font-size:1rem;text-align:center;font-weight:600;display:inline-block}
+    ol.list-group > li:nth-child(1):before{font-size:1.225rem}
+    ol.list-group > li:nth-child(2):before{font-size:1.15rem}
+    ol.list-group > li:nth-child(3):before{font-size:1.075rem}
+
+    </style>
 </head>
 
-<body id="goals-page">
+<body>
     <nav class="navbar navbar-vertical fixed-left navbar-expand-md navbar-light" id="sidenav-main">
         <div class="container-fluid">
             <button class="navbar-toggler" type="button" name="navbarFadeIn">

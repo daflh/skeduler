@@ -4,16 +4,47 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Events – Coragon</title>
     <link rel="shortcut icon" href="./img/logo/64x64.png">
     <link rel="apple-touch-icon" sizes="64x64" href="./img/logo/64x64.png">
     <link rel="manifest" href="./manifest.json">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet" />
     <link href="./css/main.css" rel="stylesheet" />
-    <title>Events – Coragon</title>
+    <style>
+    
+    table{color:inherit!important; margin-bottom:0!important}
+    table thead th{font-size:.65rem!important;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #f3f3f3!important;background-color:#fff!important}
+    table tbody tr{padding:1rem 1.5rem!important}
+    table tr:nth-child(odd){background-color:#fbfbfb}
+    table tr td, table tr th{font-size:.8125rem;border-top:0!important;padding:1rem 1.5rem!important;vertical-align: middle}
+    table tr td{white-space:nowrap}
+    table tr td.date{display:flex;align-items:center;width:auto}
+    table tr td.date i.repeat, table tr td.date i.notif-active{background-image:url(../img/icons.svg);background-size:65px 52px;width:13px;height:13px}
+    table tr td.date i.repeat{background-position: -26px -13px;}
+    table tr td.date i.notif-active{background-position: -39px -13px;}
+    table tbody tr th{white-space:normal;font-weight:600;width:100%}
+    
+    @media (max-width:991.98px) {
+        table thead{display:none}
+        table tbody{display:flex;flex-grow:1;flex-direction:column}
+        table tr{cursor:pointer}
+        table tr:not(:last-child){border-bottom:1px solid #f3f3f3}
+        table tr td, table tr th{display:block;width:100%!important;white-space:normal;padding:0!important}
+        table tr th{font-size:110%}
+        table tr td.date{margin-bottom:1rem}
+        table tr td.actions{display:none;margin-top:1rem}
+        table tr.past td.actions{display:block}
+    }
+
+    @media (min-width:992px) {
+        table tr td.actions{text-align:right;display:table-cell!important}
+    }
+
+    </style>
 </head>
 
-<body id="events-page">
+<body>
     <nav class="navbar navbar-vertical fixed-left navbar-expand-md navbar-light" id="sidenav-main">
         <div class="container-fluid">
             <button class="navbar-toggler" type="button" name="navbarFadeIn">
