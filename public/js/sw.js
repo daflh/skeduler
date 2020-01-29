@@ -29,7 +29,7 @@ self.addEventListener('activate', function(event) {
         caches.keys().then(function(keys) {
             return Promise.all(
                 keys.filter(function(key) {
-                    return key.indexOf(CACHE_VERSION) === -1;
+                    return key.indexOf(cacheVer) === -1;
                 }).map(function(key) {
                     return caches.delete(key);
                 })
