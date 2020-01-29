@@ -159,7 +159,7 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
                 sessionStorage.notesData = JSON.stringify(cachingData);
             });
 
-            ta.addEventListener("keyup", function(){
+            ta.addEventListener("input", function(){
                 let display = getComputedStyle(save).display;
                 if (display == "none" && this.value !== "") slide(save, {type: "show"});
                 if (display != "none" && this.value === "") slide(save, {type: "hide"});

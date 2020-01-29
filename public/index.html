@@ -191,7 +191,7 @@
 
             autosize(ita);
 
-            ita.addEventListener("keyup", function(){
+            ita.addEventListener("input", function(){
                 isub.disabled = this.value === "" ? true : false;
                 this.style.borderColor = null;
             });
