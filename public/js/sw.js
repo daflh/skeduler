@@ -1,4 +1,5 @@
-let cacheName = "coragon-1";
+const cacheVer = "v2.0.0";
+const cacheName = "coragon-" + cacheVer;
 
 self.addEventListener('install', function(event) {
     event.waitUntil(
@@ -16,27 +17,31 @@ self.addEventListener('install', function(event) {
                 '/img/icons.svg',
                 '/img/banner.png',
                 '/img/logo/64x64.png'
-            ]).then(() => self.skipWaiting());
+            ]).then(function() {
+                self.skipWaiting();
+            });
         })
     );
 });
 
 self.addEventListener('activate', function(event) {
     event.waitUntil(
-        clients.claim()
+        caches.keys().then(function(keys) {
+            return Promise.all(
+                keys.filter(function(key) {
+                    return key.indexOf(CACHE_VERSION) === -1;
+                }).map(function(key) {
+                    return caches.delete(key);
+                })
+            )
+        })
     );
 });
 
 self.addEventListener('fetch', function(event) {
-    if (event.request.mode === 'navigate' || (event.request.method === 'GET' && event.request.headers.get('accept').includes('text/html'))) {
-        event.respondWith(
-            fetch(event.request.url)
-        );
-    } else {
-        event.respondWith(
-            caches.match(event.request).then(function(response) {
-                return response || fetch(event.request);
-            })
-        );
-    }
+    event.respondWith(
+        fetch(event.request).catch(function() {
+            return caches.match(event.request);
+        })
+    );
 });
