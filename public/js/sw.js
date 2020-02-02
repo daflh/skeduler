@@ -33,7 +33,7 @@ self.addEventListener('activate', function(event) {
                 }).map(function(key) {
                     return caches.delete(key);
                 })
-            )
+            );
         })
     );
 });
