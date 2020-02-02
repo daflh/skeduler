@@ -14,6 +14,10 @@ const fs = firebase.firestore();
 fs.settings({cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED});
 fs.enablePersistence({synchronizeTabs: true});
 
+navigator.serviceWorker.getRegistration().then(function(reg) {
+    if (!reg) navigator.serviceWorker.register('./sw.js');
+});
+
 String.prototype.capitalize = function(onlyFirstWord = false) {
     let cptlzer = word => word.charAt(0).toUpperCase() + word.slice(1);
     return !onlyFirstWord ? this.split(" ").map(cptlzer).join(" ") : cptlzer(this);
