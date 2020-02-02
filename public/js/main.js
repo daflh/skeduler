@@ -53,7 +53,6 @@ Date.prototype.toDateRelativeString = function(){
                 let t = Math.round(d);
                 let xs = t > 1 ? 's' : '';
                 return t + ' ' + key + xs + ' ago';
-                break;
             }
         }
     } else if (this.getTimeM() === now.getTimeM()) {
