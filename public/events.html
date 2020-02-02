@@ -121,6 +121,11 @@
                         sessionStorage.setItem("onesignal-user-id", userId);
                     });
                 }
+                let removeStoredUserId = () => {
+                    osgl.getUserId(userId => fs.collection("users").doc(user.uid).set({
+                        onesignal_devices: firebase.firestore.FieldValue.arrayRemove(userId)
+                    }, {merge: true}));
+                }
                 let showWarning = permission => {
                     let element = `
                         <div id="permission-warning" class="card rounded-0 mt-4 bg-white text-muted hide">
@@ -145,17 +150,16 @@
 
                     if(permission === "default") document.getElementById("prompt-notif").addEventListener("click", () => osgl.showNativePrompt());
                 }
+                let hideWarning = () => fade(document.getElementById("permission-warning"), {type: "hide"});
                 osgl.init({ appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983" });
-                osgl.getNotificationPermission(pmsn => pmsn === "granted" ? storeUserId() : showWarning(permission));
+                osgl.getNotificationPermission(pmsn => pmsn === "granted" ? storeUserId() : showWarning(pmsn));
                 osgl.on('subscriptionChange', subs => {
                     if(subs){
-                        fade(document.getElementById("permission-warning"), {type: "hide"});
+                        hideWarning();
                         storeUserId();
                     } else {
-                        osgl.getUserId(userId => fs.collection("users").doc(user.uid).set({
-                            onesignal_devices: firebase.firestore.FieldValue.arrayRemove(userId)
-                        }, {merge: true}));
                         showWarning("denied");
+                        removeStoredUserId();
                     }
                 });
             });
