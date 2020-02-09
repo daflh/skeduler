@@ -18,11 +18,6 @@ navigator.serviceWorker.getRegistration().then(function(reg) {
     if (!reg) navigator.serviceWorker.register('./sw.js');
 });
 
-String.prototype.capitalize = function(onlyFirstWord = false) {
-    let cptlzer = word => word.charAt(0).toUpperCase() + word.slice(1);
-    return !onlyFirstWord ? this.split(" ").map(cptlzer).join(" ") : cptlzer(this);
-}
-
 String.prototype.toUrl = function(){
     let str = this;
     if(!str.includes(".")) str += ".com";
