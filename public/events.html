@@ -173,6 +173,7 @@
 
                     if(!timestamp) throw new Error("Invalid timestamp, use 10 or 13 digit UNIX Epoch time")
                     timestamp = timestamp.toString().length === 10 ? +timestamp*1000 : +timestamp;
+                    if(timestamp < _d().getTimeM()) throw new Error("Can't schedule notification for the past.");
                     if(timestamp >= _d().getTimeM()+60*60*24*29*1000) throw new Error("Can't schedule notification for more than 29 days.");
                     
                     let siteUrl = "https://coragon.web.app";
