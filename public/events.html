@@ -196,7 +196,7 @@
                         notif("Event notification created!", {type: "info"});
                     });
                 } catch (err) {
-                    notif("Failed to create notification.", {type: "warning", duration: 0});
+                    notif("Failed to create notification.", {type: "warning", duration: 0, description: err});
                 }
             }
 
