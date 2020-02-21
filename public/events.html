@@ -221,17 +221,21 @@
             function eventDone(id, data){
                 let repeat = data.repeat;
                 if (repeat === "unrepeat") {
-                    eventsRef.doc(id).delete();
+                    return eventsRef.doc(id).delete();
                 } else {
                     let nextTime;
-                    let time = data.date.seconds * 1000;
+                    let time = typeof data.date === "number" ? data.date : data.date.seconds * 1000;
                     let timeObj = new Date(time);
                     if (repeat === "daily") nextTime = time + 60*60*24*1000;
                     else if (repeat === "weekly") nextTime = time + 60*60*24*7*1000;
                     else if (repeat === "monthly") nextTime = timeObj.setMonth(timeObj.getMonth() + 1);
                     else if (repeat === "yearly") nextTime = timeObj.setFullYear(timeObj.getFullYear() + 1);
                     else return;
-                    eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromMillis(nextTime) }).then(function(){
+                    if (nextTime < _d().getTimeM()){
+                        data.date = nextTime;
+                        return eventDone(id, data);
+                    }
+                    return eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromMillis(nextTime) }).then(function(){
                         createNotif(id, data.name, nextTime)
                     });
                 }
