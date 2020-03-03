@@ -1,0 +1,23 @@
+{
+  "name": "coragon",
+  "version": "1.0.0",
+  "description": "Easy to use keep notes, organize schedules, and many more",
+  "scripts": {
+    "start": "firebase serve",
+    "deploy": "firebase deploy"
+  },
+  "keywords": [
+    "firebase",
+    "bootstrap",
+    "onesignal",
+    "notes",
+    "scheduler",
+    "notifications",
+    "schedule-manager"
+  ],
+  "author": "Dafiul Haq",
+  "license": "ISC",
+  "devDependencies": {
+    "firebase-tools": "^7.14.0"
+  }
+}
