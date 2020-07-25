@@ -1,11 +1,15 @@
 # Coragon
-Easy to use keep notes, organize schedules, and many more
+Easy to use keep notes and schedule organizer
 
 [Preview](https://coragon.web.app/)
 
+![Screenshot](https://i.imgur.com/kJGYuwp.jpg)
+
 ## Todo
 
-- **repeated event bisa di snooze**, field `ori_date` akan dibuat utk menampung tanggal aslinya
-- **custom repeat pada event**, field `repeat` akan berisi array dengan value pertama berisi angka dan value kedua berisi diantara day/week/month/year, dengan maksimal repeat 3 tahun
+- **repeated event bisa di snooze**, membuat field `ori_date` utk menampung tanggal aslinya
+- **custom repeat pada event**, membuat field `repeat` berisi array dengan item pertama berisi angka dan item kedua berisi salah satu diantara *day*/*week*/*month*/*year*
 
 ## Quick start
+
+Coming soon
