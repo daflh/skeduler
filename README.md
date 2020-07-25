@@ -1,5 +1,5 @@
 # Coragon
-Easy to use keep notes and schedule organizer
+Easy to use event scheduler and notes build with Firebase
 
 [Preview](https://coragon.web.app/)
 
