@@ -3,7 +3,9 @@ Easy to use event scheduler and notes build with Firebase
 
 [Preview](https://coragon.web.app/)
 
-![Screenshot](https://i.imgur.com/kJGYuwp.jpg)
+![Screenshot Events](https://i.imgur.com/kaiYH4I.png)
+![Screenshot Goals](https://i.imgur.com/NQfLZ2R.png)
+![Screenshot Notes](https://i.imgur.com/Dlxzmhq.png)
 
 ## Todo
 
