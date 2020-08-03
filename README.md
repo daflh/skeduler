@@ -9,9 +9,9 @@ Easy to use event scheduler and notes build with Firebase
 
 ## Todo
 
-- **repeated event bisa di snooze**, membuat field `ori_date` utk menampung tanggal aslinya
-- **custom repeat pada event**, membuat field `repeat` berisi array dengan item pertama berisi angka dan item kedua berisi salah satu diantara *day*/*week*/*month*/*year*
+- **custom repeat**, the `repeat` field will contain an array with 2 elements, like for example `[3, "week"]`, means repeat event every 3 weeks
+- **repeated event can be snoozed**, create a new field named `original_date`, which contains original date before event is snoozed
 
 ## Quick start
 
-Coming soon
+I'm too lazy for this :p
