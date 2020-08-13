@@ -5,6 +5,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 firebase-debug.log*
+.fuse_hidden*
 
 # Firebase cache
 .firebase/
