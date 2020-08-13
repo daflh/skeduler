@@ -279,10 +279,14 @@ function notif(text = "", {type = "", duration = 5000, description, whenUndo} = 
 
 const _d = (...args) => new (Function.prototype.bind.apply(Date, [Date, ...args]));
 
-document.querySelectorAll("#sidenav-main button[name^='navbarFade']").forEach(el => {
-    el.addEventListener("click", () => fade(document.getElementById("navcol")));
-});
+if(location.pathname !== "/login") {
+    
+    document.querySelectorAll("#sidenav-main button[name^='navbarFade']").forEach(el => {
+        el.addEventListener("click", () => fade(document.getElementById("navcol")));
+    });
 
-document.getElementById("logout").addEventListener("click", () => {
-    firebase.auth().signOut();
-});
+    document.getElementById("logout").addEventListener("click", () => {
+        firebase.auth().signOut();
+    });
+
+}
