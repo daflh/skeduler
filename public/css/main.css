@@ -14,7 +14,7 @@ i{display:inline-block;vertical-align:middle}
 .gu-mirror{position:fixed!important;margin:0!important;z-index:9999!important;border:0!important;opacity:.9}
 .gu-hide{display:none!important}
 .gu-transit{opacity:.5}
-.icon{width:20px;height:20px;cursor:pointer;background-image:url(../img/icons.svg);background-repeat: no-repeat;background-size: 100px 80px}
+.icon{width:20px;height:20px;cursor:pointer;background-image:url(/img/icons.svg);background-repeat: no-repeat;background-size: 100px 80px}
 .icon.add{background-position:0px -60px}
 .icon.edit{background-position:-20px -60px}
 .icon.delete{background-position:-40px -60px}
@@ -24,12 +24,10 @@ i{display:inline-block;vertical-align:middle}
 .icon.arrow-up{background-position:-20px -40px}
 .icon.shut{background-position:-40px -40px}
 .icon.undo{background-position:-60px -40px}
-.icon.pinned{background-position:0px -20px}
-.icon.unpinned{background-position:-20px -20px}
 .icon.info{background-position:0px 0px}
 .icon.warning{background-position:-20px 0px}
 .icon.error{background-position:-40px 0px}
-.add-button{background-image:url(../img/icons.svg);background-position:0px -72px;width:24px;height:24px}
+.add-button{background-image:url(/img/icons.svg);background-position:0px -72px;width:24px;height:24px}
 .main-content{position:relative;padding: 1rem;margin-bottom: 1.5rem}
 .main-content .page-nav{color:rgba(0,0,0,.75);font-size:1.0625rem!important;font-weight:600;line-height: 1.5;margin:0;text-transform: uppercase}
 .main-content .row:first-child{margin-top:1rem;margin-bottom:.5rem}
@@ -80,7 +78,7 @@ i{display:inline-block;vertical-align:middle}
 @media (max-width:767.98px) {
     .navbar-nav .nav-link{padding:.625rem 0}
     .navbar-collapse{display:none;padding:1.5rem;background:#fff;box-shadow:0 50px 100px rgba(50,50,93,.1),0 15px 35px rgba(50,50,93,.15),0 5px 15px rgba(0,0,0,.1);width:calc(100% - 1.4rem);position:absolute;top:0;left:0;right:0;z-index:1050;margin:.7rem;overflow-y:auto;height:auto!important}
-    .navbar-collapse .navbar-toggler{position:relative;cursor:pointer;display:inline-block;padding:0;width:24px;height:24px;vertical-align: middle;background: url(../img/icons.svg) -48px -48px}
+    .navbar-collapse .navbar-toggler{position:relative;cursor:pointer;display:inline-block;padding:0;width:24px;height:24px;vertical-align: middle;background: url(/img/icons.svg) -48px -48px}
     .navbar-collapse .navbar-collapse-header{display:block;padding-bottom:1rem;margin-bottom:1rem;border-bottom:1px solid #f3f3f3}
     .navbar-collapse .collapse-brand img{height:36px}
     .navbar-collapse .collapse-close{text-align:right}

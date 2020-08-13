@@ -5,12 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Events – Skeduler</title>
-    <link rel="shortcut icon" href="./img/logo-64x64.png">
-    <link rel="apple-touch-icon" sizes="64x64" href="./img/logo-64x64.png">
-    <link rel="manifest" href="./manifest.json">
+    <link rel="shortcut icon" href="/img/logo-64x64.png">
+    <link rel="apple-touch-icon" sizes="64x64" href="/img/logo-64x64.png">
+    <link rel="manifest" href="/manifest.json">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet" />
-    <link href="./css/main.css" rel="stylesheet" />
+    <link href="/css/main.css" rel="stylesheet" />
     <style>
     
     table{color:inherit!important; margin-bottom:0!important}
@@ -20,11 +20,11 @@
     table tr td, table tr th{font-size:.8125rem;border-top:0!important;padding:1rem 1.5rem!important;vertical-align: middle}
     table tr td{white-space:nowrap}
     table tr td.date{display:flex;align-items:center;width:auto}
-    table tr td.date i.repeat, table tr td.date i.notif-active{background-image:url(../img/icons.svg);background-size:65px 52px;width:13px;height:13px}
+    table tr td.date i.repeat, table tr td.date i.notif-active{background-image:url(/img/icons.svg);background-size:65px 52px;width:13px;height:13px}
     table tr td.date i.repeat{background-position: -26px -13px;}
     table tr td.date i.notif-active{background-position: -39px -13px;}
     table tbody tr th{white-space:normal;font-weight:600;width:100%}
-    .permission-icon{background-image:url(./img/icons.svg);background-position:-50px 0;background-size:250px 200px;width:50px;height:50px;align-self:center}
+    .permission-icon{background-image:url(/img/icons.svg);background-position:-50px 0;background-size:250px 200px;width:50px;height:50px;align-self:center}
     
     @media (max-width:991.98px) {
         table thead{display:none}
@@ -51,12 +51,12 @@
             <button class="navbar-toggler" type="button" name="navbarFadeIn">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand pr-3" href="./" title="Skeduler Logo">Skeduler</a>
+            <a class="navbar-brand pr-3" href="/" title="Skeduler Logo">Skeduler</a>
             <div class="navbar-collapse" id="navcol">
                 <div class="navbar-collapse-header d-md-none">
                     <div class="row">
                         <div class="col-6 collapse-brand">
-                            <a href="./" title="Skeduler Logo">Skeduler</a>
+                            <a href="/" title="Skeduler Logo">Skeduler</a>
                         </div>
                         <div class="col-6 collapse-close align-self-center">
                             <button class="navbar-toggler" type="button" name="navbarFadeOut"></button>
@@ -64,10 +64,9 @@
                     </div>
                 </div>
                 <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link" href="./">Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="./events">Events</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./goals">Goals</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./notes">Notes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/events">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/goals">Goals</a></li>
                 </ul>
                 <hr class="my-3">
                 <ul class="navbar-nav mb-md-3">
@@ -98,7 +97,7 @@
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-firestore.js"></script>
-    <script src="./js/main.js"></script>
+    <script src="/js/main.js"></script>
     <script>
 
     firebase.auth().onAuthStateChanged(function(user) {
@@ -256,7 +255,7 @@
             });
     
         } else {
-            location.href = "./login?ref=events";
+            location.href = "/login?ref=events";
         }
     });
 

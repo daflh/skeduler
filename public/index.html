@@ -5,12 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Skeduler Dashboard</title>
-    <link rel="shortcut icon" href="./img/logo-64x64.png">
-    <link rel="apple-touch-icon" sizes="64x64" href="./img/logo-64x64.png">
-    <link rel="manifest" href="./manifest.json">
+    <link rel="shortcut icon" href="/img/logo-64x64.png">
+    <link rel="apple-touch-icon" sizes="64x64" href="/img/logo-64x64.png">
+    <link rel="manifest" href="/manifest.json">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet" />
-    <link href="./css/main.css" rel="stylesheet" />
+    <link href="/css/main.css" rel="stylesheet" />
     <style>
 
     .list-group li{background-color:initial!important;padding:.75rem 0}
@@ -32,12 +32,12 @@
             <button class="navbar-toggler" type="button" name="navbarFadeIn">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand pr-3" href="./" title="Skeduler Logo">Skeduler</a>
+            <a class="navbar-brand pr-3" href="/" title="Skeduler Logo">Skeduler</a>
             <div class="navbar-collapse" id="navcol">
                 <div class="navbar-collapse-header d-md-none">
                     <div class="row">
                         <div class="col-6 collapse-brand">
-                            <a href="./" title="Skeduler Logo">Skeduler</a>
+                            <a href="/" title="Skeduler Logo">Skeduler</a>
                         </div>
                         <div class="col-6 collapse-close align-self-center">
                             <button class="navbar-toggler" type="button" name="navbarFadeOut"></button>
@@ -45,10 +45,9 @@
                     </div>
                 </div>
                 <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link active" href="./">Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./events">Events</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./goals">Goals</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./notes">Notes</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/events">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/goals">Goals</a></li>
                 </ul>
                 <hr class="my-3">
                 <ul class="navbar-nav mb-md-3">
@@ -85,18 +84,11 @@
                             <p class="text-muted">Things you wanna achieve soon</p>
                         </div>
                         <hr class="my-4">
-                        <div class="notes">
-                            <h5><a href="./notes">Notes</a></h5>
-                            <p class="text-muted">Keep your personal notes here</p>
-                            </button>
-                        </div>
-                        <hr class="my-4">
                         <div class="export">
                             <select id="exportSelect" class="form-control d-inline-block rounded-0 input-responsive" required>
                                 <option value="" disabled selected>Export Data</option>
                                 <option value="events">Events</option>
                                 <option value="goals">Goals</option>
-                                <option value="notes">Notes</option>
                             </select>
                             <textarea id="exportTextarea" class='form-control mt-3 rounded-0' readonly></textarea>
                         </div>
@@ -114,7 +106,7 @@
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-firestore.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/autosize.js/4.0.2/autosize.min.js"></script>
-    <script src="./js/main.js"></script>
+    <script src="/js/main.js"></script>
     <script>
 
     firebase.auth().onAuthStateChanged(function(user) {
@@ -182,7 +174,7 @@
                     let data = ita.value;
                     if(!!+data || ['','""','0','[]','{}','true','false'].indexOf(data) >= 0) throw new Error();
                     data = JSON.parse(data);
-                    if(!Object.keys(data).every(elem => ["events", "goals", "notes"].indexOf(elem) > -1)) throw new Error();
+                    if(!Object.keys(data).every(elem => ["events", "goals"].indexOf(elem) > -1)) throw new Error();
                     for (let [col, colVal] of Object.entries(data)) {
                         if(!colVal || typeof colVal != "object" || Object.keys(colVal).length === 0) throw new Error();
                         for (let [doc, val] of Object.entries(colVal)) {
@@ -197,7 +189,7 @@
             });
 
         } else {
-            location.href = "./login";
+            location.href = "/login";
         }
     });
 

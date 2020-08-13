@@ -1,4 +1,4 @@
-const cacheVer = "v2.1";
+const cacheVer = "v2.0";
 const cacheName = "skeduler-" + cacheVer;
 const assets = [
     'manifest.json',
@@ -6,7 +6,6 @@ const assets = [
     '/index.html',
     '/events.html',
     '/goals.html',
-    '/notes.html',
     '/login.html',
     '/css/main.css',
     '/js/main.js',

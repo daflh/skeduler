@@ -5,12 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Login to Skeduler</title>
-    <link rel="shortcut icon" href="./img/logo-64x64.png">
-    <link rel="apple-touch-icon" sizes="64x64" href="./img/logo-64x64.png">
-    <link rel="manifest" href="./manifest.json">
+    <link rel="shortcut icon" href="/img/logo-64x64.png">
+    <link rel="apple-touch-icon" sizes="64x64" href="/img/logo-64x64.png">
+    <link rel="manifest" href="/manifest.json">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet" />
-    <link href="./css/main.css" rel="stylesheet" />
+    <link href="/css/main.css" rel="stylesheet" />
     <style>
     .container{margin:10vh auto!important}
     .main-content h1{font-weight:600;font-size:2.25rem;color:#565656}
@@ -43,13 +43,13 @@
     </div>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
-    <script src="./js/main.js"></script>
+    <script src="/js/main.js"></script>
     <script>
 
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
             let query = new URLSearchParams(location.search)
-            window.location = query.has("ref") ? "./"+query.get("ref") : "./";
+            window.location = query.has("ref") ? "/"+query.get("ref") : "/";
         }
     });
 
