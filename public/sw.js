@@ -1,23 +1,23 @@
-const cacheVer = "v1.0";
+const cacheVer = "v2.0";
 const cacheName = "skeduler-" + cacheVer;
+const assets = [
+    '/',
+    '/index.html',
+    '/events.html',
+    '/goals.html',
+    '/notes.html',
+    '/login.html',
+    '/css/main.css',
+    '/js/main.js',
+    '/img/icons.svg',
+    '/img/banner.png',
+    '/img/logo/64x64.png'
+];
 
 self.addEventListener('install', function(event) {
     event.waitUntil(
         caches.open(cacheName).then(cache => {
-            return cache.addAll([
-                '/',
-                '/index.html',
-                '/events.html',
-                '/goals.html',
-                '/notes.html',
-                '/login.html',
-                '/404.html',
-                '/css/main.css',
-                '/js/main.js',
-                '/img/icons.svg',
-                '/img/banner.png',
-                '/img/logo/64x64.png'
-            ]).then(function() {
+            return cache.addAll(assets).then(function() {
                 self.skipWaiting();
             });
         })

@@ -14,9 +14,9 @@ const fs = firebase.firestore();
 fs.settings({cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED});
 fs.enablePersistence({synchronizeTabs: true});
 
-navigator.serviceWorker.getRegistration().then(function(reg) {
-    if (!reg) navigator.serviceWorker.register('./sw.js');
-});
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js');
+}
 
 String.prototype.toUrl = function(){
     let str = this;
