@@ -16,7 +16,7 @@
     "schedule-manager"
   ],
   "author": "Dafiul Haq",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "firebase-tools": "^7.14.0"
   }
