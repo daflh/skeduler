@@ -1,16 +1,18 @@
 # Skeduler
 Easy to use event scheduler build with Firebase
 
-[Preview](https://dap-skeduler.web.app/)
+### [Preview](https://dap-skeduler.web.app/)
 
-![Screenshot Events](https://i.imgur.com/kaiYH4I.png)
-![Screenshot Goals](https://i.imgur.com/NQfLZ2R.png)
+![Events Screenshot](https://i.imgur.com/9JohmaO.png)
+![Goals Screenshot](https://i.imgur.com/Oj6dHCr.png)
 
-## Todo
+## To-do
 
 - **custom repeat**, the `repeat` field will contain an array with 2 elements, like for example `[3, "week"]`, means repeat event every 3 weeks
-- **repeated event can be snoozed**, create a new field named `original_date`, which contains original date before event is snoozed
+- **repeated event can be snoozed**, create a field named `original_date` or something, which contains original date before event is snoozed
 
-## Quick start
+## Create your own
 
 I'm too lazy for this :p
+
+Coming soon ...
