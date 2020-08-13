@@ -146,7 +146,7 @@ function slide(target, { type = '', duration = 600, initial = 'block' } = {}) {
     }
 }
 
-function modal(header, input = [], { titleVal = "", titlePlac = "", linkVal = "", linkPlac = "", dateVal = "", repeatVal = "", notifChecked = true } = {}, whenSubmit = () => {}){
+function modal(header, input = [], { titleVal = "", titlePlac = "", linkVal = "", linkPlac = "", dateVal = "", repeatVal = "" } = {}, whenSubmit = () => {}){
 
     let element = `
         <div id="modal" class="modal-overlay">
@@ -166,12 +166,6 @@ function modal(header, input = [], { titleVal = "", titlePlac = "", linkVal = ""
                         <option ${repeatVal === 'yearly' ? 'selected' : ''} value="yearly">Yearly</option>
                     </select>
                     <br/>
-                    ` : ``}
-                    ${input.includes("date") ? `
-                    <div class="pretty-checkbox" title="Notification can only be used for event that happen in less than 29 days from now">
-                        <input type="checkbox" name="notif" id="notifInput" ${(new Date().getTimeS()+60*60*24*29*1000 < (dateVal ? new Date(dateVal) : new Date()).getTimeS() ? ' disabled' : '') + (notifChecked === true ? ' checked' : '')}>
-                        <label for="notifInput">Create notification for this event</label>
-                    </div>
                     ` : ``}
                 </form>
                 <div class="text-right">
@@ -194,27 +188,13 @@ function modal(header, input = [], { titleVal = "", titlePlac = "", linkVal = ""
         setTimeout(() => mdl.parentNode.removeChild(mdl), 600);
     }
 
-    if(input.includes("date")) modalForm.elements.date.addEventListener("input", evt => {
-        let val = evt.target.value;
-        let notifInput = modalForm.elements.notif;
-        let dbled;
-        if (new Date().getTimeS()+60*60*24*29*1000 < new Date(val).getTimeS()) {
-            notifInput.checked = false;
-            dbled = true;
-        } else {
-            dbled = false;
-        }
-        notifInput.disabled = dbled;
-    })
-
     modalForm.addEventListener("submit", evt => {
         evt.preventDefault();
         whenSubmit({
             title: input.includes("title") ? modalForm.elements.title.value : "",
             link: input.includes("link") ? modalForm.elements.link.value : "",
             date: input.includes("date") ? modalForm.elements.date.value : "",
-            repeat: input.includes("repeat") ? modalForm.elements.repeat.value : "",
-            useNotif: input.includes("date") ? modalForm.elements.notif.checked : ""
+            repeat: input.includes("repeat") ? modalForm.elements.repeat.value : ""
         });
         closeModal();
         modalForm.elements.submit.disabled = true;
@@ -304,9 +284,5 @@ document.querySelectorAll("#sidenav-main button[name^='navbarFade']").forEach(el
 });
 
 document.getElementById("logout").addEventListener("click", () => {
-    let userId = sessionStorage.getItem("onesignal-user-id");
-    let uid = sessionStorage.getItem("firebase-uid");
-    fs.collection("users").doc(uid).update({
-        onesignal_devices: firebase.firestore.FieldValue.arrayRemove(userId)
-    }).then(() => firebase.auth().signOut());
+    firebase.auth().signOut();
 });

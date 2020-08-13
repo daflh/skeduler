@@ -99,7 +99,6 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-firestore.js"></script>
@@ -110,112 +109,9 @@
         if (user) {
 
             let eventsRef = fs.collection("users").doc(user.uid).collection('events');
-            let osgl = window.OneSignal || [];
-            
-            sessionStorage.setItem("firebase-uid", user.uid);
-
-            osgl.push(()=> {
-                let storeUserId = () => {
-                    osgl.getUserId(userId => {
-                        fs.collection("users").doc(user.uid).set({ onesignal_devices: firebase.firestore.FieldValue.arrayUnion(userId) }, {merge: true});
-                        sessionStorage.setItem("onesignal-user-id", userId);
-                    });
-                }
-                let removeStoredUserId = () => {
-                    osgl.getUserId(userId => fs.collection("users").doc(user.uid).set({
-                        onesignal_devices: firebase.firestore.FieldValue.arrayRemove(userId)
-                    }, {merge: true}));
-                }
-                let showWarning = permission => {
-                    let element = `
-                        <div id="permission-warning" class="card rounded-0 mt-4 bg-white text-muted hide">
-                            <div class="d-flex card-body px-4 py-3">
-                                <i class="permission-icon mr-3 d-none d-sm-block"></i>
-                                <div class="align-self-center">
-                                    <p class="m-0 mt-1 mt-sm-0 small font-weight-bold">Notification Blocked</p>
-                                    <p class="m-0 small">Turn on notifications to get event reminder.</p>
-                                    ${permission === "default" ? `<button id="prompt-notif" class="btn btn-primary btn-sm small border-0 bg-secondary mt-1">Allow Notification</button>` : ``}
-                                    ${permission === "denied" ? `<p class="m-0 small">See how to enable it in 
-                                        <a href="https://support.google.com/chrome/answer/3220216" target="_blank">Chrome</a>, 
-                                        <a href="https://support.mozilla.org/en-US/kb/push-notifications-firefox" target="_blank">Firefox</a> or 
-                                        <a href="https://www.windowscentral.com/how-manage-web-notifications-edge-windows-10" target="_blank">Edge</a>.
-                                    </p>` : ``}
-                                </div>
-                            </div>
-                        </div>
-                    `;
-
-                    document.getElementById("events-wrapper").insertAdjacentHTML("beforebegin", element);
-                    fade(document.getElementById("permission-warning"), {type: "show"});
-
-                    if(permission === "default") document.getElementById("prompt-notif").addEventListener("click", () => osgl.showNativePrompt());
-                }
-                let hideWarning = () => fade(document.getElementById("permission-warning"), {type: "hide"});
-                osgl.init({ appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983" });
-                osgl.getNotificationPermission(pmsn => pmsn === "granted" ? storeUserId() : showWarning(pmsn));
-                osgl.on('subscriptionChange', subs => {
-                    if(subs){
-                        hideWarning();
-                        storeUserId();
-                    } else {
-                        showWarning("denied");
-                        removeStoredUserId();
-                    }
-                });
-            });
 
             let keys = "Nzc4MzY3MDMtOGZlNi00MTVjLWI5MjItNGNlZDMwNjU0Nzhk";
             let appId = "12fe1f4e-c50f-4321-961a-3fc7a36b7983";
-
-            async function createNotif(id, name = "Your event", timestamp = 0){
-                try {
-                    notif("Creating notification ...", {duration: 0});
-
-                    if(!timestamp) throw new Error("Invalid timestamp, use 10 or 13 digit UNIX Epoch time")
-                    timestamp = timestamp.toString().length === 10 ? +timestamp*1000 : +timestamp;
-                    if(timestamp < _d().getTimeM()) throw new Error("Can't schedule notification for the past.");
-                    if(timestamp >= _d().getTimeM()+60*60*24*29*1000) throw new Error("Can't schedule notification for more than 29 days.");
-                    
-                    let doc = await fs.collection("users").doc(user.uid).get();
-                    let response = await fetch('https://onesignal.com/api/v1/notifications', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Basic '+keys
-                        },
-                        body: JSON.stringify({
-                            app_id: appId,
-                            include_player_ids: doc.data().onesignal_devices,
-                            template_id: "1ff79e8e-fc74-41fb-93ab-01ee4cbc3eff",
-                            send_after: !!timestamp ? new Date(timestamp) : "",
-                            contents: { "en": name }
-                        })
-                    });
-                    let data = await response.json();
-                    if(!!id) eventsRef.doc(id).update({ notif_id: data.id }).then(() => {
-                        notif("Event notification created!", {type: "info"});
-                    });
-                } catch (err) {
-                    notif("Failed to create notification.", {type: "warning", duration: 0, description: err});
-                }
-            }
-
-            async function cancelNotif(notifId){
-                try {
-                    if(!notifId || notifId.length !== 36) throw new Error("Invalid notification ID.")
-                    let response = await fetch('https://onesignal.com/api/v1/notifications/'+notifId+'?app_id='+appId, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Basic '+keys
-                        }
-                    });
-                    let json = await response.json();
-                    if(json.hasOwnProperty("errors")) throw new Error(json.errors)
-                } catch (err) {
-                    notif("Unable to delete notification.", {type: "warning", duration: 0, description: err});
-                }
-            }
 
             function eventDone(id, data){
                 let repeat = data.repeat;
@@ -234,8 +130,9 @@
                         data.date = nextTime;
                         return eventDone(id, data);
                     }
-                    return eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromMillis(nextTime) }).then(function(){
-                        createNotif(id, data.name, nextTime)
+
+                    return eventsRef.doc(id).update({
+                        date: firebase.firestore.Timestamp.fromMillis(nextTime)
                     });
                 }
             }
@@ -243,8 +140,9 @@
             eventsRef.get().then(function(once){
                 once.forEach(raw=>{
                     let dt = raw.data();
-                    if (dt.date.seconds*1000 <= _d().getTimeM()) eventsRef.doc(raw.id).update({ notif_id: firebase.firestore.FieldValue.delete() });
-                    if (dt.date.seconds*1000 <= _d().getTimeM() - 60*60*24*1000) eventDone(raw.id, dt);
+                    if (dt.date.seconds*1000 <= _d().getTimeM() - 60*60*24*1000) {
+                        eventDone(raw.id, dt);
+                    }
                 });
                 eventsRef.orderBy('date').onSnapshot(function(data){
                     let elem = '';
@@ -270,7 +168,6 @@
                                     <td class='date' title='${d.date.toDate()}'>
                                         ${_d(d.date.seconds * 1000).toDateRelativeString()}
                                         ${d.repeat !== "unrepeat" ? ` <i class='repeat ml-1' title='Repeats ${d.repeat}'></i>` : ``}
-                                        ${d.notif_id ? ` <i class='notif-active ml-1' title='Notification enabled'></i>` : ``}
                                     </td>
                                     <th>${d.name}</th>
                                     <td class='actions'>
@@ -302,13 +199,11 @@
             document.getElementById("add").addEventListener("click", () => {
                 modal("Add new event", ["title", "date", "repeat"], {
                     titlePlac: "Event Name"
-                }, ({title: name, date, repeat, useNotif}) => {
+                }, ({title: name, date, repeat}) => {
                     eventsRef.add({
                         name: name,
                         date: firebase.firestore.Timestamp.fromDate(new Date(date)),
                         repeat: repeat
-                    }).then(doc => {
-                        if(useNotif) createNotif(doc.id, name, _d(date).getTimeS());
                     });
                 });
             });
@@ -329,43 +224,29 @@
                         titlePlac: "Event Name",
                         titleVal: event.name,
                         dateVal: _d(event.date.seconds * 1000).toISOMinuteString(),
-                        repeatVal: event.repeat,
-                        notifChecked: event.hasOwnProperty("notif_id") ? true : false
-                    }, ({title: name, date, repeat, useNotif}) => {
+                        repeatVal: event.repeat
+                    }, ({title: name, date, repeat}) => {
                         eventsRef.doc(id).update({
                             name: name,
                             date: firebase.firestore.Timestamp.fromDate(new Date(date)),
                             repeat: repeat
-                        }).then(function(){
-                            if (useNotif) {
-                                if(event.name !== name || event.date.seconds !== firebase.firestore.Timestamp.fromDate(new Date(date)).seconds || !event.hasOwnProperty("notif_id"))
-                                    createNotif(id, name, _d(date).getTimeS());
-                            } else {
-                                if(event.hasOwnProperty("notif_id")) cancelNotif(event.notif_id);
-                                eventsRef.doc(id).update({ notif_id: firebase.firestore.FieldValue.delete() });
-                            }
                         });
                     });
 
                 } else if (t && t.classList.contains("delete")) {
-                    let hasNotif = event.hasOwnProperty("notif_id");
                     eventsRef.doc(id).delete().then(() => {
-                        if(hasNotif) cancelNotif(event.notif_id);
-                        delete event.notif_id;
                         notif("Event successfully deleted!", {type: "info", whenUndo: () => {
                             event.date = firebase.firestore.Timestamp.fromMillis(event.date.seconds*1000);
-                            eventsRef.doc(id).set(event).then(() => {
-                                if(hasNotif) createNotif(id,event.name,+event.date.seconds);
-                            });
+                            eventsRef.doc(id).set(event);
                         }});
                     });
 
                 } else if (t && t.classList.contains("snooze")) {
                     modal("Snooze event", ["date"], {
                         dateVal: _d().toISOMinuteString()
-                    }, ({date, useNotif}) => {
-                        eventsRef.doc(id).update({ date: firebase.firestore.Timestamp.fromDate(new Date(date)) }).then(function(){
-                            if(useNotif) createNotif(id, event.name, _d(date).getTimeS())
+                    }, ({date}) => {
+                        eventsRef.doc(id).update({
+                            date: firebase.firestore.Timestamp.fromDate(new Date(date))
                         });
                     });
 

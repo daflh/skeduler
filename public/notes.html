@@ -94,7 +94,6 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
             </div>
         </div>
     </div>
-    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-firestore.js"></script>
@@ -106,24 +105,9 @@ Write new note here ..." rows="2" spellcheck="false" required></textarea>
         if (user) {
             
             let notesRef = fs.collection("users").doc(user.uid).collection('notes');
-            let osgl = window.OneSignal || [];
             let newnote = document.forms.newNoteForm;
             let ta = newnote.elements.newNoteTextarea;
             let save = newnote.lastElementChild;
-
-            sessionStorage.setItem("firebase-uid", user.uid);
-
-            osgl.push(()=> {
-                osgl.init({ appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983" });
-                osgl.getNotificationPermission(permission => {
-                    if (permission === "granted") osgl.getUserId(userId => {
-                        fs.collection("users").doc(user.uid).set({
-                            onesignal_devices: firebase.firestore.FieldValue.arrayUnion(userId)
-                        }, {merge: true});
-                        sessionStorage.setItem("onesignal-user-id", userId);
-                    });
-                });
-            });
             
             notesRef.orderBy('pin','desc').onSnapshot(function(data){
                 let elem = '';

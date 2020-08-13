@@ -114,7 +114,6 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-firestore.js"></script>
@@ -126,21 +125,6 @@
         if (user) {
 
             let userRef = fs.collection("users").doc(user.uid);
-            let osgl = window.OneSignal || [];
-
-            sessionStorage.setItem("firebase-uid", user.uid);
-
-            osgl.push(()=> {
-                osgl.init({ appId: "12fe1f4e-c50f-4321-961a-3fc7a36b7983" });
-                osgl.getNotificationPermission(permission => {
-                    if (permission === "granted") osgl.getUserId(userId => {
-                        fs.collection("users").doc(user.uid).set({
-                            onesignal_devices: firebase.firestore.FieldValue.arrayUnion(userId)
-                        }, {merge: true});
-                        sessionStorage.setItem("onesignal-user-id", userId);
-                    });
-                });
-            });
             
             document.getElementById("user").outerHTML = `
                 <div id="user" class="card-body row p-0">
@@ -172,8 +156,9 @@
                     } else {
                         dt.docs.map(function(val){
                             let dt = val.data();
-                            if(dt.hasOwnProperty("date")) dt.date = dt.date.seconds*1000;
-                            if(dt.hasOwnProperty("notif_id")) delete dt.notif_id;
+                            if(dt.hasOwnProperty("date")){
+                                dt.date = dt.date.seconds*1000;
+                            }
                             res[v][val.id] = dt;
                         });
                         res = JSON.stringify(res);
