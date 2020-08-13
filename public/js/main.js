@@ -1,11 +1,11 @@
 const config = {
-    apiKey: "AIzaSyDEwp69Rir4QRYYJzZtEHBwhC2fLD5IqVw",
-    authDomain: "coragon.firebaseapp.com",
-    databaseURL: "https://coragon.firebaseio.com",
-    projectId: "coragon",
-    storageBucket: "coragon.appspot.com",
-    messagingSenderId: "975187721562",
-    appId: "1:975187721562:web:7299b5199bb1b232620763"
+    apiKey: "AIzaSyBGxNUCjqggjDlC_PxeL2DSuJoBftsXb8c",
+    authDomain: "dap-skeduler.firebaseapp.com",
+    databaseURL: "https://dap-skeduler.firebaseio.com",
+    projectId: "dap-skeduler",
+    storageBucket: "dap-skeduler.appspot.com",
+    messagingSenderId: "264939922574",
+    appId: "1:264939922574:web:f612b753ccb538945095df"
 };
 
 firebase.initializeApp(config);

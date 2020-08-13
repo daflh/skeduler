@@ -1,5 +1,5 @@
-const cacheVer = "v2.0.0";
-const cacheName = "coragon-" + cacheVer;
+const cacheVer = "v1.0";
+const cacheName = "skeduler-" + cacheVer;
 
 self.addEventListener('install', function(event) {
     event.waitUntil(

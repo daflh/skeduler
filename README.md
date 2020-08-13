@@ -1,7 +1,7 @@
-# Coragon
+# Skeduler
 Easy to use event scheduler and notes build with Firebase
 
-[Preview](https://coragon.web.app/)
+[Preview](https://dap-skeduler.web.app/)
 
 ![Screenshot Events](https://i.imgur.com/kaiYH4I.png)
 ![Screenshot Goals](https://i.imgur.com/NQfLZ2R.png)

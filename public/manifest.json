@@ -1,6 +1,6 @@
 {
-  "name": "Coragon",
-  "short_name": "Coragon",
+  "name": "Skeduler",
+  "short_name": "Skeduler",
   "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#F2F5FA",

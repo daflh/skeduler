@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Events – Coragon</title>
+    <title>Events – Skeduler</title>
     <link rel="shortcut icon" href="./img/logo/64x64.png">
     <link rel="apple-touch-icon" sizes="64x64" href="./img/logo/64x64.png">
     <link rel="manifest" href="./manifest.json">
@@ -52,14 +52,14 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <a class="navbar-brand pr-3" href="./">
-                <img src="./img/banner.png" alt="Coragon Logo" id="navbar-brand-img">
+                <img src="./img/banner.png" alt="Skeduler Logo" id="navbar-brand-img">
             </a>
             <div class="navbar-collapse" id="navcol">
                 <div class="navbar-collapse-header d-md-none">
                     <div class="row">
                         <div class="col-6 collapse-brand">
                             <a href="./">
-                                <img src="./img/banner.png" alt="Coragon Logo" id="navbar-brand-img">
+                                <img src="./img/banner.png" alt="Skeduler Logo" id="navbar-brand-img">
                             </a>
                         </div>
                         <div class="col-6 collapse-close align-self-center">
@@ -176,7 +176,6 @@
                     if(timestamp < _d().getTimeM()) throw new Error("Can't schedule notification for the past.");
                     if(timestamp >= _d().getTimeM()+60*60*24*29*1000) throw new Error("Can't schedule notification for more than 29 days.");
                     
-                    let siteUrl = "https://coragon.web.app";
                     let doc = await fs.collection("users").doc(user.uid).get();
                     let response = await fetch('https://onesignal.com/api/v1/notifications', {
                         method: 'POST',
