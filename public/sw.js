@@ -1,6 +1,7 @@
-const cacheVer = "v2.0";
+const cacheVer = "v2.1";
 const cacheName = "skeduler-" + cacheVer;
 const assets = [
+    'manifest.json',
     '/',
     '/index.html',
     '/events.html',
@@ -10,8 +11,9 @@ const assets = [
     '/css/main.css',
     '/js/main.js',
     '/img/icons.svg',
-    '/img/banner.png',
-    '/img/logo/64x64.png'
+    '/img/logo-64x64.png',
+    '/img/logo-192x192.png',
+    '/img/logo-512x512.png'
 ];
 
 self.addEventListener('install', function(event) {
