@@ -15,7 +15,8 @@
 
     .list-group li{background-color:initial!important;padding:.75rem 0}
     textarea{max-height:300px}
-    .export textarea{background-color:#f9f9f9!important;display:none}
+    .export textarea{background-color:#f9f9f9!important}
+    .export h6, .import h6{font-weight: 600;font-size:1.1rem;margin-bottom:1.2rem;}
     .user-photo{width:80px}
     .user-name{font-weight:600}
 
@@ -65,7 +66,7 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <div id="greetings" class="card rounded-0 mt-4 bg-white p-4 text-muted">
+                    <div class="card rounded-0 mt-4 bg-white p-4 text-muted">
                         <div class="card-header bg-white border-0 p-0 mb-3">
                             <h3>How's it going ?</h3>
                         </div>
@@ -73,28 +74,14 @@
                             <h6>Loading user profile ...</h6>
                         </div>
                     </div>
-                    <div id="feature" class="card rounded-0 mt-4 bg-white p-4">
-                        <div class="events">
-                            <h5><a href="./events">Events</a></h5>
-                            <p class="text-muted">Schedule your important events</p>
+                    <div class="card rounded-0 mt-4 bg-white p-4">
+                        <div class="export mt-1 mb-4">
+                            <h6>Export data</h6>
+                            <textarea id="exportTextarea" class='form-control mt-3 rounded-0' readonly>Loading ...</textarea>
                         </div>
-                        <hr class="my-4">
-                        <div class="goals">
-                            <h5><a href="./goals">Goals</a></h5>
-                            <p class="text-muted">Things you wanna achieve soon</p>
-                        </div>
-                        <hr class="my-4">
-                        <div class="export">
-                            <select id="exportSelect" class="form-control d-inline-block rounded-0 input-responsive" required>
-                                <option value="" disabled selected>Export Data</option>
-                                <option value="events">Events</option>
-                                <option value="goals">Goals</option>
-                            </select>
-                            <textarea id="exportTextarea" class='form-control mt-3 rounded-0' readonly></textarea>
-                        </div>
-                        <hr class="my-4">
-                        <div class="import">
-                            <textarea id="importTextarea" class="form-control mb-3 rounded-0" placeholder="Import data here ..." rows="3"></textarea>
+                        <div class="import my-1">
+                            <h6>Import data</h6>
+                            <textarea id="importTextarea" class="form-control mb-3 rounded-0" placeholder="Paste here ..." rows="4"></textarea>
                             <button id="importSubmit" class="btn btn-primary px-3 rounded-0" disabled>Submit</button>
                         </div>
                     </div>
@@ -126,65 +113,73 @@
                 </div>
             `;
 
-            document.getElementById("exportSelect").addEventListener('change', function(){
-                let v = this.value;
-                let res = {[v]:{}};
-                let eta = document.getElementById("exportTextarea");
+            let result = {};
+            let exportTextarea = document.getElementById("exportTextarea");
 
-                fade(eta, {type: "show", duration: 300});
-                
-                eta.value = "Loading data ...";
-
-                autosize(eta);
-                autosize.update(eta);
-                
-                userRef.collection(v).get().then(dt=>{
-                    if(dt.empty){
-                        res = "No data";
-                    } else {
-                        dt.docs.map(function(val){
-                            let dt = val.data();
-                            if(dt.hasOwnProperty("date")){
-                                dt.date = dt.date.seconds*1000;
-                            }
-                            res[v][val.id] = dt;
-                        });
-                        res = JSON.stringify(res);
+            autosize(exportTextarea);
+            exportTextarea.addEventListener('focus', function(){
+                this.select();
+            });
+            
+            userRef.collection("events").get().then(data => {
+                if(!data.empty){
+                    let events = {};
+                    for(let rawDoc of data.docs) {
+                        let doc = rawDoc.data();
+                        if(doc.hasOwnProperty("date")){
+                            doc.date = doc.date.seconds*1000;
+                        }
+                        events[rawDoc.id] = doc;
                     }
-                    eta.value = res;
-                    eta.addEventListener('focus', function(){
-                        this.select();
-                    });
-                    autosize.update(eta);
-                });
+                    result.events = events;
+                }
+                
+                return userRef.collection("goals").get();
+
+            }).then(data => {
+                if(!data.empty){
+                    let goals = {};
+                    for(let rawDoc of data.docs) {
+                        goals[rawDoc.id] = rawDoc.data();
+                    }
+                    result.goals = goals;
+                }
+
+                exportTextarea.value = JSON.stringify(result);
+                autosize.update(exportTextarea);
+
             });
 
-            let ita = document.getElementById("importTextarea");
-            let isub = document.getElementById("importSubmit");
+            let importTextarea = document.getElementById("importTextarea");
+            let importSubmit = document.getElementById("importSubmit");
 
-            autosize(ita);
+            autosize(importTextarea);
 
-            ita.addEventListener("input", function(){
-                isub.disabled = this.value === "" ? true : false;
+            importTextarea.addEventListener("input", function(){
                 this.style.borderColor = null;
+                importSubmit.disabled = this.value === "" ? true : false;
             });
 
-            isub.addEventListener("click", function(){
+            importSubmit.addEventListener("click", function(){
                 try {
-                    let data = ita.value;
-                    if(!!+data || ['','""','0','[]','{}','true','false'].indexOf(data) >= 0) throw new Error();
-                    data = JSON.parse(data);
-                    if(!Object.keys(data).every(elem => ["events", "goals"].indexOf(elem) > -1)) throw new Error();
-                    for (let [col, colVal] of Object.entries(data)) {
-                        if(!colVal || typeof colVal != "object" || Object.keys(colVal).length === 0) throw new Error();
-                        for (let [doc, val] of Object.entries(colVal)) {
-                            if(val.hasOwnProperty("date")) val.date = firebase.firestore.Timestamp.fromMillis(val.date);
-                            userRef.collection(col).doc(doc).set(val,{merge:true});
+                    let data = JSON.parse(importTextarea.value);
+                    if(!Object.keys(data).every(elem => ["events", "goals"].indexOf(elem) !== -1)) throw new Error();
+
+                    for (let [colName, colData] of Object.entries(data)) {
+                        if(!colData || typeof colData != "object" || Object.keys(colData).length === 0) throw new Error();
+                        
+                        for (let [docID, docData] of Object.entries(colData)) {
+                            if(docData.hasOwnProperty("date")) {
+                                docData.date = firebase.firestore.Timestamp.fromMillis(docData.date);
+                            }
+                            userRef.collection(colName).doc(docID).set(docData, {merge:true});
                         }
                     }
+
                     notif("Data successfully imported!", {type: "info"});
+
                 } catch(err) {
-                    ita.style.borderColor = "#fd8f9a";
+                    importTextarea.style.borderColor = "#fd8f9a";
                 }
             });
 
