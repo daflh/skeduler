@@ -12,13 +12,11 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet" />
     <link href="./css/main.css" rel="stylesheet" />
     <style>
-    
     .container{margin:10vh auto!important}
     .main-content h1{font-weight:600;font-size:2.25rem;color:#565656}
     .logo-img{height:60px}
     .error-message{text-align:center;display:none;margin-bottom:1rem}
-    .social-button{text-align:center;display:block;cursor:pointer;padding:0.75rem 0;will-change:unset!important}
-    
+    .login-button{text-align:center;display:block;cursor:pointer;padding:0.75rem 0;will-change:unset!important}
     </style>
 </head>
 
@@ -29,13 +27,12 @@
                 <div class="col-lg-5 col-md-7">
                     <div class="card bg-white shadow">
                         <div class="card-body p-5">
-                            <div class="text-center mb-4">
-                                <h1>Get into</h1>
-                                <img class="logo-img" src="./img/banner.png" alt="Skeduler Logo">
+                            <div class="text-center">
+                                <h2>Get into</h2>
+                                <h1>Skeduler</h1>
                             </div>
-                            <div class="social-login mb-4">
-                                <div class="social-button btn btn-danger mb-3 rounded-0" data-platform="google">Sign in with <b>Google</b></div>
-                                <div class="social-button btn btn-primary rounded-0" data-platform="facebook">Login with <b>Facebook</b></div>
+                            <div id="loginBtn" class="login-button btn btn-danger my-4 rounded-0">
+                                Sign in with <b>Google</b>
                             </div>
                             <div class="error-message small text-danger"></div>
                         </div>
@@ -56,18 +53,13 @@
         }
     });
 
-    let socialbtn = Array.from(document.getElementsByClassName("social-button"));
-
-    socialbtn.forEach(el => {
-        el.addEventListener("click", function(){
-            let login = this.dataset.platform;
-            let provider = login === "google" ? new firebase.auth.GoogleAuthProvider() : new firebase.auth.FacebookAuthProvider();
-            
-            firebase.auth().signInWithPopup(provider).catch(err => {
-                let el = document.querySelector(".error-message");
-                el.textContent = err.message;
-                fade(el, {type: "show"});
-            });
+    const loginButton = document.getElementById("loginBtn");
+    loginButton.addEventListener("click", function(){
+        let provider = new firebase.auth.GoogleAuthProvider();
+        firebase.auth().signInWithPopup(provider).catch(err => {
+            let el = document.querySelector(".error-message");
+            el.textContent = err.message;
+            fade(el, {type: "show"});
         });
     });
 
