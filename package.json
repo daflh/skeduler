@@ -2,10 +2,6 @@
   "name": "skeduler",
   "version": "1.0.0",
   "description": "Easy to use event scheduler build with Firebase",
-  "scripts": {
-    "start": "firebase serve",
-    "deploy": "firebase deploy"
-  },
   "keywords": [
     "firebase",
     "bootstrap",
