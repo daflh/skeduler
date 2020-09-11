@@ -20,9 +20,7 @@
     table tr td, table tr th{font-size:.8125rem;border-top:0!important;padding:1rem 1.5rem!important;vertical-align: middle}
     table tr td{white-space:nowrap}
     table tr td.date{display:flex;align-items:center;width:auto}
-    table tr td.date i.repeat, table tr td.date i.notif-active{background-image:url(/img/icons.svg);background-size:65px 52px;width:13px;height:13px}
-    table tr td.date i.repeat{background-position: -26px -13px;}
-    table tr td.date i.notif-active{background-position: -39px -13px;}
+    table tr td.date i.repeat{background-image:url(/img/icons.svg);background-size:65px 52px;width:13px;height:13px;background-position:-26px -13px}
     table tbody tr th{white-space:normal;font-weight:600;width:100%}
     .permission-icon{background-image:url(/img/icons.svg);background-position:-50px 0;background-size:250px 200px;width:50px;height:50px;align-self:center}
     
@@ -105,12 +103,9 @@
 
             let eventsRef = fs.collection("users").doc(user.uid).collection('events');
 
-            let keys = "Nzc4MzY3MDMtOGZlNi00MTVjLWI5MjItNGNlZDMwNjU0Nzhk";
-            let appId = "12fe1f4e-c50f-4321-961a-3fc7a36b7983";
-
             function eventDone(id, data){
                 let repeat = data.repeat;
-                if (repeat === "unrepeat") {
+                if (repeat === "no") {
                     return eventsRef.doc(id).delete();
                 } else {
                     let nextTime;
@@ -135,7 +130,7 @@
             eventsRef.get().then(function(once){
                 once.forEach(raw=>{
                     let dt = raw.data();
-                    if (dt.date.seconds*1000 <= _d().getTimeM() - 60*60*24*1000) {
+                    if (dt.date.toMillis() <= _d().getTimeM() - 60*60*24*1000) {
                         eventDone(raw.id, dt);
                     }
                 });
@@ -157,12 +152,18 @@
                         `;
                         data.forEach(v=>{
                             let d = v.data();
-                            let past = d.date.seconds*1000 <= _d().getTimeM();
+                            let past = d.date.toMillis() <= _d().getTimeM();
+                            let titleDate = _d(d.date.toMillis()).toLocaleString("en-GB", {
+                                dateStyle: "full",
+                                timeStyle: "short"
+                            });
+                            let displayDate = _d(d.date.toMillis()).toDateRelativeString();
+                            let isRepeat = d.repeat !== "no";
                             elem += `
                                 <tr ${past ? "class='past' " : ""}data-id='${v.id}'>
-                                    <td class='date' title='${d.date.toDate()}'>
-                                        ${_d(d.date.seconds * 1000).toDateRelativeString()}
-                                        ${d.repeat !== "unrepeat" ? ` <i class='repeat ml-1' title='Repeats ${d.repeat}'></i>` : ``}
+                                    <td class='date' title='${titleDate}'>
+                                        ${displayDate}
+                                        ${isRepeat ? `<i class='repeat ml-1' title='Repeats ${d.repeat}'></i>`: ``}
                                     </td>
                                     <th>${d.name}</th>
                                     <td class='actions'>
@@ -170,7 +171,7 @@
                                         <i title='Edit' class='icon edit mr-3'></i>
                                         <i title='Delete' class='icon delete'></i>
                                     ` : `
-                                        ${d.repeat === "unrepeat" ? `<i title='Snooze' class='icon snooze mr-3'></i>` : ``}
+                                        ${!isRepeat ? `<i title='Snooze' class='icon snooze mr-3'></i>` : ``}
                                         <i title='Done' class='icon done'></i>
                                     `}
                                     </td>

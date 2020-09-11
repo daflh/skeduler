@@ -159,7 +159,7 @@ function modal(header, input = [], { titleVal = "", titlePlac = "", linkVal = ""
                     ${input.includes("date") ? `<input class="form-control" type="datetime-local" name="date" value="${dateVal}" min="${new Date().toISOMinuteString()}" required><br/>`:``}
                     ${input.includes("repeat") ? `
                     <select class="form-control rounded-0" name="repeat">
-                        <option ${repeatVal === 'unrepeat' ? 'selected' : ''} value="unrepeat">Does not repeat</option>
+                        <option ${repeatVal === 'no' ? 'selected' : ''} value="no">Does not repeat</option>
                         <option ${repeatVal === 'daily' ? 'selected' : ''} value="daily">Daily</option>
                         <option ${repeatVal === 'weekly' ? 'selected' : ''} value="weekly">Weekly</option>
                         <option ${repeatVal === 'monthly' ? 'selected' : ''} value="monthly">Monthly</option>

@@ -127,7 +127,7 @@
                     for(let rawDoc of data.docs) {
                         let doc = rawDoc.data();
                         if(doc.hasOwnProperty("date")){
-                            doc.date = doc.date.seconds*1000;
+                            doc.date = doc.date.toMillis();
                         }
                         events[rawDoc.id] = doc;
                     }
