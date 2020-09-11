@@ -50,5 +50,4 @@ firebase deploy
 
 ## To-do
 
-- **custom repeat**, the `repeat` field will contain an array with 2 elements, like for example `[3, "week"]`, means repeat event every 3 weeks
-- **repeated event can be snoozed**, create a field named `original_date` or something, which contains original date before event is snoozed
+Custom repeat for event, the `repeat` field will contains an array with 2 elements, for example `[3, "week"]` means repeat event every 3 weeks
