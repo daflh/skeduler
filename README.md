@@ -1,8 +1,12 @@
 # Skeduler
 Easy to use event scheduler build with Firebase. See the preview [here](https://dap-skeduler.web.app/).
 
+<details>
+  <summary>Screenshots</summary>
+  
 ![Events Screenshot](https://i.imgur.com/9JohmaO.png)
 ![Goals Screenshot](https://i.imgur.com/Oj6dHCr.png)
+</details>
 
 ## Create your own
 
