@@ -4,8 +4,9 @@ Easy to use event scheduler build with Firebase. See the preview [here](https://
 <details>
   <summary>Screenshots</summary>
   
-![Events Screenshot](https://i.imgur.com/9JohmaO.png)
-![Goals Screenshot](https://i.imgur.com/Oj6dHCr.png)
+  ![Dashboard Screenshot](https://i.imgur.com/HIfOrpm.png)
+  ![Events Screenshot](https://i.imgur.com/9JohmaO.png)
+  ![Goals Screenshot](https://i.imgur.com/Oj6dHCr.png)
 </details>
 
 ## Create your own
