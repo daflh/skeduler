@@ -1,5 +1,5 @@
 # Skeduler
-Easy to use event scheduler build with Firebase. See the preview [here](https://dap-skeduler.web.app/).
+Event scheduler build with Firebase. See the preview [here](https://dap-skeduler.web.app/).
 
 <details>
   <summary>Screenshots</summary>
@@ -12,21 +12,22 @@ Easy to use event scheduler build with Firebase. See the preview [here](https://
 ## Create your own
 
 ### Prerequisites
-- Has a Google account with firebase project
-- Your project must have enabled Google sign-in method in Authentication ([?](https://i.imgur.com/7PhXLbz.png))
-- Your project must have created a Cloud Firestore database with rules allowing third party read and write ([?](https://i.imgur.com/0hWAhMn.png))
-- Node.js and npm with Firebase CLI installed on it, if you haven't then install it by running this command `npm i -g firebase-tools`
+- Google account with a Firebase project
+- Firebase project must have enabled Google sign-in method in Authentication ([how?](https://i.imgur.com/7PhXLbz.png))
+- Firebase project must have created a Cloud Firestore database with rules allowing third party read and write ([how?](https://i.imgur.com/0hWAhMn.png))
+- Node.js and npm with Firebase CLI installed, if you haven't then install it by running this command `npm i -g firebase-tools`
 
 ### Run on your machine
-1. Login to Firebase CLI with your Google account (if you haven't)
+1. Make a copy of this repository then move to that folder
+```sh
+npx degit dafiulh/skeduler skeduler
+cd skeduler
+```
+2. Login to Firebase CLI with your Google account
 ```sh
 firebase login
 ```
-2. To make a copy of this repository, create a new folder, then run this command below
-```sh
-npx degit dafiulh/skeduler
-```
-3. Set an active Firebase project for your working directory/folder
+3. Set an active Firebase project for this folder
 ```sh
 firebase use --add
 ```
