@@ -78,110 +78,108 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.js"></script>
     <script src="/js/main.js"></script>
     <script>
-
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-
-            let goalsRef = fs.collection("users").doc(user.uid).collection('goals');
-
-            goalsRef.orderBy('sort').onSnapshot(function(data){
-                let elem = '';
-                let cachingData = {};
-                
-                if(!data.empty){
-                    elem += `<ol id='goals' class='list-group list-group-flush'>`;
-                    data.forEach(v=>{
-                        let d = v.data();
-                        elem += `
-                            <li class='list-group-item d-flex' data-id='${v.id}'>
-                                <span class='align-self-center'>
-                                    ${d.link !== "" ? `<a href='${d.link.toUrl()}' target='_blank'>${d.name}</a>` : d.name}
-                                </span>
-                                <span class='action float-right align-self-center ml-auto col-auto pr-0 pl-2'>
-                                    <i title='Edit' class='icon edit mr-2'></i>
-                                    <i title='Delete' class='icon delete'></i>
-                                </span>
-                            </li>
-                        `;
-                        cachingData[v.id] = d;
-                    });
-                    elem += `</ol>`;
-                } else {
-                    elem += `<div id='goals' class='small my-3 mx-4 text-center'>No goal has been added yet</div>`;
-                }
-                
-                document.getElementById("goals").outerHTML = elem;
-
-                sessionStorage.goalsData = JSON.stringify(cachingData);
-
-                let scrollable = true;
-                let listener = function(evt) {
-                    if (!scrollable) evt.preventDefault();
-                };
-
-                document.addEventListener('touchmove', listener, { passive:false });
-
-                dragula([document.getElementById("goals")]).on("drag", () => { 
-                    scrollable = false;
-                }).on("dragend", () => {
-                    scrollable = true;
-                }).on("drop", el => {
-                    let data = cachingData;
-                    let prev = el.previousElementSibling;
-                    let next = el.nextElementSibling;
-                    prev = prev !== null ? data[prev.dataset.id].sort : data[next.dataset.id].sort - 100000;
-                    next = next !== null ? data[next.dataset.id].sort : prev + 100000;
-                    goalsRef.doc(el.dataset.id).update({ sort: (prev + next) / 2 });
-                });
-            });
-
-            document.getElementById("add").addEventListener("click", () => {
-                modal("Add new goal", ["title", "link"], {
-                    titlePlac: "Goal Name",
-                    linkPlac: "Redirect Link (Optional)"
-                }, ({title: name, link}) => {
-                    goalsRef.add({
-                        name: name,
-                        link: link,
-                        sort: +(+_d() + "" + Math.floor(1000 + Math.random() * 9000))
-                    });
-                });
-            });
-
-            document.addEventListener("click", function(evt){
-                let id, event;
-                let goalsDt = JSON.parse(sessionStorage.goalsData);
-                let t = evt.target;
-
-                if(t.parentNode.parentNode != null && t.parentNode.parentNode.hasAttribute("data-id")){
-                    id = t.parentNode.parentNode.dataset.id;
-                    goal = goalsDt[id];
-                }
-
-                if (t && t.classList.contains("edit")) {
-                    modal("Edit goal", ["title", "link"], {
-                        titlePlac: "Goal Name",
-                        titleVal: goal.name,
-                        linkPlac: "Redirect Link (Optional)",
-                        linkVal: goal.link
-                    }, ({title: name, link}) => goalsRef.doc(id).update({
-                        name: name,
-                        link: link
-                    }));
-
-                } else if (t && t.classList.contains("delete")) {
-                    goalsRef.doc(id).delete().then(() => {
-                        notif("Goal successfully deleted!", {type: "info", whenUndo: () => {
-                            goalsRef.doc(id).set(goal);
-                        }});
-                    });
-                    
-                }
-            });
-
-        } else {
-            location.href = "/login?ref=goals";
+        
+    firebase.auth().onAuthStateChanged((user) => {
+        if (!user) {
+            return location.href = "/login?ref=goals";
         }
+
+        let goalsRef = fs.collection("users").doc(user.uid).collection('goals');
+
+        goalsRef.orderBy('sort').onSnapshot((data) => {
+            let elem = '';
+            let cachingData = {};
+            
+            if (!data.empty) {
+                elem += `<ol id='goals' class='list-group list-group-flush'>`;
+                data.forEach((v) => {
+                    let d = v.data();
+                    elem += `
+                        <li class='list-group-item d-flex' data-id='${v.id}'>
+                            <span class='align-self-center'>
+                                ${d.link !== "" ? `<a href='${d.link.toUrl()}' target='_blank'>${d.name}</a>` : d.name}
+                            </span>
+                            <span class='action float-right align-self-center ml-auto col-auto pr-0 pl-2'>
+                                <i title='Edit' class='icon edit mr-2'></i>
+                                <i title='Delete' class='icon delete'></i>
+                            </span>
+                        </li>
+                    `;
+                    cachingData[v.id] = d;
+                });
+                elem += `</ol>`;
+            } else {
+                elem += `<div id='goals' class='small my-3 mx-4 text-center'>No goal has been added yet</div>`;
+            }
+            
+            document.getElementById("goals").outerHTML = elem;
+
+            sessionStorage.goalsData = JSON.stringify(cachingData);
+
+            let scrollable = true;
+            let listener = (evt) => {
+                if (!scrollable) evt.preventDefault();
+            };
+
+            document.addEventListener('touchmove', listener, { passive:false });
+
+            dragula([document.getElementById("goals")]).on("drag", () => { 
+                scrollable = false;
+            }).on("dragend", () => {
+                scrollable = true;
+            }).on("drop", (el) => {
+                let data = cachingData;
+                let prev = el.previousElementSibling;
+                let next = el.nextElementSibling;
+                prev = prev !== null ? data[prev.dataset.id].sort : data[next.dataset.id].sort - 100000;
+                next = next !== null ? data[next.dataset.id].sort : prev + 100000;
+                goalsRef.doc(el.dataset.id).update({ sort: (prev + next) / 2 });
+            });
+        });
+
+        document.getElementById("add").addEventListener("click", () => {
+            modal("Add new goal", ["title", "link"], {
+                titlePlac: "Goal Name",
+                linkPlac: "Redirect Link (Optional)"
+            }, ({ title: name, link }) => {
+                goalsRef.add({
+                    name: name,
+                    link: link,
+                    sort: +(+_d() + "" + Math.floor(1000 + Math.random() * 9000))
+                });
+            });
+        });
+
+        document.addEventListener("click", (evt) => {
+            let id, event;
+            let goalsDt = JSON.parse(sessionStorage.goalsData);
+            let t = evt.target;
+
+            if (t.parentNode.parentNode != null && t.parentNode.parentNode.hasAttribute("data-id")) {
+                id = t.parentNode.parentNode.dataset.id;
+                goal = goalsDt[id];
+            }
+
+            if (t && t.classList.contains("edit")) {
+                modal("Edit goal", ["title", "link"], {
+                    titlePlac: "Goal Name",
+                    titleVal: goal.name,
+                    linkPlac: "Redirect Link (Optional)",
+                    linkVal: goal.link
+                }, ({ title: name, link }) => goalsRef.doc(id).update({
+                    name: name,
+                    link: link
+                }));
+
+            } else if (t && t.classList.contains("delete")) {
+                goalsRef.doc(id).delete().then(() => {
+                    notif("Goal successfully deleted!", { type: "info", whenUndo: () => {
+                        goalsRef.doc(id).set(goal);
+                    }});
+                });
+                
+            }
+        });
     });
 
     </script>

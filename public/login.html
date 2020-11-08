@@ -47,7 +47,7 @@
     <script src="/js/main.js"></script>
     <script>
 
-    firebase.auth().onAuthStateChanged(function(user) {
+    firebase.auth().onAuthStateChanged((user) => {
         if (user) {
             let query = new URLSearchParams(location.search)
             window.location = query.has("ref") ? "/"+query.get("ref") : "/";
@@ -55,12 +55,12 @@
     });
 
     const loginButton = document.getElementById("loginBtn");
-    loginButton.addEventListener("click", function(){
+    loginButton.addEventListener("click", () => {
         let provider = new firebase.auth.GoogleAuthProvider();
-        firebase.auth().signInWithPopup(provider).catch(err => {
+        firebase.auth().signInWithPopup(provider).catch((err) => {
             let el = document.querySelector(".error-message");
             el.textContent = err.message;
-            fade(el, {type: "show"});
+            fade(el, { type: "show" });
         });
     });
 

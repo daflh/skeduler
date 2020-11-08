@@ -96,96 +96,94 @@
     <script src="/js/main.js"></script>
     <script>
 
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-
-            let userRef = fs.collection("users").doc(user.uid);
-            
-            document.getElementById("user").outerHTML = `
-                <div id="user" class="card-body row p-0">
-                    <div class="col-sm-auto px-3 mb-3 mb-sm-0">
-                        <img class="user-photo rounded-circle border" src="${user.photoURL}">
-                    </div>
-                    <div class="col px-sm-0 px-3 align-self-center">
-                        <h5 class="user-name">${user.displayName}</h5>
-                        <h6 class="user-email">${user.email}</h6>
-                    </div>
-                </div>
-            `;
-
-            let result = {};
-            let exportTextarea = document.getElementById("exportTextarea");
-
-            autosize(exportTextarea);
-            exportTextarea.addEventListener('focus', function(){
-                this.select();
-            });
-            
-            userRef.collection("events").get().then(data => {
-                if(!data.empty){
-                    let events = {};
-                    for(let rawDoc of data.docs) {
-                        let doc = rawDoc.data();
-                        if(doc.hasOwnProperty("date")){
-                            doc.date = doc.date.toMillis();
-                        }
-                        events[rawDoc.id] = doc;
-                    }
-                    result.events = events;
-                }
-                
-                return userRef.collection("goals").get();
-
-            }).then(data => {
-                if(!data.empty){
-                    let goals = {};
-                    for(let rawDoc of data.docs) {
-                        goals[rawDoc.id] = rawDoc.data();
-                    }
-                    result.goals = goals;
-                }
-
-                exportTextarea.value = JSON.stringify(result);
-                autosize.update(exportTextarea);
-
-            });
-
-            let importTextarea = document.getElementById("importTextarea");
-            let importSubmit = document.getElementById("importSubmit");
-
-            autosize(importTextarea);
-
-            importTextarea.addEventListener("input", function(){
-                this.style.borderColor = null;
-                importSubmit.disabled = this.value === "" ? true : false;
-            });
-
-            importSubmit.addEventListener("click", function(){
-                try {
-                    let data = JSON.parse(importTextarea.value);
-                    if(!Object.keys(data).every(elem => ["events", "goals"].indexOf(elem) !== -1)) throw new Error();
-
-                    for (let [colName, colData] of Object.entries(data)) {
-                        if(!colData || typeof colData != "object" || Object.keys(colData).length === 0) throw new Error();
-                        
-                        for (let [docID, docData] of Object.entries(colData)) {
-                            if(docData.hasOwnProperty("date")) {
-                                docData.date = firebase.firestore.Timestamp.fromMillis(docData.date);
-                            }
-                            userRef.collection(colName).doc(docID).set(docData, {merge:true});
-                        }
-                    }
-
-                    notif("Data successfully imported!", {type: "info"});
-
-                } catch(err) {
-                    importTextarea.style.borderColor = "#fd8f9a";
-                }
-            });
-
-        } else {
-            location.href = "/login";
+    firebase.auth().onAuthStateChanged((user) => {
+        if (!user) {
+            return location.href = "/login";
         }
+
+        let userRef = fs.collection("users").doc(user.uid);
+        
+        document.getElementById("user").outerHTML = `
+            <div id="user" class="card-body row p-0">
+                <div class="col-sm-auto px-3 mb-3 mb-sm-0">
+                    <img class="user-photo rounded-circle border" src="${user.photoURL}">
+                </div>
+                <div class="col px-sm-0 px-3 align-self-center">
+                    <h5 class="user-name">${user.displayName}</h5>
+                    <h6 class="user-email">${user.email}</h6>
+                </div>
+            </div>
+        `;
+
+        let result = {};
+        let exportTextarea = document.getElementById("exportTextarea");
+
+        autosize(exportTextarea);
+        exportTextarea.addEventListener('focus', function() {
+            this.select();
+        });
+        
+        userRef.collection("events").get().then((data) => {
+            if (!data.empty) {
+                let events = {};
+                for(let rawDoc of data.docs) {
+                    let doc = rawDoc.data();
+                    if (doc.hasOwnProperty("date")) {
+                        doc.date = doc.date.toMillis();
+                    }
+                    events[rawDoc.id] = doc;
+                }
+                result.events = events;
+            }
+            
+            return userRef.collection("goals").get();
+
+        }).then((data) => {
+            if (!data.empty) {
+                let goals = {};
+                for(let rawDoc of data.docs) {
+                    goals[rawDoc.id] = rawDoc.data();
+                }
+                result.goals = goals;
+            }
+
+            exportTextarea.value = JSON.stringify(result);
+            autosize.update(exportTextarea);
+
+        });
+
+        let importTextarea = document.getElementById("importTextarea");
+        let importSubmit = document.getElementById("importSubmit");
+
+        autosize(importTextarea);
+
+        importTextarea.addEventListener("input", function() {
+            this.style.borderColor = null;
+            importSubmit.disabled = this.value === "" ? true : false;
+        });
+
+        importSubmit.addEventListener("click", () => {
+            try {
+                let data = JSON.parse(importTextarea.value);
+                if (!Object.keys(data).every((elem) => ["events", "goals"].indexOf(elem) !== -1)) throw new Error();
+
+                for (let [colName, colData] of Object.entries(data)) {
+                    if (!colData || typeof colData != "object" || Object.keys(colData).length === 0) throw new Error();
+                    
+                    for (let [docID, docData] of Object.entries(colData)) {
+                        if (docData.hasOwnProperty("date")) {
+                            docData.date = firebase.firestore.Timestamp.fromMillis(docData.date);
+                        }
+                        userRef.collection(colName).doc(docID).set(docData, { merge:true });
+                    }
+                }
+
+                notif("Data successfully imported!", { type: "info" });
+
+            } catch(err) {
+                importTextarea.style.borderColor = "#fd8f9a";
+            }
+        });
     });
 
     </script>

@@ -98,166 +98,164 @@
     <script src="/js/main.js"></script>
     <script>
 
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
+    firebase.auth().onAuthStateChanged((user) => {
+        if (!user) {
+            return location.href = "/login?ref=events";
+        }
 
-            let eventsRef = fs.collection("users").doc(user.uid).collection('events');
+        let eventsRef = fs.collection("users").doc(user.uid).collection('events');
 
-            function eventDone(id, data){
-                let repeat = data.repeat;
-                if (repeat === "no") {
-                    return eventsRef.doc(id).delete();
-                } else {
-                    let nextTime;
-                    let time = typeof data.date === "number" ? data.date : data.date.seconds * 1000;
-                    let timeObj = new Date(time);
-                    if (repeat === "daily") nextTime = time + 60*60*24*1000;
-                    else if (repeat === "weekly") nextTime = time + 60*60*24*7*1000;
-                    else if (repeat === "monthly") nextTime = timeObj.setMonth(timeObj.getMonth() + 1);
-                    else if (repeat === "yearly") nextTime = timeObj.setFullYear(timeObj.getFullYear() + 1);
-                    else return;
-                    if (nextTime < _d().getTimeM()){
-                        data.date = nextTime;
-                        return eventDone(id, data);
-                    }
-
-                    return eventsRef.doc(id).update({
-                        date: firebase.firestore.Timestamp.fromMillis(nextTime)
-                    });
+        function eventDone(id, data) {
+            let repeat = data.repeat;
+            if (repeat === "no") {
+                return eventsRef.doc(id).delete();
+            } else {
+                let nextTime;
+                let time = typeof data.date === "number" ? data.date : data.date.seconds * 1000;
+                let timeObj = new Date(time);
+                if (repeat === "daily") nextTime = time + 60*60*24*1000;
+                else if (repeat === "weekly") nextTime = time + 60*60*24*7*1000;
+                else if (repeat === "monthly") nextTime = timeObj.setMonth(timeObj.getMonth() + 1);
+                else if (repeat === "yearly") nextTime = timeObj.setFullYear(timeObj.getFullYear() + 1);
+                else return;
+                if (nextTime < _d().getTimeM()) {
+                    data.date = nextTime;
+                    return eventDone(id, data);
                 }
-            }
 
-            eventsRef.get().then(function(once){
-                once.forEach(raw=>{
-                    let dt = raw.data();
-                    if (dt.date.toMillis() <= _d().getTimeM() - 60*60*24*1000) {
-                        eventDone(raw.id, dt);
-                    }
+                return eventsRef.doc(id).update({
+                    date: firebase.firestore.Timestamp.fromMillis(nextTime)
                 });
-                eventsRef.orderBy('date').onSnapshot(function(data){
-                    let elem = '';
-                    let cachingData = {};
+            }
+        }
 
-                    if(!data.empty){
-                        elem += `
-                            <table id="events" class="table">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Date</th>
-                                        <th scope="col">Event Name</th>
-                                        <th scope="col">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                        `;
-                        data.forEach(v=>{
-                            let d = v.data();
-                            let past = d.date.toMillis() <= _d().getTimeM();
-                            let titleDate = _d(d.date.toMillis()).toLocaleString("en-GB", {
-                                dateStyle: "full",
-                                timeStyle: "short"
-                            });
-                            let displayDate = _d(d.date.toMillis()).toDateRelativeString();
-                            let isRepeat = d.repeat !== "no";
-                            elem += `
-                                <tr ${past ? "class='past' " : ""}data-id='${v.id}'>
-                                    <td class='date' title='${titleDate}'>
-                                        ${displayDate}
-                                        ${isRepeat ? `<i class='repeat ml-1' title='Repeats ${d.repeat}'></i>`: ``}
-                                    </td>
-                                    <th>${d.name}</th>
-                                    <td class='actions'>
-                                    ${!past ? `
-                                        <i title='Edit' class='icon edit mr-3'></i>
-                                        <i title='Delete' class='icon delete'></i>
-                                    ` : `
-                                        ${!isRepeat ? `<i title='Snooze' class='icon snooze mr-3'></i>` : ``}
-                                        <i title='Done' class='icon done'></i>
-                                    `}
-                                    </td>
+        eventsRef.get().then((once) => {
+            once.forEach((raw) => {
+                let dt = raw.data();
+                if (dt.date.toMillis() <= _d().getTimeM() - 60*60*24*1000) {
+                    eventDone(raw.id, dt);
+                }
+            });
+            eventsRef.orderBy('date').onSnapshot((data) => {
+                let elem = '';
+                let cachingData = {};
+
+                if (!data.empty) {
+                    elem += `
+                        <table id="events" class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Event Name</th>
+                                    <th scope="col">Actions</th>
                                 </tr>
-                            `;
-                            cachingData[v.id] = d;
+                            </thead>
+                            <tbody>
+                    `;
+                    data.forEach((v) => {
+                        let d = v.data();
+                        let past = d.date.toMillis() <= _d().getTimeM();
+                        let titleDate = _d(d.date.toMillis()).toLocaleString("en-GB", {
+                            dateStyle: "full",
+                            timeStyle: "short"
                         });
+                        let displayDate = _d(d.date.toMillis()).toDateRelativeString();
+                        let isRepeat = d.repeat !== "no";
                         elem += `
-                                </tbody>
-                            </table>
+                            <tr ${past ? "class='past' " : ""}data-id='${v.id}'>
+                                <td class='date' title='${titleDate}'>
+                                    ${displayDate}
+                                    ${isRepeat ? `<i class='repeat ml-1' title='Repeats ${d.repeat}'></i>`: ``}
+                                </td>
+                                <th>${d.name}</th>
+                                <td class='actions'>
+                                ${!past ? `
+                                    <i title='Edit' class='icon edit mr-3'></i>
+                                    <i title='Delete' class='icon delete'></i>
+                                ` : `
+                                    ${!isRepeat ? `<i title='Snooze' class='icon snooze mr-3'></i>` : ``}
+                                    <i title='Done' class='icon done'></i>
+                                `}
+                                </td>
+                            </tr>
                         `;
-                    } else {
-                        elem += `<div id='events' class='small my-3 mx-4 text-center'>No event has been added yet</div>`;
-                    }
-                    
-                    document.getElementById("events").outerHTML = elem;
-                    sessionStorage.eventsData = JSON.stringify(cachingData);
+                        cachingData[v.id] = d;
+                    });
+                    elem += `
+                            </tbody>
+                        </table>
+                    `;
+                } else {
+                    elem += `<div id='events' class='small my-3 mx-4 text-center'>No event has been added yet</div>`;
+                }
+                
+                document.getElementById("events").outerHTML = elem;
+                sessionStorage.eventsData = JSON.stringify(cachingData);
+            });
+        });
+
+        document.getElementById("add").addEventListener("click", () => {
+            modal("Add new event", ["title", "date", "repeat"], {
+                titlePlac: "Event Name"
+            }, ({ title: name, date, repeat }) => {
+                eventsRef.add({
+                    name: name,
+                    date: firebase.firestore.Timestamp.fromDate(new Date(date)),
+                    repeat: repeat
                 });
             });
+        });
 
-            document.getElementById("add").addEventListener("click", () => {
-                modal("Add new event", ["title", "date", "repeat"], {
-                    titlePlac: "Event Name"
-                }, ({title: name, date, repeat}) => {
-                    eventsRef.add({
+        document.addEventListener("click", (evt) => {
+            let id, event;
+            let eventsDt = JSON.parse(sessionStorage.eventsData);
+            let t = evt.target;
+            let item = evt.path.slice(0,-3).find((el) => el.hasAttribute("data-id") && el.getAttribute("data-id") !== null);
+
+            if (t.parentNode.parentNode != null && t.parentNode.parentNode.hasAttribute("data-id")) {
+                id = t.parentNode.parentNode.dataset.id;
+                event = eventsDt[id];
+            }
+
+            if (t && t.classList.contains("edit")) {
+                modal("Edit event", ["title", "date", "repeat"], {
+                    titlePlac: "Event Name",
+                    titleVal: event.name,
+                    dateVal: _d(event.date.seconds * 1000).toISOMinuteString(),
+                    repeatVal: event.repeat
+                }, ({ title: name, date, repeat }) => {
+                    eventsRef.doc(id).update({
                         name: name,
                         date: firebase.firestore.Timestamp.fromDate(new Date(date)),
                         repeat: repeat
                     });
                 });
-            });
 
-            document.addEventListener("click", function(evt){
-                let id, event;
-                let eventsDt = JSON.parse(sessionStorage.eventsData);
-                let t = evt.target;
-                let item = evt.path.slice(0,-3).find(el => el.hasAttribute("data-id") && el.getAttribute("data-id") !== null);
+            } else if (t && t.classList.contains("delete")) {
+                eventsRef.doc(id).delete().then(() => {
+                    notif("Event successfully deleted!", { type: "info", whenUndo: () => {
+                        event.date = firebase.firestore.Timestamp.fromMillis(event.date.seconds*1000);
+                        eventsRef.doc(id).set(event);
+                    }});
+                });
 
-                if(t.parentNode.parentNode != null && t.parentNode.parentNode.hasAttribute("data-id")){
-                    id = t.parentNode.parentNode.dataset.id;
-                    event = eventsDt[id];
-                }
-
-                if (t && t.classList.contains("edit")) {
-                    modal("Edit event", ["title", "date", "repeat"], {
-                        titlePlac: "Event Name",
-                        titleVal: event.name,
-                        dateVal: _d(event.date.seconds * 1000).toISOMinuteString(),
-                        repeatVal: event.repeat
-                    }, ({title: name, date, repeat}) => {
-                        eventsRef.doc(id).update({
-                            name: name,
-                            date: firebase.firestore.Timestamp.fromDate(new Date(date)),
-                            repeat: repeat
-                        });
+            } else if (t && t.classList.contains("snooze")) {
+                modal("Snooze event", ["date"], {
+                    dateVal: _d().toISOMinuteString()
+                }, ({ date }) => {
+                    eventsRef.doc(id).update({
+                        date: firebase.firestore.Timestamp.fromDate(new Date(date))
                     });
+                });
 
-                } else if (t && t.classList.contains("delete")) {
-                    eventsRef.doc(id).delete().then(() => {
-                        notif("Event successfully deleted!", {type: "info", whenUndo: () => {
-                            event.date = firebase.firestore.Timestamp.fromMillis(event.date.seconds*1000);
-                            eventsRef.doc(id).set(event);
-                        }});
-                    });
+            } else if (t && t.classList.contains("done")) {
+                eventDone(id, event);
+            
+            } else if (window.innerWidth < 992 && t && item !== undefined && !item.classList.contains("past")) {
+                slide(item.lastElementChild);
 
-                } else if (t && t.classList.contains("snooze")) {
-                    modal("Snooze event", ["date"], {
-                        dateVal: _d().toISOMinuteString()
-                    }, ({date}) => {
-                        eventsRef.doc(id).update({
-                            date: firebase.firestore.Timestamp.fromDate(new Date(date))
-                        });
-                    });
-
-                } else if (t && t.classList.contains("done")) {
-                    eventDone(id, event);
-                
-                } else if (window.innerWidth < 992 && t && item !== undefined && !item.classList.contains("past")) {
-                    slide(item.lastElementChild);
-
-                }
-            });
-    
-        } else {
-            location.href = "/login?ref=events";
-        }
+            }
+        });
     });
 
     </script>

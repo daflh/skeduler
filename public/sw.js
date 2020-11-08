@@ -15,23 +15,23 @@ const assets = [
     '/img/logo-512x512.png'
 ];
 
-self.addEventListener('install', function(event) {
+self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(cacheName).then(cache => {
-            return cache.addAll(assets).then(function() {
+        caches.open(cacheName).then((cache) => {
+            return cache.addAll(assets).then(() => {
                 self.skipWaiting();
             });
         })
     );
 });
 
-self.addEventListener('activate', function(event) {
+self.addEventListener('activate', (event) => {
     event.waitUntil(
-        caches.keys().then(function(keys) {
+        caches.keys().then((keys) => {
             return Promise.all(
-                keys.filter(function(key) {
+                keys.filter((key) => {
                     return key.indexOf(cacheVer) === -1;
-                }).map(function(key) {
+                }).map((key) => {
                     return caches.delete(key);
                 })
             );
@@ -39,9 +39,9 @@ self.addEventListener('activate', function(event) {
     );
 });
 
-self.addEventListener('fetch', function(event) {
+self.addEventListener('fetch', (event) => {
     event.respondWith(
-        fetch(event.request).catch(function() {
+        fetch(event.request).catch(() => {
             return caches.match(event.request);
         })
     );

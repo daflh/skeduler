@@ -11,35 +11,35 @@ const config = {
 firebase.initializeApp(config);
 
 const fs = firebase.firestore();
-fs.settings({cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED});
-fs.enablePersistence({synchronizeTabs: true});
+fs.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
+fs.enablePersistence({ synchronizeTabs: true });
 
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js');
 }
 
-String.prototype.toUrl = function(){
+String.prototype.toUrl = () => {
     let str = this;
-    if(!str.includes(".")) str += ".com";
+    if (!str.includes(".")) str += ".com";
     return !str.match(/^[a-zA-Z]+:\/\//) ? ('http://' + str) : ('' + str);
 }
 
-Date.prototype.getTimeS = function(){
+Date.prototype.getTimeS = () => {
     return Math.floor(this.getTime()/1000)*1000;
 }
 
-Date.prototype.getTimeM = function(){
+Date.prototype.getTimeM = () => {
     return this.getTimeS() - this.getSeconds()*1000;
 }
 
-Date.prototype.toISOMinuteString = function(){
-    let twoDig = num => num.toString().padStart(2, "0");
+Date.prototype.toISOMinuteString = () => {
+    let twoDig = (num) => num.toString().padStart(2, "0");
     let dateString = this.getFullYear() + "-" + twoDig(this.getMonth()+1) + "-" + twoDig(this.getDate());
     let timeString = twoDig(this.getHours()) + ":" + twoDig(this.getMinutes());
     return dateString+'T'+timeString;
 }
 
-Date.prototype.toDateRelativeString = function(){
+Date.prototype.toDateRelativeString = () => {
     const dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
     const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     let now = new Date();
@@ -48,7 +48,7 @@ Date.prototype.toDateRelativeString = function(){
         let diff = (now.getTimeM() - this.getTimeM())/1000;
         for(let key in condition){
             let d = diff / condition[key];
-            if(d >= 1){
+            if (d >= 1) {
                 let t = Math.round(d);
                 let xs = t > 1 ? 's' : '';
                 return t + ' ' + key + xs + ' ago';
@@ -79,14 +79,14 @@ Date.prototype.toDateRelativeString = function(){
 
 function fade(target, { type = '', duration = 600, initial = 'block' } = {}) {
     let dn = (type == 'show' || type == 'hide') ? (type == 'show' ? true : false) : getComputedStyle(target).display === 'none';
-    if(dn) target.style.display = initial;
+    if (dn) target.style.display = initial;
     target.style.opacity = dn ? 0 : 1;
     target.style.transitionProperty = 'opacity';
     target.style.transitionDuration = duration + 'ms';
-    if(dn) window.setTimeout(() => target.style.opacity = 1);
-    if(!dn) target.style.opacity = 0;
+    if (dn) window.setTimeout(() => target.style.opacity = 1);
+    if (!dn) target.style.opacity = 0;
     window.setTimeout(() => {
-        if(!dn) target.style.display = 'none';
+        if (!dn) target.style.display = 'none';
         target.style.removeProperty('opacity');
         target.style.removeProperty('transition-duration');
         target.style.removeProperty('transition-property');
@@ -95,7 +95,7 @@ function fade(target, { type = '', duration = 600, initial = 'block' } = {}) {
 
 function slide(target, { type = '', duration = 600, initial = 'block' } = {}) {
     let dn = (type == 'show' || type == 'hide') ? (type == 'show' ? true : false) : getComputedStyle(target).display === 'none';
-    if(dn) {
+    if (dn) {
         target.style.removeProperty('display');
         target.style.display = initial;
         let height = target.offsetHeight;
@@ -146,7 +146,7 @@ function slide(target, { type = '', duration = 600, initial = 'block' } = {}) {
     }
 }
 
-function modal(header, input = [], { titleVal = "", titlePlac = "", linkVal = "", linkPlac = "", dateVal = "", repeatVal = "" } = {}, whenSubmit = () => {}){
+function modal(header, input = [], { titleVal = "", titlePlac = "", linkVal = "", linkPlac = "", dateVal = "", repeatVal = "" } = {}, whenSubmit = () => {}) {
 
     let element = `
         <div id="modal" class="modal-overlay">
@@ -180,15 +180,15 @@ function modal(header, input = [], { titleVal = "", titlePlac = "", linkVal = ""
 
     document.body.insertAdjacentHTML("beforeend", element);
     mdl = document.getElementById("modal");
-    fade(mdl, {type: "show"});
+    fade(mdl, { type: "show" });
 
     let modalForm = document.forms["modal-form"]; 
     let closeModal = () => {
-        fade(mdl, {type: "hide", duration: 600});
+        fade(mdl, { type: "hide", duration: 600 });
         setTimeout(() => mdl.parentNode.removeChild(mdl), 600);
     }
 
-    modalForm.addEventListener("submit", evt => {
+    modalForm.addEventListener("submit", (evt) => {
         evt.preventDefault();
         whenSubmit({
             title: input.includes("title") ? modalForm.elements.title.value : "",
@@ -204,7 +204,7 @@ function modal(header, input = [], { titleVal = "", titlePlac = "", linkVal = ""
 
 }
 
-function notif(text = "", {type = "", duration = 5000, description, whenUndo} = {}){
+function notif(text = "", { type = "", duration = 5000, description, whenUndo } = {}) {
 
     let identifierNum = Math.floor(100000 + Math.random() * 900000);
     let element = `
@@ -240,25 +240,27 @@ function notif(text = "", {type = "", duration = 5000, description, whenUndo} = 
 
     typeof ntf != 'undefined' && ntf != null ? ntf.outerHTML = element : document.body.insertAdjacentHTML("beforeend", element);
     ntf = document.getElementById("notif");
-    fade(ntf, {type: "show"})
+    fade(ntf, { type: "show" })
 
-    let closeNotif = idNum => {
+    let closeNotif = (idNum) => {
         ntf = document.getElementById("notif");
-        if(idNum !== undefined && (ntf == null || ntf.dataset.identifier != idNum)) return;
-        fade(ntf, {type: "hide", duration: 600})
+        if (idNum !== undefined && (ntf == null || ntf.dataset.identifier != idNum)) return;
+        fade(ntf, { type: "hide", duration: 600 })
         setTimeout(() => {
-            if(typeof ntf != 'undefined' && ntf != null) ntf.parentNode.removeChild(ntf)
+            if (typeof ntf != 'undefined' && ntf != null) ntf.parentNode.removeChild(ntf)
         }, 600);
     }
 
-    if(duration !== 0) setTimeout(() => closeNotif(identifierNum), duration);
+    if (duration !== 0) setTimeout(() => closeNotif(identifierNum), duration);
 
-    if(whenUndo) ntf.querySelector(".undo").addEventListener("click", () => {
-        whenUndo();
-        closeNotif();
-    });
+    if (whenUndo) {
+        ntf.querySelector(".undo").addEventListener("click", () => {
+            whenUndo();
+            closeNotif();
+        });
+    }
 
-    if(description) {
+    if (description) {
         let desc = ntf.querySelector(".desc");
         let expand = ntf.querySelector(".expand");
         expand.addEventListener("click", () => {
@@ -279,9 +281,9 @@ function notif(text = "", {type = "", duration = 5000, description, whenUndo} = 
 
 const _d = (...args) => new (Function.prototype.bind.apply(Date, [Date, ...args]));
 
-if(location.pathname !== "/login") {
+if (location.pathname !== "/login") {
     
-    document.querySelectorAll("#sidenav-main button[name^='navbarFade']").forEach(el => {
+    document.querySelectorAll("#sidenav-main button[name^='navbarFade']").forEach((el) => {
         el.addEventListener("click", () => fade(document.getElementById("navcol")));
     });
 
