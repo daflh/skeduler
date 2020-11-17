@@ -53,7 +53,3 @@ firebase serve
 ```sh
 firebase deploy
 ```
-
-## To-do
-
-Custom repeat for event, the `repeat` field will contains an array with 2 elements, for example `[3, "week"]` means repeat event every 3 weeks
