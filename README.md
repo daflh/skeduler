@@ -31,7 +31,7 @@ firebase login
 ```sh
 firebase use --add
 ```
-4. Go to `public/js/main.js` file then change the `config` variable with your Firebase configuration ([?](https://i.imgur.com/NTgG0Ap.jpg))
+4. Go to `public/js/main.js` file then change the `config` variable with your Firebase app configuration ([?](https://support.google.com/firebase/answer/7015592#web))
 ```javascript
 // change this variable
 const config = {
