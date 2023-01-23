@@ -20,7 +20,7 @@ Event scheduler build with Firebase. See the preview [here](https://dap-skeduler
 ### Run on your machine
 1. Make a copy of this repository then move to that folder
 ```sh
-npx degit dafiulh/skeduler skeduler
+npx degit daflh/skeduler skeduler
 cd skeduler
 ```
 2. Login to Firebase CLI with your Google account
